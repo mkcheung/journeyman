@@ -2,19 +2,48 @@
 
     import axios from 'axios'
     import React, { Component } from 'react'
-    import { TextareaAutosize } from '@material-ui/core';
+    import { 
+      FormControl,
+      InputLabel,
+      Select,
+      TextareaAutosize 
+    } from '@material-ui/core';
 
     class NewPost extends Component {
       constructor (props) {
         super(props)
         this.state = {
           title: '',
+          tag:'',
+          tags:[],
           errors: []
         }
         this.handleFieldChange = this.handleFieldChange.bind(this)
         this.handleCreateNewPost = this.handleCreateNewPost.bind(this)
         this.hasErrorFor = this.hasErrorFor.bind(this)
         this.renderErrorFor = this.renderErrorFor.bind(this)
+      }
+
+      componentDidMount () {
+        axios.get('/api/tags').then(res => {
+          console.log(res.data);
+
+          let tagOptions = [];
+          let tags = res.data;
+          tags.forEach(function(tag){
+            let temp = []
+            temp['id'] = tag.id;
+            temp['value'] = tag.title;
+            tagOptions.push(temp);
+          });
+          console.log(tagOptions);
+          this.setState( {
+            tags: tagOptions
+          });
+        })
+        .catch(error => {
+          return error;
+        })
       }
 
       handleFieldChange (event) {
@@ -59,6 +88,14 @@
         }
       }
 
+      handleChange = (event) => {
+        const name = event.target.name;
+        setState({
+          ...state,
+          [tag]: event.target.value,
+        });
+      };
+
       render () {
         return (
           <div className='container py-4'>
@@ -80,6 +117,25 @@
                           onChange={this.handleFieldChange}
                         />
                         {this.renderErrorFor('title')}
+                        </div>
+                        <div>
+                          <FormControl >
+                            <InputLabel htmlFor="age-native-simple">Tags</InputLabel>
+                            <Select
+                              native
+                              value={this.state.age}
+                              onChange={this.handleChange}
+                              inputProps={{
+                                name: 'age',
+                                id: 'age-native-simple',
+                              }}
+                            >
+                              <option aria-label="None" value="" />
+                              <option value={10}>Ten</option>
+                              <option value={20}>Twenty</option>
+                              <option value={30}>Thirty</option>
+                            </Select>
+                          </FormControl>
                         </div>
                         <div>
                         <label htmlFor='name'>Content</label>
