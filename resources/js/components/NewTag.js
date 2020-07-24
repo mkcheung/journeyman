@@ -2,6 +2,7 @@
 
     import axios from 'axios'
     import React, { Component } from 'react'
+    import swal from 'sweetalert';
 
     class NewTag extends Component {
       constructor (props) {
@@ -11,7 +12,7 @@
           errors: []
         }
         this.handleFieldChange = this.handleFieldChange.bind(this)
-        this.handleCreateNewtag = this.handleCreateNewtag.bind(this)
+        this.handleCreateNewTag = this.handleCreateNewTag.bind(this)
         this.hasErrorFor = this.hasErrorFor.bind(this)
         this.renderErrorFor = this.renderErrorFor.bind(this)
       }
@@ -22,7 +23,7 @@
         })
       }
 
-      handleCreateNewtag (event) {
+      handleCreateNewTag (event) {
         event.preventDefault()
 
         const { history } = this.props
@@ -35,6 +36,7 @@
         axios.post('/api/tags', tag)
           .then(response => {
             // redirect to the homepage
+            swal("Done!", "Tag Created!", "success");
             history.push('/')
           })
           .catch(error => {
@@ -66,7 +68,7 @@
                 <div className='card'>
                   <div className='card-header'>Create new Tag</div>
                   <div className='card-body'>
-                    <form onSubmit={this.handleCreateNewtag}>
+                    <form onSubmit={this.handleCreateNewTag}>
                       <div className='form-group'>
                         <label htmlFor='name'>Tag title</label>
                         <input
@@ -79,7 +81,11 @@
                         />
                         {this.renderErrorFor('title')}
                       </div>
-                      <button className='btn btn-primary'>Create</button>
+                      <button 
+                        className='btn btn-primary'
+                        onClick={this.handleCreateNewTag}>
+                        Create
+                      </button>
                     </form>
                   </div>
                 </div>

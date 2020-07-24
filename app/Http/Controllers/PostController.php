@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    public function index()
+      {
+        $posts = Post::get();
+        return $posts->toJson();
+      }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -54,7 +60,7 @@ class PostController extends Controller
         return view('posts.show', compact('post'));
     }
 
-    *
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id

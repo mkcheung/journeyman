@@ -16,9 +16,10 @@ use Illuminate\Http\Request;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-  Route::get('tags', 'TagController@index');
-    Route::post('tags', 'TagController@store');
-    Route::get('tags/{id}', 'TagController@show');
-    Route::put('tags/{tag}', 'TagController@markAsCompleted');
+
+Route::resource('tags', 'TagController');
+Route::resource('posts', 'PostController');
+Route::resource('categories', 'CategoryController');
+Route::resource('comments', 'CommentController');
     // Route::post('tasks', 'TaskController@store');
     // Route::put('tasks/{task}', 'TaskController@markAsCompleted');

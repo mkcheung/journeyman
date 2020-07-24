@@ -12,9 +12,9 @@
       }
 
       componentDidMount () {
-        const projectId = this.props.match.params.id
+        const tagId = this.props.match.params.id
 
-        axios.get(`/api/projects/${projectId}`).then(response => {
+        axios.get(`/api/tags/${tagId}`).then(response => {
           this.setState({
             tags: response.data.tags
           })
@@ -29,9 +29,9 @@
             <div className='row justify-content-center'>
               <div className='col-md-8'>
                 <div className='card'>
-                  <div className='card-header'>{project.name}</div>
+                  <div className='card-header'>{tag.name}</div>
                   <div className='card-body'>
-                    <p>{project.description}</p>
+                    <p>{tag.description}</p>
 
                     <button className='btn btn-primary btn-sm'>
                       Mark as completed

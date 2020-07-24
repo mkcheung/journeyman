@@ -6,7 +6,10 @@
     import Header from './Header'
     import NewTag from './NewTag'
     import TagsList from './TagsList'
+    import PostsList from './PostsList'
+    import NewPost from './NewPost'
     import SingleTag from './SingleTag'
+    import NewCategory from './NewCategory'
 
     class App extends Component {
       render () {
@@ -15,8 +18,10 @@
             <div>
               <Header />
               <Switch>
-                <Route exact path='/' component={TagsList} />
-                <Route path='/create' component={NewTag} />
+                <Route exact path='/' component={PostsList} />
+                <Route path='/post/create' component={NewPost} />
+                <Route path='/tag/create' component={NewTag} />
+                <Route path='/category/create' component={NewCategory} />
                 <Route path='/:id' component={SingleTag} />
               </Switch>
             </div>
