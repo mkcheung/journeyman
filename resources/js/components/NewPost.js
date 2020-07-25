@@ -2,11 +2,14 @@
 
     import axios from 'axios'
     import React, { Component } from 'react'
+    import { Editor } from '@tinymce/tinymce-react';
     import { 
       FormControl,
+      FormControlLabel,
+      FormLabel,
       InputLabel,
+      Checkbox,
       Select,
-      TextareaAutosize 
     } from '@material-ui/core';
 
     class NewPost extends Component {
@@ -15,6 +18,11 @@
         this.state = {
           title: '',
           tag:'',
+          slug:'',
+          category_id:'',
+          publish:false,
+          content:'',
+          categories:[],
           tags:[],
           errors: []
         }
@@ -29,7 +37,7 @@
 
           let tagOptions = [];
           let tags = res.data;
-          
+
           tags.forEach(function(tag){
             let temp = []
             temp['id'] = tag.id;
@@ -43,12 +51,35 @@
         })
         .catch(error => {
           return error;
+        });
+
+        axios.get('/api/categories').then(res => {
+
+          let categoryOptions = [];
+          let categories = res.data;
+
+          categories.forEach(function(category){
+            let temp = []
+            temp['id'] = category.id;
+            temp['value'] = category.title;
+            categoryOptions.push(temp);
+          });
+   
+          this.setState( {
+            categories: categoryOptions
+          });
         })
+        .catch(error => {
+          return error;
+        });
       }
 
       handleFieldChange (event) {
         this.setState({
-          [event.target.title]: event.target.value
+          [event.target.title]: event.target.value,
+          [event.target.slug]: event.target.value,
+          [event.target.content]: event.target.value,
+          [event.target.category_id]: event.target.value
         })
       }
 
@@ -59,7 +90,10 @@
 
         const post = {
           title: this.state.title,
-          description: this.state.description
+          slug: this.state.slug,
+          publish: this.state.publish,
+          content: this.state.content,
+          category_id: this.state.category_id
         }
 
         axios.post('/api/posts', post)
@@ -89,12 +123,26 @@
       }
 
       handleChange = (event) => {
-        const name = event.target.name;
-        setState({
-          ...state,
-          [tag]: event.target.value,
+        this.setState({
+          ...this.state,
+          [event.target.name]: event.target.value,
         });
       };
+
+      handleChkboxToggle = (event) => {
+        this.setState({
+            ...this.state,
+            [event.target.name]: event.target.checked
+        });
+      };
+
+      handleEditorChange = (content, editor) => {
+       console.log('Content was updated:', content);
+        this.setState({
+          ...this.state,
+          ['content']: content,
+        });
+      }
 
       render () {
         return (
@@ -119,11 +167,36 @@
                         {this.renderErrorFor('title')}
                         </div>
                         <div>
+                        <label htmlFor='name'>Post slug</label>
+                        <input
+                          id='slug'
+                          type='text'
+                          classslug={`form-control ${this.hasErrorFor('slug') ? 'is-invalid' : ''}`}
+                          title='slug'
+                          value={this.state.slug}
+                          onChange={this.handleFieldChange}
+                        />
+                        {this.renderErrorFor('slug')}
+                        </div>
+                        <div>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={this.state.publish}
+                                        onChange={this.handleChkboxToggle}
+                                        name="publish"
+                                        color="primary"
+                                    />
+                                }
+                                label="Publish"
+                            />
+                        </div>
+                        <div>
                           <FormControl >
                             <InputLabel htmlFor="age-native-simple">Tags</InputLabel>
                             <Select
                               native
-                              value={this.state.age}
+                              value={this.state.tag}
                               onChange={this.handleChange}
                               inputProps={{
                                 name: 'age',
@@ -140,14 +213,47 @@
                           </FormControl>
                         </div>
                         <div>
+                          <FormControl >
+                            <InputLabel htmlFor="age-native-simple">Category</InputLabel>
+                            <Select
+                              native
+                              value={this.state.category_id}
+                              onChange={this.handleChange}
+                              title='category_id'
+                              inputProps={{
+                                name: 'age',
+                                id: 'age-native-simple',
+                              }}
+                            >
+                            <option value='0'></option>
+                            {
+                              Object
+                              .keys(this.state.categories)
+                              .map(key => <option key={key} value = {this.state.categories[key].id}>{this.state.categories[key].value}</option>)
+                            }
+                            </Select>
+                          </FormControl>
+                        </div>
+                        <div>
                         <label htmlFor='name'>Content</label>
-                        <TextareaAutosize
-                          id='content'
-                          rowsMax={15}
-                          aria-label="maximum height"
-                          placeholder="Maximum 15 rows"
-                          defaultValue="Thoughts...."
-                        />
+                        <Editor
+                           initialValue="<p>This is the initial content of the editor</p>"
+                           title='content'
+                           init={{
+                             height: 500,
+                             menubar: false,
+                             plugins: [
+                               'advlist autolink lists link image charmap print preview anchor',
+                               'searchreplace visualblocks code fullscreen',
+                               'insertdatetime media table paste code help wordcount'
+                             ],
+                             toolbar:
+                               'undo redo | formatselect | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | \
+                               bullist numlist outdent indent | removeformat | help'
+                           }}
+                           onEditorChange={this.handleEditorChange}
+                         />
                         {this.renderErrorFor('content')}
                         </div>
                         <button className='btn btn-primary'>Create</button>

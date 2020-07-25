@@ -37,12 +37,12 @@ class PostController extends Controller
         // ]);
 
         $project = Post::create([
-          'title' => $request['name'],
+          'title' => $request['title'],
           'slug' => $request['slug'],
           'content' => $request['content'],
-          'published' => $request['published'],
+          'published' => $request['publish'],
           'category' => $request['category'],
-          'user_id' => $request['user_id']
+          'user_id' => 1//$request['user_id']
         ]);
 
         return response()->json('Post created!');

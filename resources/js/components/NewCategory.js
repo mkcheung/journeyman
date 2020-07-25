@@ -2,24 +2,33 @@
 
     import axios from 'axios'
     import React, { Component } from 'react'
+    import swal from 'sweetalert';
+    import { 
+      FormControl,
+      InputLabel,
+      Select,
+      TextareaAutosize 
+    } from '@material-ui/core';
 
     class NewCategory extends Component {
       constructor (props) {
         super(props)
         this.state = {
           title: '',
+          description: '',
           slug: '',
           errors: []
         }
-        this.handleFieldChange = this.handleFieldChange.bind(this)
-        this.handleCreateNewCategory = this.handleCreateNewCategory.bind(this)
-        this.hasErrorFor = this.hasErrorFor.bind(this)
-        this.renderErrorFor = this.renderErrorFor.bind(this)
+        this.handleFieldChange = this.handleFieldChange.bind(this);
+        this.handleCreateNewCategory = this.handleCreateNewCategory.bind(this);
+        this.hasErrorFor = this.hasErrorFor.bind(this);
+        this.renderErrorFor = this.renderErrorFor.bind(this);
       }
 
       handleFieldChange (event) {
         this.setState({
           [event.target.title]: event.target.value,
+          [event.target.description]: event.target.value,
           [event.target.slug]: event.target.value
         })
       }
@@ -38,6 +47,7 @@
         axios.post('/api/categories', category)
           .then(response => {
             // redirect to the homepage
+            swal("Done!", "Category Created!", "success");
             history.push('/')
           })
           .catch(error => {
@@ -95,8 +105,25 @@
                           />
                           {this.renderErrorFor('slug')}
                         </div>
+                        <div>
+                        <label htmlFor='name'>Content</label><br/>
+                        <TextareaAutosize
+                          id='description'
+                            title='description'
+                          rowsMax={15}
+                          aria-label="maximum height"
+                          placeholder="Maximum 15 rows"
+                          onChange={this.handleFieldChange}
+                          defaultValue="Thoughts...."
+                        />
+                        {this.renderErrorFor('description')}
+                        </div>
                       </div>
-                      <button className='btn btn-primary'>Create</button>
+                      <button 
+                        className='btn btn-primary'
+                        onClick={this.handleCreateNewCategory}>
+                        Create
+                      </button>
                     </form>
                   </div>
                 </div>

@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "@material-ui/core": "^4.11.0",
+        "@tinymce/tinymce-react": "^3.6.0",
         "react-router-dom": "^5.2.0",
         "sweetalert": "^2.1.2"
     }
