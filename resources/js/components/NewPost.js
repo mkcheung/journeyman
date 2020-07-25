@@ -26,17 +26,17 @@
 
       componentDidMount () {
         axios.get('/api/tags').then(res => {
-          console.log(res.data);
 
           let tagOptions = [];
           let tags = res.data;
+          
           tags.forEach(function(tag){
             let temp = []
             temp['id'] = tag.id;
             temp['value'] = tag.title;
             tagOptions.push(temp);
           });
-          console.log(tagOptions);
+   
           this.setState( {
             tags: tagOptions
           });
@@ -130,10 +130,12 @@
                                 id: 'age-native-simple',
                               }}
                             >
-                              <option aria-label="None" value="" />
-                              <option value={10}>Ten</option>
-                              <option value={20}>Twenty</option>
-                              <option value={30}>Thirty</option>
+                            <option value='0'></option>
+                            {
+                              Object
+                              .keys(this.state.tags)
+                              .map(key => <option key={key} value = {this.state.tags[key].id}>{this.state.tags[key].value}</option>)
+                            }
                             </Select>
                           </FormControl>
                         </div>
