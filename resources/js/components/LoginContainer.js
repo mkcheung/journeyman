@@ -42,8 +42,8 @@ class LoginContainer extends Component {
     let userData = this.state.user;
     axios.post("/api/auth/login", userData).then(response => {
 		return response;
-    }).then(json => {
-         if (json.data.success) {
+    }).then(json => {;
+         if (json.status == 200) {
            let userData = {
              id: json.data.id,
              name: json.data.name,

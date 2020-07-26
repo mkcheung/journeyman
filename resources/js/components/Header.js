@@ -2,6 +2,9 @@
 
 import React, {Component} from 'react'
 import {Link, withRouter} from 'react-router-dom';
+import { 
+    Button,
+} from '@material-ui/core';
 
 class Header extends Component {
   constructor(props) {
@@ -33,7 +36,20 @@ class Header extends Component {
                 <ul>
                     <li><Link to="/">Index</Link></li>
                     {this.state.isLoggedIn ? 
-                        <li className="has-sub"><Link to="/dashboard">Dashboard</Link></li> : ""}
+                        <div>
+                            <li className="has-sub"><Link to="/dashboard">Dashboard</Link></li>
+                            <li>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={this.logOut}
+                                >
+                                    Logout
+                                </Button>
+                            </li>
+                        </div> : ""}
                     {!this.state.isLoggedIn ?
                     <li><Link to="/login">Login</Link> | <Link to="/register">Register</Link></li> : ""}
                 </ul>
