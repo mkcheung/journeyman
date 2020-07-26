@@ -1,14 +1,44 @@
 // resources/assets/js/components/Header.js
 
-    import React from 'react'
-    import { Link } from 'react-router-dom'
+import React, {Component} from 'react'
+import {Link, withRouter} from 'react-router-dom';
 
-    const Header = () => (
-      <nav className='navbar navbar-expand-md navbar-light navbar-laravel'>
-        <div className='container'>
-          <Link className='navbar-brand' to='/'>Tasksman</Link>
-        </div>
-      </nav>
-    )
+class Header extends Component {
+  constructor(props) {
+    super(props);
+      this.state = {
+        user: props.userData,
+        isLoggedIn: props.userIsLoggedIn
+      };
+      this.logOut = this.logOut.bind(this);
+  }
 
-    export default Header
+  logOut() {
+    let appState = {
+      isLoggedIn: false,
+      user: {}
+    };
+    localStorage["appState"] = JSON.stringify(appState);
+    this.setState(appState);
+    this.props.history.push('/login');
+  }
+
+  render() {
+    const aStyle = {
+      cursor: 'pointer'
+    };
+    
+        return (
+            <nav className="navbar">
+                <ul>
+                    <li><Link to="/">Index</Link></li>
+                    {this.state.isLoggedIn ? 
+                        <li className="has-sub"><Link to="/dashboard">Dashboard</Link></li> : ""}
+                    {!this.state.isLoggedIn ?
+                    <li><Link to="/login">Login</Link> | <Link to="/register">Register</Link></li> : ""}
+                </ul>
+            </nav>
+        );
+    }
+}
+export default withRouter(Header)
