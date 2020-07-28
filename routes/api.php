@@ -28,6 +28,16 @@ Route::group([
     });
 });
 
+Route::group([    
+    'namespace' => 'Auth',    
+    'middleware' => 'api',    
+    'prefix' => 'password'
+], function () {    
+    Route::post('create', 'PasswordResetController@create');
+    Route::get('find/{token}', 'PasswordResetController@find');
+    Route::post('reset', 'PasswordResetController@reset');
+});
+
 Route::resource('tags', 'TagController');
 Route::resource('posts', 'PostController');
 Route::resource('categories', 'CategoryController');

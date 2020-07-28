@@ -40,8 +40,9 @@ class LoginContainer extends Component {
     e.preventDefault();
     this.setState({formSubmitting: true});
     let userData = this.state.user;
+    
     axios.post("/api/auth/login", userData).then(response => {
-		return response;
+		  return response;
     }).then(json => {;
          if (json.status == 200) {
            let userData = {

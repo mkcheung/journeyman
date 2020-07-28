@@ -38,6 +38,9 @@ class Header extends Component {
                     {this.state.isLoggedIn ? 
                         <div>
                             <li className="has-sub"><Link to="/dashboard">Dashboard</Link></li>
+                            <li className="has-sub"><Link to="/category">Categories</Link></li>
+                            <li className="has-sub"><Link to="/tag">Tags</Link></li>
+                            <li className="has-sub"><Link to="/post">Posts</Link></li>
                             <li>
                                 <Button
                                     type="submit"

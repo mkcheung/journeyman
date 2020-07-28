@@ -7,15 +7,15 @@ use App\Category;
 
 class CategoryController extends Controller
 {
-	public function index()
-      {
+    public function index()
+    {
         $categories = Category::get();
 
         return $categories->toJson();
-      }
+    }
 
-      public function store(Request $request)
-      {
+    public function store(Request $request)
+    {
         $validatedData = $request->validate([
           'title' => 'required',
           'description' => 'required',
@@ -29,12 +29,12 @@ class CategoryController extends Controller
         ]);
 
         return response()->json('Category created!');
-      }
+    }
 
-      public function show($id)
-      {
+    public function show($id)
+    {
         $category = Category::find($id);
 
         return $category->toJson();
-      }
+    }
 }
