@@ -4,12 +4,13 @@
     import React, { Component } from 'react'
     import { Editor } from '@tinymce/tinymce-react';
     import { 
+      Checkbox,
       FormControl,
       FormControlLabel,
       FormLabel,
       InputLabel,
-      Checkbox,
       Select,
+      TextareaAutosize
     } from '@material-ui/core';
 
     class NewPost extends Component {
