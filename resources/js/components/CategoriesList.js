@@ -138,4 +138,4 @@ class CategoriesList extends Component {
 	}
 }
 
-    export default CategoriesList;
+export default CategoriesList;
