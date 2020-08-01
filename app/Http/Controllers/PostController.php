@@ -36,7 +36,12 @@ class PostController extends Controller
         //   'description' => 'required',
         // ]);
 
-        $project = Post::create([
+        $selectedTagIds = [];
+        $selectedTags = $request['selectedTags'];
+        foreach($selectedTags as $selectedTag){
+            $selectedTagIds[] = $selectedTag['id'];
+        }
+        $post = Post::create([
           'title' => $request['title'],
           'slug' => $request['slug'],
           'content' => $request['content'],
@@ -44,6 +49,8 @@ class PostController extends Controller
           'category' => $request['category'],
           'user_id' => 1//$request['user_id']
         ]);
+
+        $post->tags()->sync($selectedTagIds);
 
         return response()->json('Post created!');
     }

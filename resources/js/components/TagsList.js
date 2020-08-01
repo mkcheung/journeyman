@@ -100,7 +100,6 @@ class TagsList extends Component {
             open 
         } = this.state;
 
-        console.log(tags);
         return (
             <Container maxWidth="lg">
                 <Grid container spacing={3}>

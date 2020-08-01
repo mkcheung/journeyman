@@ -3,9 +3,11 @@
 import axios from 'axios'
 import React, { Component } from 'react'
 import { Editor } from '@tinymce/tinymce-react';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { 
     Button,
     Checkbox,
+    Chip,
     Container,
     FormControl,
     FormControlLabel,
@@ -13,6 +15,7 @@ import {
     Grid,
     Input,
     InputLabel,
+    MenuItem,
     Select,
     TextField
 } from '@material-ui/core';
@@ -26,7 +29,7 @@ class NewPost extends Component {
         errors: [],
         content:'',
         title: '',
-        tag:'',
+        selectedTags:[],
         slug:'',
         publish:false,
         open: false,
@@ -39,7 +42,7 @@ class NewPost extends Component {
             let tags = res.data;
 
             tags.forEach(function(tag){
-                let temp = []
+                let temp = {};
                 temp['id'] = tag.id;
                 temp['value'] = tag.title;
                 tagOptions.push(temp);
@@ -79,7 +82,13 @@ class NewPost extends Component {
             [event.target.id]: event.target.value,
             [event.target.slug]: event.target.value,
             [event.target.content]: event.target.value,
-            [event.target.category_id]: event.target.value
+            [event.target.category_id]: event.target.value,
+        });
+    }
+
+    onTagsChange = (event, values) => {
+        this.setState({
+            selectedTags: values
         });
     }
 
@@ -93,13 +102,14 @@ class NewPost extends Component {
             slug: this.state.slug,
             publish: this.state.publish,
             content: this.state.content,
-            category_id: this.state.category_id
+            category_id: this.state.category_id,
+            selectedTags: this.state.selectedTags
         };
 
         axios.post('/api/posts', post)
         .then(response => {
             // redirect to the homepage
-            history.push('/')
+            // history.push('/')
         })
         .catch(error => {
             this.setState({
@@ -123,6 +133,7 @@ class NewPost extends Component {
     }
 
     handleChange = async (event) => {
+
         this.setState({
             ...this.state,
             [event.target.name]: event.target.value,
@@ -151,117 +162,118 @@ class NewPost extends Component {
                     <Grid item xs={12}>
                         <div className='card-header'>Create New Post</div>
                     </Grid>
-                    <form onSubmit={this.handleCreateNewPost}>
-                        <Grid item xs={12}>
-                            <div>
-                                <InputLabel htmlFor="name">Title:</InputLabel>
-                                <TextField 
-                                    id="title" 
-                                    title='title' 
-                                    onChange={this.handleFieldChange} 
-                                    aria-describedby="my-helper-text" 
-                                    value={this.state.title}
-                                />
-                                {this.renderErrorFor('title')}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <div>
-                                <InputLabel htmlFor="name">Slug:</InputLabel>
-                                <TextField 
-                                    id="slug" 
-                                    title='slug' 
-                                    onChange={this.handleFieldChange} 
-                                    aria-describedby="my-helper-text" 
-                                    value={this.state.slug}
-                                />
-                                {this.renderErrorFor('slug')}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={this.state.publish}
-                                        onChange={this.handleChkboxToggle}
-                                        name="publish"
-                                        color="primary"
-                                    />
-                                }
-                                label="Publish"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl >
-                                <InputLabel htmlFor="age-native-simple">Tags</InputLabel>
-                                <Select
-                                    native
-                                    value={this.state.tag}
-                                    onChange={this.handleChange}
-                                    inputProps={{
-                                        name: 'age',
-                                        id: 'age-native-simple',
+                    <Grid item xs={12}>
+                        <form onSubmit={this.handleCreateNewPost}>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <Grid item xs={12}>
+                                        <InputLabel htmlFor="name">Title:</InputLabel>
+                                        <TextField 
+                                            id="title" 
+                                            title='title' 
+                                            onChange={this.handleFieldChange} 
+                                            value={this.state.title}
+                                        />
+                                        {this.renderErrorFor('title')}
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                            <InputLabel htmlFor="name">Slug:</InputLabel>
+                                            <TextField 
+                                                id="slug" 
+                                                title='slug' 
+                                                onChange={this.handleFieldChange} 
+                                                aria-describedby="my-helper-text" 
+                                                value={this.state.slug}
+                                            />
+                                            {this.renderErrorFor('slug')}
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={this.state.publish}
+                                                    onChange={this.handleChkboxToggle}
+                                                    name="publish"
+                                                    color="primary"
+                                                />
+                                            }
+                                            label="Publish"
+                                        />
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Grid item xs={12}>
+                                        <FormControl >
+                                            <Autocomplete
+                                                multiple
+                                                id="selectedTags"
+                                                options={this.state.tags}
+                                                getOptionLabel={(option) => option.value}
+                                                onChange={this.onTagsChange}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="standard"
+                                                        label="Tags"
+                                                        placeholder="Favorites"
+                                                    />
+                                                )}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormControl >
+                                            <InputLabel htmlFor="age-native-simple">Category</InputLabel>
+                                            <Select
+                                                native
+                                                value={this.state.category_id}
+                                                onChange={this.handleChange}
+                                                title='category_id'
+                                                inputProps={{
+                                                    name: 'age',
+                                                    id: 'age-native-simple',
+                                                }}
+                                            >
+                                            <option value='0'></option>
+                                            {
+                                                Object
+                                                .keys(this.state.categories)
+                                                .map(key => <option key={key} value = {this.state.categories[key].id}>{this.state.categories[key].value}</option>)
+                                            }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Editor
+                                    initialValue="<p>This is the initial content of the editor</p>"
+                                    title='content'
+                                    init={{
+                                    height: 500,
+                                    menubar: false,
+                                    plugins: [
+                                        'advlist autolink lists link image charmap print preview anchor',
+                                        'searchreplace visualblocks code fullscreen',
+                                        'insertdatetime media table paste code help wordcount'
+                                    ],
+                                    toolbar:
+                                        'undo redo | formatselect | bold italic backcolor | \
+                                        alignleft aligncenter alignright alignjustify | \
+                                        bullist numlist outdent indent | removeformat | help'
                                     }}
-                                >
-                                <option value='0'></option>
-                                {
-                                    Object
-                                    .keys(this.state.tags)
-                                    .map(key => <option key={key} value = {this.state.tags[key].id}>{this.state.tags[key].value}</option>)
-                                }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl >
-                                <InputLabel htmlFor="age-native-simple">Category</InputLabel>
-                                <Select
-                                    native
-                                    value={this.state.category_id}
-                                    onChange={this.handleChange}
-                                    title='category_id'
-                                    inputProps={{
-                                        name: 'age',
-                                        id: 'age-native-simple',
-                                    }}
-                                >
-                                <option value='0'></option>
-                                {
-                                    Object
-                                    .keys(this.state.categories)
-                                    .map(key => <option key={key} value = {this.state.categories[key].id}>{this.state.categories[key].value}</option>)
-                                }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Editor
-                                initialValue="<p>This is the initial content of the editor</p>"
-                                title='content'
-                                init={{
-                                height: 500,
-                                menubar: false,
-                                plugins: [
-                                    'advlist autolink lists link image charmap print preview anchor',
-                                    'searchreplace visualblocks code fullscreen',
-                                    'insertdatetime media table paste code help wordcount'
-                                ],
-                                toolbar:
-                                    'undo redo | formatselect | bold italic backcolor | \
-                                    alignleft aligncenter alignright alignjustify | \
-                                    bullist numlist outdent indent | removeformat | help'
-                                }}
-                                onEditorChange={this.handleEditorChange}
-                            />
-                            {this.renderErrorFor('content')}
-                        </Grid>
+                                    onEditorChange={this.handleEditorChange}
+                                />
+                                {this.renderErrorFor('content')}
+                            </Grid>
 
-                        <Grid item xs={6}>
-                            <Button variant="contained" color="primary" >
-                                Create
-                            </Button>
-                        </Grid>
-                    </form>
+                            <Grid item xs={6}>
+                                <Button type="submit" variant="contained" color="primary" >
+                                    Create
+                                </Button>
+                            </Grid>
+                        </form>
+                    </Grid>
                 </Grid>
             </Container>
         );

@@ -103,7 +103,6 @@ class CategoriesList extends Component {
         	open 
         } = this.state;
 
-        console.log(categories);
         return (
 	    	<Container maxWidth="lg">
 		      	<Grid container spacing={3}>
