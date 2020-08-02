@@ -47,6 +47,11 @@ class Post extends Model
     {
         return $this->belongsToMany(Tag::class, 'post_tag', 'post_id', 'tag_id');
     }
+
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'book_post', 'book_id', 'post_id');
+    }
  
     public function getDateFormattedAttribute()
     {

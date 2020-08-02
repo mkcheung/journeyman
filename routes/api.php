@@ -38,9 +38,9 @@ Route::group([
     Route::post('reset', 'PasswordResetController@reset');
 });
 
-Route::resource('tags', 'TagController');
-Route::resource('posts', 'PostController');
+Route::resource('books', 'BookController');
+Route::resource('citations', 'CitationController');
 Route::resource('categories', 'CategoryController');
 Route::resource('comments', 'CommentController');
-    // Route::post('tasks', 'TaskController@store');
-    // Route::put('tasks/{task}', 'TaskController@markAsCompleted');
+Route::resource('posts', 'PostController');
+Route::resource('tags', 'TagController');

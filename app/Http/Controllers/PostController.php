@@ -8,10 +8,10 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     public function index()
-      {
+    {
         $posts = Post::get();
         return $posts->toJson();
-      }
+    }
 
     /**
      * Show the form for creating a new resource.
