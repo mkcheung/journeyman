@@ -38,6 +38,7 @@ Route::group([
     Route::post('reset', 'PasswordResetController@reset');
 });
 
+Route::get('books/searchByTitle', 'BookController@searchByTitle');
 Route::resource('books', 'BookController');
 Route::resource('citations', 'CitationController');
 Route::resource('categories', 'CategoryController');

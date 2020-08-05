@@ -46,15 +46,16 @@ class BookController extends Controller
         return response()->json('Book created!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Book $book)
+    public function show($id)
     {
-        //
+
+    }
+
+    public function searchByTitle(Request $request)
+    {
+        $bookCitations = Book::where('title', 'like', '%' . $request->query('bookTitle') . '%')->with('citations')->get()->toArray();
+
+        return $bookCitations;
     }
 
     /**

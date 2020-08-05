@@ -4,6 +4,7 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import { Editor } from '@tinymce/tinymce-react';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import BookCitationList  from './BookCitationList';
 import { 
     Button,
     Checkbox,
@@ -25,8 +26,11 @@ class NewPost extends Component {
     state = {
         loading: true,
         categories: [],
+        citations: [],
         tags:[],
         errors: [],
+        book_title:'',
+        book_title_search_term:'',
         content:'',
         title: '',
         selectedTags:[],
@@ -35,12 +39,29 @@ class NewPost extends Component {
         open: false,
     };
 
-    componentDidMount () {
-        axios.get('/api/tags').then(res => {
+    async componentDidMount () {
+        await this.loadData();
+    }
 
-            let tagOptions = [];
-            let tags = res.data;
+    async componentDidUpdate(prevProps, prevState) {
+        const {
+            loading
+        } = this.state;
 
+        if (prevState.loading === true) {
+            await this.loadData();
+        }
+    }
+
+    loadData = async () => {
+
+        let categoryOptions = [];
+        let tagOptions = [];
+        try {
+
+            let tagRes = await axios.get('/api/tags');
+            let tags = tagRes.data;
+            
             tags.forEach(function(tag){
                 let temp = {};
                 temp['id'] = tag.id;
@@ -48,19 +69,9 @@ class NewPost extends Component {
                 tagOptions.push(temp);
             });
 
-            this.setState( {
-                tags: tagOptions
-            });
-        })
-        .catch(error => {
-            return error;
-        });
-
-        axios.get('/api/categories').then(res => {
-
-            let categoryOptions = [];
-            let categories = res.data;
-
+            let categoryRes = await axios.get('/api/categories');
+            let categories = categoryRes.data;
+            
             categories.forEach(function(category){
                 let temp = []
                 temp['id'] = category.id;
@@ -68,14 +79,16 @@ class NewPost extends Component {
                 categoryOptions.push(temp);
             });
 
-            this.setState({
-                categories: categoryOptions
+            this.setState( {
+                categories: categoryOptions,
+                loading:false,
+                tags: tagOptions
             });
-        })
-        .catch(error => {
-            return error;
-        });
-    }
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     handleFieldChange = async (event) => {
         this.setState({
@@ -83,6 +96,36 @@ class NewPost extends Component {
             [event.target.slug]: event.target.value,
             [event.target.content]: event.target.value,
             [event.target.category_id]: event.target.value,
+            [event.target.book_title_search_term]: event.target.value,
+        });
+    }
+
+    handleGetCitations = async (e) => {
+
+        e.preventDefault();
+
+        this.setState({
+            loading: true
+        });
+
+        axios.get('/api/books/searchByTitle', {
+            params: {
+                    bookTitle: this.state.book_title_search_term
+                }
+            }).then(res => {
+
+            let bookCitations = res.data[0].citations;
+            let book_title = res.data[0].title;
+
+            this.setState({
+                loading: false,
+                book_title: book_title,
+                citations: bookCitations
+            });
+        })
+        .catch(error => {
+            console.log('stopped');
+            return error;
         });
     }
 
@@ -155,6 +198,8 @@ class NewPost extends Component {
     }
 
     render () {
+        let { book_title, book_title_search_term, citations} = this.state;
+
         return (
 
             <Container maxWidth="lg">
@@ -245,32 +290,43 @@ class NewPost extends Component {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Editor
-                                    initialValue="<p>This is the initial content of the editor</p>"
-                                    title='content'
-                                    init={{
-                                    height: 500,
-                                    menubar: false,
-                                    plugins: [
-                                        'advlist autolink lists link image charmap print preview anchor',
-                                        'searchreplace visualblocks code fullscreen',
-                                        'insertdatetime media table paste code help wordcount'
-                                    ],
-                                    toolbar:
-                                        'undo redo | formatselect | bold italic backcolor | \
-                                        alignleft aligncenter alignright alignjustify | \
-                                        bullist numlist outdent indent | removeformat | help'
-                                    }}
-                                    onEditorChange={this.handleEditorChange}
-                                />
-                                {this.renderErrorFor('content')}
-                            </Grid>
+                            <Grid container>
+                                <Grid item xs={4}>  
+                                    <BookCitationList 
+                                        book_title={book_title}
+                                        book_title_search_term={book_title_search_term} 
+                                        handleFieldChange={this.handleFieldChange}
+                                        handleGetCitations={this.handleGetCitations}
+                                        citations={citations}
+                                    />
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Editor
+                                        initialValue="<p>This is the initial content of the editor</p>"
+                                        title='content'
+                                        init={{
+                                        height: 500,
+                                        menubar: false,
+                                        plugins: [
+                                            'advlist autolink lists link image charmap print preview anchor',
+                                            'searchreplace visualblocks code fullscreen',
+                                            'insertdatetime media table paste code help wordcount'
+                                        ],
+                                        toolbar:
+                                            'undo redo | formatselect | bold italic backcolor | \
+                                            alignleft aligncenter alignright alignjustify | \
+                                            bullist numlist outdent indent | removeformat | help'
+                                        }}
+                                        onEditorChange={this.handleEditorChange}
+                                    />
+                                    {this.renderErrorFor('content')}
+                                </Grid>
 
-                            <Grid item xs={6}>
-                                <Button type="submit" variant="contained" color="primary" >
-                                    Create
-                                </Button>
+                                <Grid item xs={12}>
+                                    <Button type="submit" variant="contained" color="primary" >
+                                        Create
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </form>
                     </Grid>
