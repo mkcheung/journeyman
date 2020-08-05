@@ -107,15 +107,16 @@ class NewPost extends Component {
         this.setState({
             loading: true
         });
+        const { book_title_search_term } = this.state;
 
         axios.get('/api/books/searchByTitle', {
             params: {
-                    bookTitle: this.state.book_title_search_term
+                    bookTitle: book_title_search_term
                 }
             }).then(res => {
 
-            let bookCitations = res.data[0].citations;
-            let book_title = res.data[0].title;
+            let bookCitations = (res.data[0]) ? res.data[0].citations : [] ;
+            let book_title = (res.data[0]) ? res.data[0].title : [] ;
 
             this.setState({
                 loading: false,
@@ -124,7 +125,6 @@ class NewPost extends Component {
             });
         })
         .catch(error => {
-            console.log('stopped');
             return error;
         });
     }
@@ -305,7 +305,7 @@ class NewPost extends Component {
                                         initialValue="<p>This is the initial content of the editor</p>"
                                         title='content'
                                         init={{
-                                        height: 500,
+                                        height: 1000,
                                         menubar: false,
                                         plugins: [
                                             'advlist autolink lists link image charmap print preview anchor',

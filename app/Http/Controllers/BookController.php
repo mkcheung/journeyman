@@ -53,7 +53,9 @@ class BookController extends Controller
 
     public function searchByTitle(Request $request)
     {
-        $bookCitations = Book::where('title', 'like', '%' . $request->query('bookTitle') . '%')->with('citations')->get()->toArray();
+        $bookTitle = $request->query('bookTitle');
+
+        $bookCitations =  !empty($bookTitle) ? Book::where('title', 'like', '%' . $bookTitle . '%')->with('citations')->get()->toArray() : [];
 
         return $bookCitations;
     }
