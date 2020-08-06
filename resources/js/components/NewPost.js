@@ -65,14 +65,13 @@ class NewPost extends Component {
   
     attachQuillRefs = () => {
     // Ensure React-Quill reference is available:
-    console.log('aqr');
-    console.log(typeof this.reactQuillRef.getEditor);
+
         if (typeof this.reactQuillRef.getEditor !== 'function') return;
         // Skip if Quill reference is defined:
         if (this.quillRef != null) return;
 
         const quillRef = this.reactQuillRef.getEditor();
-    console.log(quillRef);
+
         if (quillRef != null) this.quillRef = quillRef;
     }
 
@@ -125,9 +124,16 @@ class NewPost extends Component {
 
     handleClick = (e) => {
         e.preventDefault();
+
+        let citationBlock = e.currentTarget;
+
+        console.log(citationBlock.getElementsByClassName("page")[0].innerText);
+
+        const citationText = '"' + citationBlock.getElementsByClassName("citationText")[0].innerText + '", <i>' + citationBlock.getElementsByClassName("title")[0].innerText + '</i>, ' + citationBlock.getElementsByClassName("page")[0].innerText;
+
         var range = this.quillRef.getSelection();
         let position = range ? range.index : 0;
-        this.quillRef.insertText(position, 'Hello, World! ')
+        this.quillRef.insertText(position, citationText)
     }
 
     handleGetCitations = async (e) => {
@@ -328,6 +334,7 @@ class NewPost extends Component {
                                         handleFieldChange={this.handleFieldChange}
                                         handleGetCitations={this.handleGetCitations}
                                         citations={citations}
+                                        handleClick={this.handleClick}
                                     />
                                 </Grid>
                                 <Grid item xs={8}>
@@ -337,7 +344,6 @@ class NewPost extends Component {
                                         onChange={this.handleEditorChange} 
                                         theme="snow"
                                     />
-                                    <button onClick={(e) => this.handleClick(e)}>Insert Text</button>
                                     {this.renderErrorFor('content')}
                                 </Grid>
 

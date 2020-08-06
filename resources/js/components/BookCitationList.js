@@ -16,7 +16,7 @@ import {
 
 export default function BookCitationList(props) {
 
-	let {book_title, book_title_search_term, citations, handleFieldChange, handleGetCitations} = props; 
+	let {book_title, book_title_search_term, citations, handleClick, handleFieldChange, handleGetCitations} = props; 
 
 	const body = (
         <Grid container spacing={3}>
@@ -42,21 +42,19 @@ export default function BookCitationList(props) {
                 </Grid>
             </Grid>
             <Grid item xs={12}>
-                <ul>
+                <ul >
                 {
                     citations && citations.map(citation => (
-                    <li key={citation.id}>
-                        <div>
-                            <div>
-                                {book_title}
-                            </div>
-                            <div>
-                                Page: {citation.page}
-                            </div>
-                            <p>
-                                {citation.content}
-                            </p>
+                    <li key={citation.id} onClick={(e) => handleClick(e)}>
+                        <div className="title">
+                            {book_title}
                         </div>
+                        <div className="page">
+                            Page: {citation.page}
+                        </div>
+                        <p className="citationText">
+                            {citation.content}
+                        </p>
                     </li>
                 ))}
                 </ul>
