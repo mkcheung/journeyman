@@ -9,6 +9,8 @@
         <title>Tasksman</title>
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="//cdn.quilljs.com/1.2.6/quill.snow.css">
+
     </head>
     <body>
         <div id="app"></div>

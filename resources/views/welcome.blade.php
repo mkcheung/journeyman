@@ -8,6 +8,8 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <link rel="stylesheet" href="//cdn.quilljs.com/1.2.6/quill.snow.css">
+
 
         <!-- Styles -->
         <style>

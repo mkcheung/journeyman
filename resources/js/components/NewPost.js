@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 import React, { Component } from 'react'
-import { Editor } from '@tinymce/tinymce-react';
+import ReactQuill from 'react-quill'; // ES6
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
 import { 
@@ -39,7 +39,16 @@ class NewPost extends Component {
         open: false,
     };
 
+  constructor(props) {
+    super(props);
+
+    this.quillRef = null;
+    this.reactQuillRef = null;
+  }
+    // reactQuillRef = React.createRef();
+
     async componentDidMount () {
+        this.attachQuillRefs()
         await this.loadData();
     }
 
@@ -47,10 +56,24 @@ class NewPost extends Component {
         const {
             loading
         } = this.state;
+        this.attachQuillRefs()
 
         if (prevState.loading === true) {
             await this.loadData();
         }
+    }
+  
+    attachQuillRefs = () => {
+    // Ensure React-Quill reference is available:
+    console.log('aqr');
+    console.log(typeof this.reactQuillRef.getEditor);
+        if (typeof this.reactQuillRef.getEditor !== 'function') return;
+        // Skip if Quill reference is defined:
+        if (this.quillRef != null) return;
+
+        const quillRef = this.reactQuillRef.getEditor();
+    console.log(quillRef);
+        if (quillRef != null) this.quillRef = quillRef;
     }
 
     loadData = async () => {
@@ -98,6 +121,13 @@ class NewPost extends Component {
             [event.target.category_id]: event.target.value,
             [event.target.book_title_search_term]: event.target.value,
         });
+    }
+
+    handleClick = (e) => {
+        e.preventDefault();
+        var range = this.quillRef.getSelection();
+        let position = range ? range.index : 0;
+        this.quillRef.insertText(position, 'Hello, World! ')
     }
 
     handleGetCitations = async (e) => {
@@ -301,24 +331,13 @@ class NewPost extends Component {
                                     />
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <Editor
-                                        initialValue="<p>This is the initial content of the editor</p>"
-                                        title='content'
-                                        init={{
-                                        height: 1000,
-                                        menubar: false,
-                                        plugins: [
-                                            'advlist autolink lists link image charmap print preview anchor',
-                                            'searchreplace visualblocks code fullscreen',
-                                            'insertdatetime media table paste code help wordcount'
-                                        ],
-                                        toolbar:
-                                            'undo redo | formatselect | bold italic backcolor | \
-                                            alignleft aligncenter alignright alignjustify | \
-                                            bullist numlist outdent indent | removeformat | help'
-                                        }}
-                                        onEditorChange={this.handleEditorChange}
+                                    <ReactQuill 
+                                        value={this.state.content}
+                                        ref={(el) => { this.reactQuillRef = el }}
+                                        onChange={this.handleEditorChange} 
+                                        theme="snow"
                                     />
+                                    <button onClick={(e) => this.handleClick(e)}>Insert Text</button>
                                     {this.renderErrorFor('content')}
                                 </Grid>
 
