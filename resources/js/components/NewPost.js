@@ -343,8 +343,8 @@ class NewPost extends Component {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid container style={{height:'750px'}}>
-                                <Grid item xs={4}>  
+                            <Grid container style={{height:'775px'}}>
+                                <Grid item xs={4} style={{padding:'10px'}}>  
                                     <BookCitationList 
                                         book_title={book_title}
                                         book_title_search_term={book_title_search_term} 
@@ -354,7 +354,7 @@ class NewPost extends Component {
                                         handleClick={this.handleClick}
                                     />
                                 </Grid>
-                                <Grid item xs={8}>
+                                <Grid item xs={8} style={{padding:'10px'}}>
                                     <ReactQuill 
                                         value={this.state.content}
                                         ref={(el) => { this.reactQuillRef = el }}
