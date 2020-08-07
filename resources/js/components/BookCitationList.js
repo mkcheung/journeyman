@@ -21,7 +21,12 @@ export default function BookCitationList(props) {
 	const body = (
         <Grid container spacing={3}>
             <Grid item xs={12}>
-                <div className='card-header'>Citations:</div>
+                <div className='card-header'>Citations:
+
+                <Button id="citationSubmit" variant="contained" color="primary" onClick={(e) => handleGetCitations(e)}>
+                    Search
+                </Button>
+                </div>
             </Grid>
             <Grid item xs={12}>
                 <Grid container>
@@ -35,9 +40,6 @@ export default function BookCitationList(props) {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" color="primary" onClick={(e) => handleGetCitations(e)}>
-                            Search
-                        </Button>
                     </Grid>
                 </Grid>
             </Grid>

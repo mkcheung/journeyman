@@ -38,6 +38,25 @@ class NewPost extends Component {
         publish:false,
         open: false,
     };
+    static quillModules = {
+  toolbar: [
+    [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+    [{size: []}],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, 
+     {'indent': '-1'}, {'indent': '+1'}],
+    ['link', 'image', 'video'],
+    ['clean']
+    ]
+  }
+      /* ... other modules */
+
+  static  _quillFormats = [ 
+  'header', 'font', 'size',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent',
+  'link', 'image', 'video'
+      ];
 
   constructor(props) {
     super(props);
@@ -126,8 +145,6 @@ class NewPost extends Component {
         e.preventDefault();
 
         let citationBlock = e.currentTarget;
-
-        console.log(citationBlock.getElementsByClassName("page")[0].innerText);
 
         const citationText = '"' + citationBlock.getElementsByClassName("citationText")[0].innerText + '", <i>' + citationBlock.getElementsByClassName("title")[0].innerText + '</i>, ' + citationBlock.getElementsByClassName("page")[0].innerText;
 
@@ -326,7 +343,7 @@ class NewPost extends Component {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid container>
+                            <Grid container style={{height:'750px'}}>
                                 <Grid item xs={4}>  
                                     <BookCitationList 
                                         book_title={book_title}
@@ -343,13 +360,15 @@ class NewPost extends Component {
                                         ref={(el) => { this.reactQuillRef = el }}
                                         onChange={this.handleEditorChange} 
                                         theme="snow"
+                                        style={{height:'90%'}}
                                     />
                                     {this.renderErrorFor('content')}
                                 </Grid>
-
+                            </Grid>
+                            <Grid container>
                                 <Grid item xs={12}>
-                                    <Button type="submit" variant="contained" color="primary" >
-                                        Create
+                                    <Button  style={{float:'right'}} type="submit" variant="contained" color="primary" >
+                                        Save
                                     </Button>
                                 </Grid>
                             </Grid>
