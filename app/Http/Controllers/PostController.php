@@ -43,7 +43,7 @@ class PostController extends Controller
         }
         $post = Post::create([
           'title' => $request['title'],
-          'slug' => $request['slug'],
+          'slug' => str_slug($request->title, '-'),
           'content' => $request['content'],
           'published' => $request['publish'],
           'category' => $request['category'],
@@ -61,10 +61,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show($id)
     {
-        $post = Post::where('slug', $slug)->first();
-        return view('posts.show', compact('post'));
+        $post = Post::where('id', $id)->first();
+        return $post->toJson();
     }
 
     /**
@@ -89,8 +89,10 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         $post = Post::findOrFail($id);
-        $post->name = $request->name;
-        $post->slug = str_slug($request->name, '-');
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->slug = str_slug($request->title, '-');
+        $post->published = $request->publish;
         $post->save();
         return redirect('posts');
     }

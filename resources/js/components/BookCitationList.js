@@ -28,7 +28,7 @@ export default function BookCitationList(props) {
             </Grid>
 
             <Grid item xs={12}>
-                <div style={{'text-align':'center'}}>
+                <div style={{'textAlign':'center'}}>
                     <InputLabel htmlFor="book_title_search_term">Title:</InputLabel>
                     <TextField 
                         id="book_title_search_term" 

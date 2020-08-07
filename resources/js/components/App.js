@@ -29,6 +29,7 @@ class App extends Component {
 					<PrivateRoute exact path='/' component={Dashboard}/>
 					<PrivateRoute exact path='/post' component={PostsList} />
 					<PrivateRoute exact path='/post/create' component={NewPost} />
+					<PrivateRoute exact path='/post/edit/:id' component={NewPost} />
 					<PrivateRoute exact path='/tag' component={TagsList} />
 					<PrivateRoute exact path='/tag/create' component={NewTag} />
 					<PrivateRoute exact path='/category' component={CategoriesList} />

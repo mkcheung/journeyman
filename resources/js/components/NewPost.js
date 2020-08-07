@@ -29,6 +29,7 @@ class NewPost extends Component {
         citations: [],
         tags:[],
         errors: [],
+        post_id: null,
         book_title:'',
         book_title_search_term:'',
         content:'',
@@ -68,7 +69,9 @@ class NewPost extends Component {
 
     async componentDidMount () {
         this.attachQuillRefs()
-        await this.loadData();
+
+        const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
+        await this.loadData(postId);
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -94,7 +97,7 @@ class NewPost extends Component {
         if (quillRef != null) this.quillRef = quillRef;
     }
 
-    loadData = async () => {
+    loadData = async (postId = null) => {
 
         let categoryOptions = [];
         let tagOptions = [];
@@ -120,11 +123,26 @@ class NewPost extends Component {
                 categoryOptions.push(temp);
             });
 
-            this.setState( {
+
+            let newState = {
                 categories: categoryOptions,
                 loading:false,
                 tags: tagOptions
-            });
+            };
+
+            if(postId !== null){
+                console.log(postId);
+                let postObj = await axios.get('/api/posts/'+postId);
+
+                let postData = postObj.data;
+
+                newState['title'] = postData['title'];
+                newState['content'] = postData['content'];
+                newState['post_id'] = postData['id'];
+                newState['publish'] = postData['published'] ? true : false;
+
+            }
+            this.setState(newState);
 
         } catch (error) {
             console.log(error);
@@ -188,12 +206,13 @@ class NewPost extends Component {
         });
     }
 
-    handleCreateNewPost = async (event) => {
+    handleCreateUpdatePost = async (event) => {
         event.preventDefault();
 
         const { history } = this.props;
 
         const post = {
+            id: this.state.post_id ? this.state.post_id : null,
             title: this.state.title,
             slug: this.state.slug,
             publish: this.state.publish,
@@ -202,16 +221,12 @@ class NewPost extends Component {
             selectedTags: this.state.selectedTags
         };
 
-        axios.post('/api/posts', post)
-        .then(response => {
-            // redirect to the homepage
-            // history.push('/')
-        })
-        .catch(error => {
-            this.setState({
-              errors: error.response.data.errors
-            })
-        })
+        if (this.state.post_id){
+            let results = await axios.patch('/api/posts/'+this.state.post_id, post);
+        } else {
+            let results = await axios.post('/api/posts', post);
+        }
+
     }
 
     hasErrorFor = (field) => {
@@ -251,7 +266,14 @@ class NewPost extends Component {
     }
 
     render () {
-        let { book_title, book_title_search_term, citations} = this.state;
+        let { 
+            book_title,
+            book_title_search_term,
+            citations,
+            post_id
+        } = this.state;
+
+        const buttonTitle = (post_id) ? 'Update' : 'Create';
 
         return (
 
@@ -261,7 +283,7 @@ class NewPost extends Component {
                         <div className='card-header'>Create New Post</div>
                     </Grid>
                     <Grid item xs={12}>
-                        <form onSubmit={this.handleCreateNewPost}>
+                        <form onSubmit={this.handleCreateUpdatePost}>
                             <Grid container>
                                 <Grid item xs={6}>
                                     <Grid item xs={12}>
@@ -368,7 +390,7 @@ class NewPost extends Component {
                             <Grid container>
                                 <Grid item xs={12}>
                                     <Button  style={{float:'right'}} type="submit" variant="contained" color="primary" >
-                                        Save
+                                       {buttonTitle}
                                     </Button>
                                 </Grid>
                             </Grid>
