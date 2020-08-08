@@ -13,6 +13,13 @@ class PostController extends Controller
         return $posts->toJson();
     }
 
+    public function getUserPosts(Request $request)
+    {
+        $userId = $request->query('userId');
+        $posts = Post::where('user_id', '=', $userId)->get();
+        return $posts->toJson();
+    }
+
     /**
      * Show the form for creating a new resource.
      *

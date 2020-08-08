@@ -1,6 +1,8 @@
+import axios from 'axios'
 import React, {Component} from 'react'
 import Header from './Header';
 import Footer from './Footer';
+import { Link } from 'react-router-dom';
 import { 
 	Container,
 	Grid,
@@ -9,13 +11,14 @@ import {
 
 
 class Home extends Component {
-	constructor() {
-		super();
-		this.state = {
-			isLoggedIn: false,
-			user: {}
-		}	
-	}
+
+    state = {
+		isLoggedIn: false,
+        loading: true,
+        post_id: [],
+		user: {},
+		posts: []
+    };
 
 	// check if user is authenticated and storing authentication data as states if true
 	componentWillMount() {
@@ -27,8 +30,35 @@ class Home extends Component {
 		}
 	}
 
+    async componentDidMount () {
+
+    	const userId = this.state.user.id;
+        await this.loadData(userId);
+    }
+
+    loadData = async (userId) => {
+
+        let postObj = await axios.get('/api/posts/getUserPosts', {
+            params: {
+                userId: userId
+            }
+        });
+
+
+	    let postData = postObj.data;
+        this.setState({
+            loading:false,
+            posts: postData
+        });
+	}
+
 	render() {
-	  let { user } = this.state;
+
+		let { 
+			posts,
+			user 
+		} = this.state;
+	    
 	    return (
 	    	<Container maxWidth="lg">
 		      	<Grid container spacing={3}>
@@ -38,7 +68,17 @@ class Home extends Component {
 			        </Grid>
 
 			        <Grid item xs={6}>
-			          <Paper>Testing 123</Paper>
+			          <Paper>My Posts</Paper>
+	                    {
+	                        posts && posts.map(post => (
+								<Link
+									className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
+									to={`/post/edit/${post.id}`}
+									key={post.id}
+								>
+									{post.title}
+								</Link>
+	                    ))}
 			        </Grid>
 			        <Grid item xs={6}>
 			          <Paper>Testing 123</Paper>

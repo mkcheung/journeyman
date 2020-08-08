@@ -43,5 +43,6 @@ Route::resource('books', 'BookController');
 Route::resource('citations', 'CitationController');
 Route::resource('categories', 'CategoryController');
 Route::resource('comments', 'CommentController');
+Route::get('posts/getUserPosts', 'PostController@getUserPosts');
 Route::resource('posts', 'PostController');
 Route::resource('tags', 'TagController');
