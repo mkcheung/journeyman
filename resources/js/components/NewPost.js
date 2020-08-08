@@ -78,7 +78,6 @@ class NewPost extends Component {
         const {
             loading
         } = this.state;
-        this.attachQuillRefs()
 
         if (prevState.loading === true) {
             await this.loadData();
@@ -131,7 +130,6 @@ class NewPost extends Component {
             };
 
             if(postId !== null){
-                console.log(postId);
                 let postObj = await axios.get('/api/posts/'+postId);
 
                 let postData = postObj.data;
@@ -166,10 +164,23 @@ class NewPost extends Component {
 
         const citationText = '"' + citationBlock.getElementsByClassName("citationText")[0].innerText + '", <i>' + citationBlock.getElementsByClassName("title")[0].innerText + '</i>, ' + citationBlock.getElementsByClassName("page")[0].innerText;
 
+
+        // must focus before calling getSelection
+        this.quillRef.focus();
         var range = this.quillRef.getSelection();
+        
         let position = range ? range.index : 0;
-        this.quillRef.insertText(position, citationText)
+        this.quillRef.insertText(position, citationBlock.getElementsByClassName("page")[0].innerText );
+        this.quillRef.insertText(position, citationBlock.getElementsByClassName("title")[0].innerText + ', ', {
+            'italic': true
+        });
+        this.quillRef.insertText(position, '"' + citationBlock.getElementsByClassName("citationText")[0].innerText + '", ', {
+            'italic': false
+        });
+
+
     }
+
 
     handleGetCitations = async (e) => {
 
