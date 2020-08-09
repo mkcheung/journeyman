@@ -29,69 +29,69 @@ class LoginContainer extends Component {
 	}
 
 	componentDidMount() {
-		const { prevLocation } = this.state.redirect.state || { prevLocation: { pathname: '/dashboard' } };
+		const { prevLocation } = this.state.redirect.state || { prevLocation: { pathname: '/' } };
 		if (prevLocation && this.state.isLoggedIn) {
 			return this.props.history.push(prevLocation);
 		}
 	}
 
-  handleSubmit(e) {
+    handleSubmit(e) {
   	
-    e.preventDefault();
-    this.setState({formSubmitting: true});
-    let userData = this.state.user;
-    
-    axios.post("/api/auth/login", userData).then(response => {
-		  return response;
-    }).then(json => {;
-         if (json.status == 200) {
-           let userData = {
-             id: json.data.id,
-             name: json.data.name,
-             email: json.data.email,
-             access_token: json.data.access_token,
-           };
-           let appState = {
-             isLoggedIn: true,
-             user: userData
-           };
-           localStorage["appState"] = JSON.stringify(appState);
+        e.preventDefault();
+        this.setState({formSubmitting: true});
+        let userData = this.state.user;
+        
+        axios.post("/api/auth/login", userData).then(response => {
+    		  return response;
+        }).then(json => {;
+             if (json.status == 200) {
+               let userData = {
+                 id: json.data.id,
+                 name: json.data.name,
+                 email: json.data.email,
+                 access_token: json.data.access_token,
+               };
+               let appState = {
+                 isLoggedIn: true,
+                 user: userData
+               };
+               localStorage["appState"] = JSON.stringify(appState);
+               this.setState({
+                  isLoggedIn: appState.isLoggedIn,
+                  user: appState.user,
+                  error: ''
+               });
+               location.reload()
+             }
+             else {
+                alert(`Our System Failed To Register Your Account!`);
+             }
+        }).catch(error => {if (error.response) {
+            // The request was made and the server responded with a status code that falls out of the range of 2xx
+            let err = error.response.data;
+            this.setState({
+              error: err.message,
+              errorMessage: err.errors,
+              formSubmitting: false
+            })
+          }
+          else if (error.request) {
+            // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+            let err = error.request;
+            this.setState({
+              error: err,
+              formSubmitting: false
+            })
+         } else {
+           // Something happened in setting up the request that triggered an Error
+           let err = error.message;
            this.setState({
-              isLoggedIn: appState.isLoggedIn,
-              user: appState.user,
-              error: ''
-           });
-           location.reload()
-         }
-         else {
-            alert(`Our System Failed To Register Your Account!`);
-         }
-    }).catch(error => {if (error.response) {
-        // The request was made and the server responded with a status code that falls out of the range of 2xx
-        let err = error.response.data;
-        this.setState({
-          error: err.message,
-          errorMessage: err.errors,
-          formSubmitting: false
-        })
-      }
-      else if (error.request) {
-        // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-        let err = error.request;
-        this.setState({
-          error: err,
-          formSubmitting: false
-        })
-     } else {
-       // Something happened in setting up the request that triggered an Error
-       let err = error.message;
-       this.setState({
-         error: err,
-         formSubmitting: false
-       })
-   }
- }).finally(this.setState({error: ''}));
-}
+             error: err,
+             formSubmitting: false
+           })
+       }
+     }).finally(this.setState({error: ''}));
+    }
 handleEmail(e) {
   let value = e.target.value;
   this.setState(prevState => ({

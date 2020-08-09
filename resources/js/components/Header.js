@@ -4,7 +4,12 @@ import React, {Component} from 'react'
 import {Link, withRouter} from 'react-router-dom';
 import { 
     Button,
+    IconButton,
+    Menu,
+    MenuItem
 } from '@material-ui/core';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import HeaderMenu  from './HeaderMenu';
 
 class Header extends Component {
   constructor(props) {
@@ -26,36 +31,14 @@ class Header extends Component {
     this.props.history.push('/login');
   }
 
-  render() {
-    const aStyle = {
-      cursor: 'pointer'
-    };
+    render() {
+        const aStyle = {
+          cursor: 'pointer'
+        };
     
         return (
             <nav className="navbar">
-                <ul>
-                    <li><Link to="/">Index</Link></li>
-                    {this.state.isLoggedIn ? 
-                        <div>
-                            <li className="has-sub"><Link to="/dashboard">Dashboard</Link></li>
-                            <li className="has-sub"><Link to="/category">Categories</Link></li>
-                            <li className="has-sub"><Link to="/tag">Tags</Link></li>
-                            <li className="has-sub"><Link to="/post">Posts</Link></li>
-                            <li>
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={this.logOut}
-                                >
-                                    Logout
-                                </Button>
-                            </li>
-                        </div> : ""}
-                    {!this.state.isLoggedIn ?
-                    <li><Link to="/login">Login</Link> | <Link to="/register">Register</Link></li> : ""}
-                </ul>
+                <HeaderMenu loggedIn={this.state.isLoggedIn} logOut={this.logOut}/>
             </nav>
         );
     }

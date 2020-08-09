@@ -62,11 +62,6 @@ class Home extends Component {
 	    return (
 	    	<Container maxWidth="lg">
 		      	<Grid container spacing={3}>
-
-			        <Grid item xs={12}>
-			        	<Header userData={this.state.user} userIsLoggedIn={this.state.isLoggedIn}/>
-			        </Grid>
-
 			        <Grid item xs={6}>
 			          <Paper>My Posts</Paper>
 	                    {
@@ -82,10 +77,6 @@ class Home extends Component {
 			        </Grid>
 			        <Grid item xs={6}>
 			          <Paper>Testing 123</Paper>
-			        </Grid>
-			          
-			        <Grid item xs={12}>
-			        	<Footer/>
 			        </Grid>
 		       </Grid>
 		    </Container>

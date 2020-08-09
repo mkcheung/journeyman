@@ -1,3 +1,7 @@
 #citationSubmit {
     margin-left: 55%;
 }
+
+#navigation li{
+	display: inline;
+}

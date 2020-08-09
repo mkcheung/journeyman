@@ -29,9 +29,7 @@
             <div className='row justify-content-center'>
               <div className='col-md-8'>
                 <div className='card'>
-                  <div className='card-header'>{tag.name}</div>
                   <div className='card-body'>
-                    <p>{tag.description}</p>
 
                     <button className='btn btn-primary btn-sm'>
                       Mark as completed
