@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Link, Route, Switch, HashRouter} from 'react-router-dom'
+import { BrowserRouter, Link, Route, Switch, HashRouter, Redirect, useHistory } from 'react-router-dom'
 import Footer from './Footer';
 import Header from './Header';
 import Home from './Home';
@@ -11,6 +11,7 @@ import Register from './Register';
 import NotFound from './NotFound'
 // User is LoggedIn
 import PrivateRoute from './PrivateRoute'
+import ProtectedRoute from './ProtectedRoute'
 import Dashboard from './Dashboard';
 import NewTag from './NewTag'
 import TagsList from './TagsList'
@@ -23,35 +24,105 @@ import CategoriesList from './CategoriesList'
 class App extends Component {
     state = {
 		isLoggedIn: false,
-		user: {}
+		user: {},
+		formSubmitting:false
     };
 
-	// check if user is authenticated and storing authentication data as states if true
-	componentWillMount() {
-		let state = localStorage["appState"];
-
-		if (state) {
-			let AppState = JSON.parse(state);
-			this.setState({ isLoggedIn: AppState.isLoggedIn, user: AppState.user });
-		}
+	constructor() {
+		super();
 	}
+
+
+    handleLogin = (event) => {
+    
+        event.preventDefault();
+
+        const email = event.target.email.value;
+        const password = event.target.password.value;
+        this.setState({formSubmitting: true});
+        this.loginUser(email, password);
+    }
+
+    loginUser = (email, password) => {
+
+        let userData = {
+            email,
+            password
+        };
+        axios.post("/api/auth/login", userData).then(response => {
+              return response;
+        }).then(json => {;
+            if (json.status == 200) {
+                let userData = {
+                    id: json.data.id,
+                    name: json.data.name,
+                    email: json.data.email,
+                    access_token: json.data.access_token,
+                };
+                let appState = {
+                    isLoggedIn: true,
+                    user: userData
+                };
+                localStorage["appState"] = JSON.stringify(appState);
+                this.setState({
+                    isLoggedIn: appState.isLoggedIn,
+                    user: appState.user,
+                    error: ''
+                });
+             }
+             else {
+                alert(`Our System Failed To Register Your Account!`);
+             }
+        }).catch(error => {if (error.response) {
+            // The request was made and the server responded with a status code that falls out of the range of 2xx
+            let err = error.response.data;
+            this.setState({
+              error: err.message,
+              errorMessage: err.errors,
+              formSubmitting: false
+            })
+          }
+          else if (error.request) {
+            // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+            let err = error.request;
+            this.setState({
+              error: err,
+              formSubmitting: false
+            })
+         } else {
+           // Something happened in setting up the request that triggered an Error
+           let err = error.message;
+           this.setState({
+             error: err,
+             formSubmitting: false
+           })
+       }
+     }).finally(this.setState({error: ''}));
+    }
+
+
 	render () {
+
+		let { isLoggedIn } = this.state;
+
+		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} /> : null ; 
+
 		return (
 			<HashRouter>
-	        	<Header userData={this.state.user} userIsLoggedIn={this.state.isLoggedIn}/>
+	        	{HideHeader}
 					<Switch>
-						<Route exact path='/login' component={Login}/>
+						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} />)} />
 						<Route exact path='/register' component={Register}/>
-						<PrivateRoute exact path='/' component={Dashboard}/>
-						<PrivateRoute exact path='/post' component={PostsList} />
-						<PrivateRoute exact path='/post/create' component={NewPost} />
-						<PrivateRoute exact path='/post/edit/:id' component={NewPost} />
-						<PrivateRoute exact path='/tag' component={TagsList} />
-						<PrivateRoute exact path='/tag/create' component={NewTag} />
-						<PrivateRoute exact path='/category' component={CategoriesList} />
-						<PrivateRoute exact path='/category/create' component={NewCategory} />
-						<PrivateRoute exact path='/:id' component={SingleTag} />
-						<PrivateRoute component={NotFound}/>
+						<ProtectedRoute exact path='/dashboard' component={Dashboard}/>
+						<ProtectedRoute exact path='/post' component={PostsList} />
+						<ProtectedRoute exact path='/post/create' component={NewPost} />
+						<ProtectedRoute exact path='/post/edit/:id' component={NewPost} />
+						<ProtectedRoute exact path='/tag' component={TagsList} />
+						<ProtectedRoute exact path='/tag/create' component={NewTag} />
+						<ProtectedRoute exact path='/category' component={CategoriesList} />
+						<ProtectedRoute exact path='/category/create' component={NewCategory} />
+						<ProtectedRoute exact path='/:id' component={SingleTag} />
+						<ProtectedRoute component={NotFound}/>
 					</Switch>
 	        	<Footer/>
 			</HashRouter>
@@ -60,3 +131,7 @@ class App extends Component {
 }
 
 ReactDOM.render(<App />, document.getElementById('app'))
+
+
+
+

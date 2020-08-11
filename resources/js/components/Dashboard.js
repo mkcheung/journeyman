@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, {Component} from 'react'
 import Header from './Header';
 import Footer from './Footer';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { 
 	Container,
 	Grid,
@@ -55,10 +55,16 @@ class Home extends Component {
 	render() {
 
 		let { 
+			isLoggedIn,
 			posts,
 			user 
 		} = this.state;
 	    
+
+        if (isLoggedIn === false) {
+            this.props.history.push('/login');
+		}
+
 	    return (
 	    	<Container maxWidth="lg">
 		      	<Grid container spacing={3}>
