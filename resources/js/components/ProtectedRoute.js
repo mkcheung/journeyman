@@ -9,7 +9,7 @@ const ProtectedRoute = ({ component: Component, ...rest}) => {
  
 
     const appState = (localStorage.length !== 0 && !localStorage["appState"].isLoggedIn) ? JSON.parse(localStorage["appState"]) : null ;
-
+console.log(appState);
     // const rolesAndPermissions = (appState && appState.user.rolesAndPermissions) ? appState.user.rolesAndPermissions : null ;
 
     // const userSpecificPermissions = (appState && appState.user.userSpecificPermissions) ? appState.user.userSpecificPermissions : null ;

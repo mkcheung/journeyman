@@ -104,7 +104,7 @@ class App extends Component {
 	render () {
 
 		let { isLoggedIn } = this.state;
-
+console.log(isLoggedIn);
 		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} /> : null ; 
 
 		return (

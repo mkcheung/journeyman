@@ -3,13 +3,17 @@
 import React, {Component} from 'react'
 import {Link, withRouter, Redirect} from 'react-router-dom';
 import { 
-    Link as MUILINK,
+	AppBar,
     Button,
     IconButton,
+    Link as MUILINK,
     Menu,
-    MenuItem
+    MenuItem,
+    Toolbar
 } from '@material-ui/core';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { 
+	MenuIcon 
+} from '@material-ui/icons';
 
 const navOps = [
     {
@@ -43,7 +47,6 @@ class Header extends Component {
 		let state = localStorage["appState"];
 		if (state) {
 			let AppState = JSON.parse(state);
-			console.log(AppState);
 			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
 		}
 	}
@@ -80,15 +83,15 @@ class Header extends Component {
         console.log(isLoggedIn);
 
         return (
-            <nav className="navbar">
-		        <div>
+        	<AppBar position="static">
+        		<Toolbar>
 		            <IconButton
 		                aria-label="more"
 		                aria-controls="long-menu"
 		                aria-haspopup="true"
 		                onClick={this.handleClick}
 		            >
-		                <MoreVertIcon />
+		                <MenuIcon />
 		            </IconButton>
 		            <Menu
 		                id="long-menu"
@@ -102,26 +105,26 @@ class Header extends Component {
 		                    },
 		                }}
 		            >
-		            {navOps.map((navOp) => (
-		                <MenuItem key={navOp.name}>
-		                    <Link to={navOp.route}>{navOp.name}</Link>
-		                </MenuItem>
-		            ))}
-		            {!isLoggedIn ?
-		                <MenuItem key={'login'}>
-		                    <Link to="/login">
-		                        Login
-		                    </Link> | <Link to="/register">Register</Link>
-		                </MenuItem>
-		            :   <MenuItem key={'logout'}>
-		                    <MUILINK href="#" onClick={this.handleLogOut}>
-		                        Logout
-		                    </MUILINK>
-		                </MenuItem>
-		            }
-		          </Menu>
-		        </div>
-            </nav>
+			            {navOps.map((navOp) => (
+			                <MenuItem key={navOp.name}>
+			                    <Link to={navOp.route}>{navOp.name}</Link>
+			                </MenuItem>
+			            ))}
+			            {!isLoggedIn ?
+			                <MenuItem key={'login'}>
+			                    <Link to="/login">
+			                        Login
+			                    </Link> | <Link to="/register">Register</Link>
+			                </MenuItem>
+			            :   <MenuItem key={'logout'}>
+			                    <MUILINK href="#" onClick={this.handleLogOut}>
+			                        Logout
+			                    </MUILINK>
+			                </MenuItem>
+			            }
+		          	</Menu>
+        		</Toolbar>
+			</AppBar>
         );
     }
 }
