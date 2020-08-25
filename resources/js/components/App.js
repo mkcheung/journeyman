@@ -25,12 +25,57 @@ class App extends Component {
     state = {
 		isLoggedIn: false,
 		user: {},
-		formSubmitting:false
+		formSubmitting:false,
+		openMenu: false
     };
 
 	constructor() {
 		super();
 	}
+
+    componentDidMount() {
+		let state = localStorage["appState"];
+		console.log(state);
+		if (state) {
+			let AppState = JSON.parse(state);
+			console.log(AppState);
+			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
+		}
+    }
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.openMenu !== this.state.openMenu) {
+			let state = localStorage["appState"];
+			if(state) {
+				let AppState = JSON.parse(state);
+		        this.setState({
+					openMenu:this.state.openMenu,
+					isLoggedIn: AppState.isLoggedIn,
+					user: AppState
+		        });
+		    } else {
+		        this.setState({
+					openMenu:this.state.openMenu,
+					isLoggedIn: false,
+					user: {}
+		        });
+		    }
+		}
+	}
+
+    handleClick = (event) => {
+    	console.log('handleClick');
+    	event.preventDefault();
+        this.setState({
+			openMenu:true
+        });
+    };
+
+    handleClose = () => {
+        this.setState({
+			openMenu:false,
+        });
+    };
 
 
     handleLogin = (event) => {
@@ -103,11 +148,12 @@ class App extends Component {
 
 	render () {
 
-		let { isLoggedIn } = this.state;
-console.log('---------------');
-console.log(isLoggedIn);
-console.log('---------------');
-		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} /> : null ; 
+		let { 
+			isLoggedIn,
+			openMenu 
+		} = this.state;
+
+		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu}/> : null ; 
 
 		return (
 			<HashRouter>

@@ -35,20 +35,9 @@ const ITEM_HEIGHT = 48;
 
 class Header extends Component {
 	state = {
-		openMenu: false,
-		isLoggedIn: false,
-		user: {}
+		// isLoggedIn: false,
+		// user: {}
 	};
-
-	componentWillMount(){
-
-		let state = localStorage["appState"];
-		if (state) {
-			let AppState = JSON.parse(state);
-			console.log(AppState);
-			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
-		}
-	}
 
 	constructor(props) {
 		super(props);
@@ -56,29 +45,20 @@ class Header extends Component {
 	}
 
 	handleLogOut() {
+        let { handleClose } = this.props;
 		localStorage.clear();
-		this.setState({isLoggedIn: false, user: {}});
+		handleClose();
 		this.props.history.push('/login');
 	}
-
-    handleClick = (event) => {
-        this.setState({
-			openMenu:true
-        });
-    };
-
-    handleClose = () => {
-        this.setState({
-			openMenu:false
-        });
-    };
 
     render() {
         const aStyle = {
 			cursor: 'pointer'
         };
 
-        let { isLoggedIn } = this.state;
+        let { isLoggedIn, handleClick, handleClose, openMenu } = this.props;
+
+        console.log(isLoggedIn);
 
         return (
         	<AppBar position="static">
@@ -87,15 +67,15 @@ class Header extends Component {
 		                aria-label="more"
 		                aria-controls="long-menu"
 		                aria-haspopup="true"
-		                onClick={this.handleClick}
+		                onClick={handleClick}
 		            >
 		                <MenuIcon />
 		            </IconButton>
 		            <Menu
 		                id="long-menu"
 		                keepMounted
-		                open={this.state.openMenu}
-		                onClose={this.handleClose}
+		                open={openMenu}
+		                onClose={handleClose}
 		                PaperProps={{
 		                    style: {
 		                        maxHeight: ITEM_HEIGHT * 4.5,
