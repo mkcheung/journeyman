@@ -104,12 +104,14 @@ class App extends Component {
 	render () {
 
 		let { isLoggedIn } = this.state;
+console.log('---------------');
 console.log(isLoggedIn);
+console.log('---------------');
 		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} /> : null ; 
 
 		return (
 			<HashRouter>
-	        	{HideHeader}
+				{HideHeader}
 					<Switch>
 						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} />)} />
 						<Route exact path='/register' component={Register}/>

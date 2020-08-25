@@ -11,9 +11,7 @@ import {
     MenuItem,
     Toolbar
 } from '@material-ui/core';
-import { 
-	MenuIcon 
-} from '@material-ui/icons';
+import MenuIcon from '@material-ui/icons/Menu';
 
 const navOps = [
     {
@@ -47,6 +45,7 @@ class Header extends Component {
 		let state = localStorage["appState"];
 		if (state) {
 			let AppState = JSON.parse(state);
+			console.log(AppState);
 			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
 		}
 	}
@@ -79,8 +78,7 @@ class Header extends Component {
 			cursor: 'pointer'
         };
 
-        let { isLoggedIn, userData, logOut } = this.state;
-        console.log(isLoggedIn);
+        let { isLoggedIn } = this.state;
 
         return (
         	<AppBar position="static">
