@@ -9,7 +9,10 @@ const ProtectedRoute = ({ component: Component, ...rest}) => {
  
 
     const appState = (localStorage.length !== 0 && !localStorage["appState"].isLoggedIn) ? JSON.parse(localStorage["appState"]) : null ;
-console.log(appState);
+
+console.log('-------------------------');
+console.log(rest.params);
+console.log('-------------------------');
     // const rolesAndPermissions = (appState && appState.user.rolesAndPermissions) ? appState.user.rolesAndPermissions : null ;
 
     // const userSpecificPermissions = (appState && appState.user.userSpecificPermissions) ? appState.user.userSpecificPermissions : null ;
@@ -23,9 +26,8 @@ console.log(appState);
     return (
 
         <Route
-
+            {...rest}
             render={(props) => {
-
                 if (!appState || !appState.isLoggedIn) {
 
                     return <Redirect to="/"/>

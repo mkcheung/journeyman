@@ -3,6 +3,7 @@
 import axios from 'axios'
 import React, { Component } from 'react'
 import ReactQuill from 'react-quill'; // ES6
+import {withRouter} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
 import { 
@@ -69,7 +70,6 @@ class NewPost extends Component {
 
     async componentDidMount () {
         this.attachQuillRefs()
-
         const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
         await this.loadData(postId);
     }
@@ -414,3 +414,4 @@ class NewPost extends Component {
 }
 
 export default NewPost;
+
