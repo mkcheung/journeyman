@@ -3,6 +3,7 @@
 import axios from 'axios'
 import React, { Component } from 'react'
 import ReactQuill from 'react-quill'; // ES6
+import swal from 'sweetalert';
 import {withRouter} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
@@ -53,19 +54,19 @@ class NewPost extends Component {
   }
       /* ... other modules */
 
-  static  _quillFormats = [ 
-  'header', 'font', 'size',
-  'bold', 'italic', 'underline', 'strike', 'blockquote',
-  'list', 'bullet', 'indent',
-  'link', 'image', 'video'
-      ];
+    static  _quillFormats = [ 
+        'header', 'font', 'size',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image', 'video'
+    ];
 
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.quillRef = null;
-    this.reactQuillRef = null;
-  }
+        this.quillRef = null;
+        this.reactQuillRef = null;
+    }
     // reactQuillRef = React.createRef();
 
     async componentDidMount () {
@@ -122,11 +123,13 @@ class NewPost extends Component {
                 categoryOptions.push(temp);
             });
 
+            let appState = JSON.parse(localStorage["appState"]);
 
             let newState = {
                 categories: categoryOptions,
                 loading:false,
-                tags: tagOptions
+                tags: tagOptions,
+                user_id:appState.user.id
             };
 
             if(postId !== null){
@@ -229,13 +232,20 @@ class NewPost extends Component {
             publish: this.state.publish,
             content: this.state.content,
             category_id: this.state.category_id,
-            selectedTags: this.state.selectedTags
+            selectedTags: this.state.selectedTags,
+            user_id: this.state.user_id
         };
 
         if (this.state.post_id){
-            let results = await axios.patch('/api/posts/'+this.state.post_id, post);
+            let results = await axios.post('/api/posts/'+this.state.post_id,
+                { 
+                    data: post,
+                    _method: 'patch'                  
+                });
+            swal("Done!", "Post Updated.", "success");
         } else {
             let results = await axios.post('/api/posts', post);
+            swal("Done!", "Post Created.", "success");
         }
 
     }

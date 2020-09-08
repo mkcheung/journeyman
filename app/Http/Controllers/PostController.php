@@ -95,11 +95,15 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
-        $post->title = $request->title;
-        $post->content = $request->content;
-        $post->slug = str_slug($request->title, '-');
-        $post->published = $request->publish;
+
+        $data = $request->all();
+        $post = Post::findOrFail((int)$id);
+
+        $post->title = $data['data']['title'];
+        $post->content = $data['data']['content'];
+        $post->slug = str_slug($data['data']['title'], '-');
+        $post->published = $data['data']['publish'];
+        $post->user_id = $data['data']['user_id'];
         $post->save();
         return redirect('posts');
     }
