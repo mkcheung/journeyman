@@ -2,7 +2,8 @@
 
 import axios from 'axios'
 import React, { Component } from 'react'
-import ReactQuill from 'react-quill'; // ES6
+import ReactQuill, { Quill }  from 'react-quill'; // ES6
+import ImageUploader from "quill-image-uploader";
 import swal from 'sweetalert';
 import {withRouter} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -23,6 +24,9 @@ import {
     TextField
 } from '@material-ui/core';
 
+
+Quill.register("modules/imageUploader", ImageUploader);
+
 class NewPost extends Component {
 
     state = {
@@ -41,6 +45,62 @@ class NewPost extends Component {
         publish:false,
         open: false,
     };
+
+
+  modules = {
+    // #3 Add "image" to the toolbar
+    toolbar: [
+    [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+    [{size: []}],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, 
+     {'indent': '-1'}, {'indent': '+1'}],
+    ['link', 'image', 'video'],
+    ['clean']
+    ],
+    // # 4 Add module and upload function
+    imageUploader: {
+      upload: file => {
+        return new Promise((resolve, reject) => {
+          const formData = new FormData();
+          formData.append("image", file);
+
+          fetch(
+            "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
+            {
+              method: "POST",
+              body: formData
+            }
+          )
+            .then(response => response.json())
+            .then(result => {
+              console.log(result);
+              resolve(result.data.url);
+            })
+            .catch(error => {
+              reject("Upload failed");
+              console.error("Error:", error);
+            });
+        });
+      }
+    }
+  };
+
+  formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "imageBlot" // #5 Optinal if using custom formats
+  ];
+
     static quillModules = {
   toolbar: [
     [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
@@ -295,7 +355,7 @@ class NewPost extends Component {
         } = this.state;
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
-
+console.log(this.modules);
         return (
 
             <Container maxWidth="lg">
@@ -399,10 +459,12 @@ class NewPost extends Component {
                                 </Grid>
                                 <Grid item xs={8} style={{padding:'10px'}}>
                                     <ReactQuill 
+                                        theme="snow"
+                                        modules={this.modules}
                                         value={this.state.content}
+                                        formats={this.formats}
                                         ref={(el) => { this.reactQuillRef = el }}
                                         onChange={this.handleEditorChange} 
-                                        theme="snow"
                                         style={{height:'90%'}}
                                     />
                                     {this.renderErrorFor('content')}
