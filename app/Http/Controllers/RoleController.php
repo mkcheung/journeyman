@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Role;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class RoleController extends Controller
 {
 
     public function index()
     {
-        $posts = User::get();
-        return $posts->toJson();
+        $roles = Role::get();
+        return $roles->toJson();
     }
     /**
      * Store a newly created resource in storage.
@@ -21,24 +21,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
+            'name' => 'required|unique:roles,name',
+            'permission' => 'required',
         ]);
 
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $role = Role::create(['name' => $request->input('name')]);
+        $role->syncPermissions($request->input('permission'));
 
 
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
-
-
-        // return redirect()->route('users.index')
-        //                 ->with('success','User created successfully');
+        // return redirect()->route('roles.index')
+        //                 ->with('success','Role created successfully');
     }
 
     /**
@@ -49,8 +44,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::find($id);
-        return view('users.show',compact('user'));
+        $role = Role::find($id);
+        return view('roles.show',compact('role'));
     }
 
     /**
@@ -61,10 +56,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name','name')->all();
-
+        $role = Role::find($id);
 
         // return view('users.edit',compact('user','roles','userRole'));
     }
@@ -94,16 +86,16 @@ class UserController extends Controller
         }
 
 
-        $user = User::find($id);
-        $user->update($input);
+        $role = Role::find($id);
+        $role->update($input);
         DB::table('model_has_roles')->where('model_id',$id)->delete();
 
 
-        $user->assignRole($request->input('roles'));
+        // $role->assignRole($request->input('roles'));
 
 
         // return redirect()->route('users.index')
-        //                 ->with('success','User updated successfully');
+        //                 ->with('success','Role updated successfully');
     }
 
 
@@ -116,8 +108,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        User::find($id)->delete();
-        // return redirect()->route('users.index')
-        //                 ->with('success','User deleted successfully');
+        Role::find($id)->delete();
+        // return redirect()->route('Roles.index')
+        //                 ->with('success','Role deleted successfully');
     }
 }

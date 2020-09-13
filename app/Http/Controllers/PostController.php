@@ -7,6 +7,19 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    function __construct()
+    {
+         $this->middleware('permission:post-list');
+         $this->middleware('permission:post-create', ['only' => ['create','store']]);
+         $this->middleware('permission:post-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:post-delete', ['only' => ['destroy']]);
+    }
+    
     public function index()
     {
         $posts = Post::get();

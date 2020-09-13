@@ -9,6 +9,7 @@ use Storage;
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
+    use HasRoles;
     /**
      * The attributes that are mass assignable.
      *
