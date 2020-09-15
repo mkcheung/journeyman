@@ -38,6 +38,7 @@ class RegisterContainer extends Component {
 			    password_confirmation: '',
 			    is_admin:false
 			},
+        	roles:[],
 			redirect: props.redirect,
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -58,12 +59,36 @@ class RegisterContainer extends Component {
 		}
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		const { prevLocation } = this.state.redirect.state || {prevLocation: { pathname: '/dashboard' } };
+        await this.loadData();
 		if (prevLocation && this.state.isLoggedIn) {
 			return this.props.history.push(prevLocation);
 		}
 	}
+
+    loadData = async () => {
+
+        let roleOptions = [];
+        try {
+            let rolesRes = await axios.get('/api/roles');
+            let roles = rolesRes.data;
+            roles.forEach(function(role){
+            	console.log(role);
+                let temp = {};
+                temp['id'] = role.id;
+                temp['value'] = role.name;
+                roleOptions.push(temp);
+            });
+
+            let newState = {
+                roles: roleOptions,
+            };
+            this.setState(newState);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 	handleUserChkboxToggle = (event) => {
 		this.setState({
@@ -139,6 +164,16 @@ class RegisterContainer extends Component {
 	    }
 	  }));
 	}
+
+
+    handleChange = async (event) => {
+
+        this.setState({
+            ...this.state,
+            [event.target.name]: event.target.value,
+        });
+    };
+
 
 	handlePassword(e) {
 	  let value = e.target.value;
@@ -222,6 +257,26 @@ class RegisterContainer extends Component {
                             }
 							label="Admin"
 						/>
+						<br/>
+                        <FormControl >
+                            <InputLabel htmlFor="age-native-simple">Role:</InputLabel>
+                            <Select
+                                native
+                                onChange={this.handleChange}
+                                title='role_id'
+                                inputProps={{
+                                    name: 'age',
+                                    id: 'age-native-simple',
+                                }}
+                            >
+                            <option value='0'></option>
+                            {
+                                Object
+                                .keys(this.state.roles)
+                                .map(key => <option key={key} value = {this.state.roles[key].id}>{this.state.roles[key].value}</option>)
+                            }
+                            </Select>
+                        </FormControl>
 						<Button
 							type="submit"
 							fullWidth

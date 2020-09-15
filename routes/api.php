@@ -13,12 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::resource('roles', 'RoleController');
 Route::group([
     'prefix' => 'auth'
 ], function () {
     Route::post('login', 'AuthController@login');
     Route::post('signup', 'AuthController@signup');
     Route::get('signup/activate/{token}', 'AuthController@signupActivate');
+    Route::resource('roles', 'RoleController');
   
     Route::group([
       'middleware' => 'auth:api'
