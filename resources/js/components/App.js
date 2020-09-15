@@ -34,13 +34,11 @@ class App extends Component {
 	}
 
     componentDidMount() {
-		let state = localStorage["appState"];
-		console.log(state);
-		if (state) {
-			let AppState = JSON.parse(state);
-			console.log(AppState);
-			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
-		}
+  		let state = localStorage["appState"];
+  		if (state) {
+  			let AppState = JSON.parse(state);
+  			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
+  		}
     }
 
 	componentDidUpdate(prevProps, prevState) {
@@ -64,7 +62,6 @@ class App extends Component {
 	}
 
     handleClick = (event) => {
-    	console.log('handleClick');
     	event.preventDefault();
         this.setState({
 			openMenu:true
@@ -98,11 +95,17 @@ class App extends Component {
               return response;
         }).then(json => {;
             if (json.status == 200) {
+
+              let { id, name, email, access_token, token, roles, permissions, rolesAndPermissions, userSpecificPermissions } = json.data;
                 let userData = {
-                    id: json.data.id,
-                    name: json.data.name,
-                    email: json.data.email,
-                    access_token: json.data.access_token,
+                    id,
+                    name,
+                    email,
+                    access_token,
+                    roles,
+                    permissions,
+                    rolesAndPermissions: JSON.parse(rolesAndPermissions),
+                    userSpecificPermissions,
                 };
                 let appState = {
                     isLoggedIn: true,
@@ -161,7 +164,7 @@ class App extends Component {
 					<Switch>
 						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} />)} />
 						<Route exact path='/register' component={Register}/>
-						<ProtectedRoute exact path='/dashboard' component={Dashboard}/>
+						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
 						<ProtectedRoute exact path='/post' component={PostsList} />
 						<ProtectedRoute exact path='/post/create' component={NewPost} />
 						<ProtectedRoute exact path='/post/edit/:id' component={NewPost} />

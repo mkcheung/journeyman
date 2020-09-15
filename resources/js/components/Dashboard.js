@@ -25,8 +25,16 @@ class Home extends Component {
 		let state = localStorage["appState"];
 
 		if (state) {
-			let AppState = JSON.parse(state);
-			this.setState({ isLoggedIn: AppState.isLoggedIn, user: AppState.user });
+			let appState = JSON.parse(state);
+			this.setState(
+				{ 
+					isLoggedIn: appState.isLoggedIn,
+					user: appState.user,
+		            token: appState.user.access_token,
+		            rolesAndPermissions:appState.user.rolesAndPermissions,
+		            userSpecificPermissions:appState.user.userSpecificPermissions,
+				}
+			);
 		}
 	}
 
@@ -38,7 +46,12 @@ class Home extends Component {
 
     loadData = async (userId) => {
 
-        let postObj = await axios.get('/api/posts/getUserPosts', {
+        let postObj = await axios.get('/api/posts/getUserPosts', 
+        {
+        	headers: {
+                'Authorization': 'Bearer '+this.state.token,
+                'Accept': 'application/json'
+            },
             params: {
                 userId: userId
             }

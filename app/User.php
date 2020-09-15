@@ -1,9 +1,10 @@
 <?php
 namespace App;
  
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 use Storage;
  
 class User extends Authenticatable

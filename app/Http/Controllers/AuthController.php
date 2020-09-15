@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\User;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -90,19 +91,34 @@ class AuthController extends Controller
 
         $tokenResult = $user->createToken('Personal Access Token');
 
-        $token = $tokenResult->token;
+        // $token = $tokenResult->token;
 
-        if ($request->remember_me) {
-            $token->expires_at = Carbon::now()->addWeeks(1);
+        // if ($request->remember_me) {
+        //     $token->expires_at = Carbon::now()->addWeeks(1);
+        // }
+
+        // $token->save();
+        $userSpecificPermissions = $user->getPermissionNames();
+        $userRolePermissions = $user->getPermissionsViaRoles()->pluck('name');
+        $roles = $user->getRoleNames();
+
+        $rolesAndPermissions = [];
+        $allRoles = Role::all();
+        foreach($allRoles as $role){
+            $rolesAndPermissions[$role->name]['static'] = $role->getPermissionNames();
         }
 
-        $token->save();
+        $rolesAndPermissions = json_encode($rolesAndPermissions);
 
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
+            'roles' => $roles,
+            'permissions' => $userRolePermissions,
+            'userSpecificPermissions' => $userSpecificPermissions,
+            'rolesAndPermissions' => $rolesAndPermissions,
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()

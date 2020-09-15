@@ -44,6 +44,7 @@ class NewPost extends Component {
         slug:'',
         publish:false,
         open: false,
+        user: {},
     };
 
 
@@ -74,7 +75,6 @@ class NewPost extends Component {
           )
             .then(response => response.json())
             .then(result => {
-              console.log(result);
               resolve(result.data.url);
             })
             .catch(error => {
@@ -130,6 +130,20 @@ class NewPost extends Component {
     // reactQuillRef = React.createRef();
 
     async componentDidMount () {
+        let state = localStorage["appState"];
+
+        if (state) {
+            let appState = JSON.parse(state);
+            this.setState(
+                { 
+                    isLoggedIn: appState.isLoggedIn,
+                    user: appState.user,
+                    token: appState.user.access_token,
+                    rolesAndPermissions:appState.user.rolesAndPermissions,
+                    userSpecificPermissions:appState.user.userSpecificPermissions,
+                }
+            );
+        }
         this.attachQuillRefs()
         const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
         await this.loadData(postId);
@@ -163,7 +177,13 @@ class NewPost extends Component {
         let tagOptions = [];
         try {
 
-            let tagRes = await axios.get('/api/tags');
+            let tagRes = await axios.get('/api/tags', 
+                {
+                    headers: {
+                        'Authorization': 'Bearer '+this.state.token,
+                        'Accept': 'application/json'
+                    }
+                });
             let tags = tagRes.data;
             
             tags.forEach(function(tag){
@@ -173,7 +193,13 @@ class NewPost extends Component {
                 tagOptions.push(temp);
             });
 
-            let categoryRes = await axios.get('/api/categories');
+            let categoryRes = await axios.get('/api/categories', 
+                {
+                    headers: {
+                        'Authorization': 'Bearer '+this.state.token,
+                        'Accept': 'application/json'
+                    }
+                });
             let categories = categoryRes.data;
             
             categories.forEach(function(category){
@@ -254,7 +280,12 @@ class NewPost extends Component {
         });
         const { book_title_search_term } = this.state;
 
-        axios.get('/api/books/searchByTitle', {
+        await axios.get('/api/books/searchByTitle', 
+        {
+            headers: {
+                'Authorization': 'Bearer '+this.state.token,
+                'Accept': 'application/json'
+            },
             params: {
                     bookTitle: book_title_search_term
                 }
@@ -355,7 +386,7 @@ class NewPost extends Component {
         } = this.state;
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
-console.log(this.modules);
+
         return (
 
             <Container maxWidth="lg">

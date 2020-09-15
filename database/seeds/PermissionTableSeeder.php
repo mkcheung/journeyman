@@ -30,10 +30,14 @@ class PermissionTableSeeder extends Seeder
            'comment-list',
            'comment-create',
            'comment-edit',
-           'tag-delete',
+           'tag-list',
            'tag-create',
            'tag-edit',
-           'tag-delete'
+           'tag-delete',
+           'category-list',
+           'category-create',
+           'category-edit',
+           'category-delete'
         ];
 
 

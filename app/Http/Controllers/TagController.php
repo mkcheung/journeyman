@@ -7,6 +7,14 @@ use App\Tag;
 
 class TagController extends Controller
 { 
+  function __construct()
+  {
+       $this->middleware('permission:tag-list');
+       $this->middleware('permission:tag-create', ['only' => ['create','store']]);
+       $this->middleware('permission:tag-edit', ['only' => ['edit','update']]);
+       $this->middleware('permission:tag-delete', ['only' => ['destroy']]);
+  }
+  
 	public function index()
       {
         $tags = Tag::get();

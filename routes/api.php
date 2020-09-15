@@ -38,11 +38,13 @@ Route::group([
     Route::post('reset', 'PasswordResetController@reset');
 });
 
-Route::get('books/searchByTitle', 'BookController@searchByTitle');
-Route::resource('books', 'BookController');
-Route::resource('citations', 'CitationController');
-Route::resource('categories', 'CategoryController');
-Route::resource('comments', 'CommentController');
-Route::get('posts/getUserPosts', 'PostController@getUserPosts');
-Route::resource('posts', 'PostController');
-Route::resource('tags', 'TagController');
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('books/searchByTitle', 'BookController@searchByTitle');
+    Route::resource('books', 'BookController');
+    Route::resource('citations', 'CitationController');
+    Route::resource('categories', 'CategoryController');
+    Route::resource('comments', 'CommentController');
+    Route::get('posts/getUserPosts', 'PostController@getUserPosts');
+    Route::resource('posts', 'PostController');
+    Route::resource('tags', 'TagController');
+});

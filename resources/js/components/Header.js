@@ -58,8 +58,6 @@ class Header extends Component {
 
         let { isLoggedIn, handleClick, handleClose, openMenu } = this.props;
 
-        console.log(isLoggedIn);
-
         return (
         	<AppBar position="static">
         		<Toolbar>
