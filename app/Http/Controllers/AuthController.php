@@ -35,6 +35,8 @@ class AuthController extends Controller
             'activation_token' => str_random(60)
         ]);
 
+        $user->assignRole('Reader');
+
         $user->save();
         
         $avatar = Avatar::create($user->name)->getImageObject()->encode('png');

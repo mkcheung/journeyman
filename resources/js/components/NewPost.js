@@ -86,32 +86,32 @@ class NewPost extends Component {
     }
   };
 
-  formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "imageBlot" // #5 Optinal if using custom formats
-  ];
+    formats = [
+        "header",
+        "bold",
+        "italic",
+        "underline",
+        "strike",
+        "blockquote",
+        "list",
+        "bullet",
+        "indent",
+        "link",
+        "image",
+        "imageBlot" // #5 Optinal if using custom formats
+    ];
 
     static quillModules = {
-  toolbar: [
-    [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-    [{size: []}],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [{'list': 'ordered'}, {'list': 'bullet'}, 
-     {'indent': '-1'}, {'indent': '+1'}],
-    ['link', 'image', 'video'],
-    ['clean']
-    ]
-  }
+        toolbar: [
+            [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+            [{size: []}],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{'list': 'ordered'}, {'list': 'bullet'}, 
+             {'indent': '-1'}, {'indent': '+1'}],
+            ['link', 'image', 'video'],
+            ['clean']
+        ]
+    }
       /* ... other modules */
 
     static  _quillFormats = [ 
@@ -332,10 +332,26 @@ class NewPost extends Component {
                 { 
                     data: post,
                     _method: 'patch'                  
-                });
+                },
+                {   
+                    headers: {
+                        'Authorization': 'Bearer '+this.state.token,
+                        'Accept': 'application/json'
+                    }
+                }
+            );
             swal("Done!", "Post Updated.", "success");
         } else {
-            let results = await axios.post('/api/posts', post);
+            // let results = await axios.post('/api/posts', post);
+            let results = await axios.post('/api/posts/',
+                post,
+                {   
+                    headers: {
+                        'Authorization': 'Bearer '+this.state.token,
+                        'Accept': 'application/json'
+                    }
+                }
+            );
             swal("Done!", "Post Created.", "success");
         }
 

@@ -23,26 +23,27 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 class RegisterContainer extends Component {
+    state = {
+		isRegistered: false,
+		error: '',
+		errorMessage: '',
+		formSubmitting: false,
+		user: {
+		    name: '',
+		    email: '',
+		    password: '',
+		    password_confirmation: '',
+		    is_admin:false
+		},
+    	roles:[],
+		// redirect: props.redirect,
+	};
   
 	constructor(props) {
 	    super(props);
-	    this.state = {
-			isRegistered: false,
-			error: '',
-			errorMessage: '',
-			formSubmitting: false,
-			user: {
-			    name: '',
-			    email: '',
-			    password: '',
-			    password_confirmation: '',
-			    is_admin:false
-			},
-        	roles:[],
-			redirect: props.redirect,
-		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleEmail = this.handleEmail.bind(this);
+		this.handleName = this.handleName.bind(this);
 		this.handlePassword = this.handlePassword.bind(this);
 		this.handlePasswordConfirm = this.handlePasswordConfirm.bind(this);
 
@@ -104,7 +105,7 @@ class RegisterContainer extends Component {
 		this.setState({formSubmitting: true});
 		ReactDOM.findDOMNode(this).scrollIntoView();
 		let userData = this.state.user;
-
+		console.log(userData);
 		axios.post("/api/auth/signup", userData)
 		.then(response => {
 			return response;
@@ -165,6 +166,16 @@ class RegisterContainer extends Component {
 	  }));
 	}
 
+	handleName(e) {
+	  let value = e.target.value;
+	  console.log(value);
+	  this.setState(prevState => ({
+	    user: {
+	      ...prevState.user, name: value
+	    }
+	  }));
+	}
+
 
     handleChange = async (event) => {
 
@@ -208,7 +219,19 @@ class RegisterContainer extends Component {
 					<Typography component="h1" variant="h5">
 						Create Your Account
 					</Typography>
-					<form noValidate>
+					<form onSubmit={(event) => this.handleSubmit(event)} noValidate>
+						<TextField
+							variant="outlined"
+							margin="normal"
+							required
+							fullWidth
+							id="name"
+							onChange={this.handleName}
+							label="Name"
+							name="name"
+							autoComplete="name"
+							autoFocus
+						/>
 						<TextField
 							variant="outlined"
 							margin="normal"

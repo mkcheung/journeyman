@@ -61,13 +61,14 @@ class PostController extends Controller
         foreach($selectedTags as $selectedTag){
             $selectedTagIds[] = $selectedTag['id'];
         }
+
         $post = Post::create([
           'title' => $request['title'],
           'slug' => str_slug($request->title, '-'),
           'content' => $request['content'],
           'published' => $request['publish'],
           'category' => $request['category'],
-          'user_id' => 1//$request['user_id']
+          'user_id' => $request['user_id']
         ]);
 
         $post->tags()->sync($selectedTagIds);

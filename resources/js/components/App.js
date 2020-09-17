@@ -23,10 +23,10 @@ import CategoriesList from './CategoriesList'
 
 class App extends Component {
     state = {
-		isLoggedIn: false,
-		user: {},
-		formSubmitting:false,
-		openMenu: false
+  		isLoggedIn: false,
+  		user: {},
+  		formSubmitting:false,
+  		openMenu: false
     };
 
 	constructor() {
@@ -165,14 +165,14 @@ class App extends Component {
 						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} />)} />
 						<Route exact path='/register' component={Register}/>
 						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
-						<ProtectedRoute exact path='/post' component={PostsList} />
-						<ProtectedRoute exact path='/post/create' component={NewPost} />
-						<ProtectedRoute exact path='/post/edit/:id' component={NewPost} />
-						<ProtectedRoute exact path='/tag' component={TagsList} />
-						<ProtectedRoute exact path='/tag/create' component={NewTag} />
-						<ProtectedRoute exact path='/category' component={CategoriesList} />
-						<ProtectedRoute exact path='/category/create' component={NewCategory} />
-						<ProtectedRoute exact path='/:id' component={SingleTag} />
+						<ProtectedRoute exact path='/post' perform="post-list" component={PostsList} />
+						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
+						<ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
+						<ProtectedRoute exact path='/tag' perform="tag-list" component={TagsList} />
+						<ProtectedRoute exact path='/tag/create' perform="tag-create" component={NewTag} />
+						<ProtectedRoute exact path='/category' perform="category-list" component={CategoriesList} />
+						<ProtectedRoute exact path='/category/create' perform="category-create" component={NewCategory} />
+						<ProtectedRoute exact path='/:id' perform="post-list" component={SingleTag} />
 						<ProtectedRoute component={NotFound}/>
 					</Switch>
 	        	<Footer/>

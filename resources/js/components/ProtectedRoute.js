@@ -17,6 +17,15 @@ const ProtectedRoute = ({ component: Component, ...rest}) => {
     const roles = (appState && appState.user.roles) ? appState.user.roles : null ;
 
     const perform = rest.perform;
+console.log('-------------------------');
+console.log(appState);
+console.log(rolesAndPermissions);
+console.log(userSpecificPermissions);
+console.log(rest.params);
+console.log(roles);
+console.log(perform);
+console.log('-------------------------');
+ 
 
     return (
 
