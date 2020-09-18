@@ -14,7 +14,11 @@ class Login extends Component {
     async componentDidUpdate(prevProps, prevState) {
 
         if (prevState.isLoggedIn === false && this.props.isLoggedIn === true ) {
-            this.props.history.push('/dashboard');
+            if(this.props.userRole == 'Admin'){
+                this.props.history.push('/adminDashboard');
+            } else {
+                this.props.history.push('/dashboard');
+            }
         }
     }
 

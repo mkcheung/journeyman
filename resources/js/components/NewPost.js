@@ -155,7 +155,8 @@ class NewPost extends Component {
         } = this.state;
 
         if (prevState.loading === true) {
-            await this.loadData();
+            const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
+            await this.loadData(postId);
         }
     }
   
@@ -172,7 +173,6 @@ class NewPost extends Component {
     }
 
     loadData = async (postId = null) => {
-
         let categoryOptions = [];
         let tagOptions = [];
         try {
@@ -219,7 +219,14 @@ class NewPost extends Component {
             };
 
             if(postId !== null){
-                let postObj = await axios.get('/api/posts/'+postId);
+                let postObj = await axios.get('/api/posts/'+postId, 
+                    {
+                        headers: {
+                            'Authorization': 'Bearer '+this.state.token,
+                            'Accept': 'application/json'
+                        }
+                    }
+                );
 
                 let postData = postObj.data;
 

@@ -12,6 +12,7 @@ import NotFound from './NotFound'
 // User is LoggedIn
 import PrivateRoute from './PrivateRoute'
 import ProtectedRoute from './ProtectedRoute'
+import AdminDashboard from './AdminDashboard';
 import Dashboard from './Dashboard';
 import NewTag from './NewTag'
 import TagsList from './TagsList'
@@ -153,17 +154,21 @@ class App extends Component {
 
 		let { 
 			isLoggedIn,
-			openMenu 
+			openMenu,
+      user 
 		} = this.state;
 
-		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu}/> : null ; 
+    let role = user.roles ? user.roles[0] : ''; 
+
+		let HideHeader = isLoggedIn ? <Header isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
 
 		return (
 			<HashRouter>
 				{HideHeader}
 					<Switch>
-						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} />)} />
+						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} userRole={role}/>)} />
 						<Route exact path='/register' component={Register}/>
+            <ProtectedRoute exact path='/adminDashboard' perform="admins-only" component={AdminDashboard}/>
 						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
 						<ProtectedRoute exact path='/post' perform="post-list" component={PostsList} />
 						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
