@@ -4,20 +4,29 @@ import Header from './Header';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import { 
+	Collapse,
 	Container,
 	Grid,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
 	Paper
 } from '@material-ui/core';
-
+import { 
+	ExpandLess,
+	ExpandMore,
+} from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core/styles';
 
 class AdminDashboard extends Component {
-
     state = {
 		isLoggedIn: false,
         loading: true,
         post_id: [],
 		user: {},
-		posts: []
+		posts: [],
+		open:false
     };
 
 	// check if user is authenticated and storing authentication data as states if true
@@ -44,9 +53,20 @@ class AdminDashboard extends Component {
         await this.loadData(userId);
     }
 
+    handleClick = () => {
+		let { 
+			open, 
+		} = this.state;
+
+        this.setState({
+			open: !open
+        })
+    }
+
+
     loadData = async (userId) => {
 
-        let postObj = await axios.get('/api/posts/getUserPosts', 
+        let postsObj = await axios.get('/api/posts/', 
         {
         	headers: {
                 'Authorization': 'Bearer '+this.state.token,
@@ -58,7 +78,7 @@ class AdminDashboard extends Component {
         });
 
 
-	    let postData = postObj.data;
+	    let postData = postsObj.data;
         this.setState({
             loading:false,
             posts: postData
@@ -70,7 +90,8 @@ class AdminDashboard extends Component {
 		let { 
 			isLoggedIn,
 			posts,
-			user 
+			user,
+			open, 
 		} = this.state;
 	    
 
@@ -80,13 +101,39 @@ class AdminDashboard extends Component {
 
 	    return (
 	    	<Container maxWidth="lg">
-		      	<Grid container spacing={3}>
-			        <Grid item xs={6}>
-			        	ADMIN DASHBOARD
-			        </Grid>
-			        <Grid item xs={6}>
-			          <Paper>Testing 123</Paper>
-			        </Grid>
+		      	<Grid container>
+    				<List
+			      		style={{width: '100%'}}
+			      	>
+	                    {
+	                        posts && posts.map(post => (
+	                        	<div key={'userPost'+post.id}>
+									<ListItem key={post.name} button onClick={this.handleClick}>
+										<ListItemIcon>
+											{post.name}
+										</ListItemIcon>
+										<ListItemText/>
+										{open ? <ExpandLess /> : <ExpandMore />}
+									</ListItem>
+	      							<Collapse key={post.id} in={open} timeout="auto" unmountOnExit>
+	        							<List component="div" disablePadding style={{width: '100%'}}>
+	        								{post.posts.map(userpost => (
+												<ListItem button 
+														key={userpost.title}>
+													<Link
+														className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
+														to={`/post/edit/${userpost.id}`}
+														key={userpost.id}
+													>
+														{userpost.title}
+													</Link>
+												</ListItem>
+	        									))}
+	        							</List>
+	      							</Collapse>
+      							</div>
+	                    ))}
+    				</List>
 		       </Grid>
 		    </Container>
 		)

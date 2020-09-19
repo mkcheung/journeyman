@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -22,8 +23,8 @@ class PostController extends Controller
     
     public function index()
     {
-        $posts = Post::get();
-        return $posts->toJson();
+        $postsByUser = User::with('posts')->get();
+        return $postsByUser->toJson();
     }
 
     public function getUserPosts(Request $request)
