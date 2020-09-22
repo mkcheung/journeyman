@@ -26,7 +26,7 @@ class AdminDashboard extends Component {
         post_id: [],
 		user: {},
 		posts: [],
-		open:false
+		openStatusSlots: {}
     };
 
 	// check if user is authenticated and storing authentication data as states if true
@@ -53,13 +53,15 @@ class AdminDashboard extends Component {
         await this.loadData(userId);
     }
 
-    handleClick = () => {
+    handleClick = (postId) => {
 		let { 
-			open, 
+			openStatusSlots, 
 		} = this.state;
 
+		openStatusSlots['open-user-'+postId] = !(openStatusSlots['open-user-'+postId]);
+
         this.setState({
-			open: !open
+			openStatusSlots
         })
     }
 
@@ -79,9 +81,15 @@ class AdminDashboard extends Component {
 
 
 	    let postData = postsObj.data;
+	    let openStatusSlots = {};
+	    postData.map(function(pd){
+	    	openStatusSlots['open-user-'+pd.id] = false;
+	    });
+
         this.setState({
             loading:false,
-            posts: postData
+            posts: postData,
+            openStatusSlots
         });
 	}
 
@@ -91,7 +99,7 @@ class AdminDashboard extends Component {
 			isLoggedIn,
 			posts,
 			user,
-			open, 
+			openStatusSlots,
 		} = this.state;
 	    
 
@@ -108,14 +116,14 @@ class AdminDashboard extends Component {
 	                    {
 	                        posts && posts.map(post => (
 	                        	<div key={'userPost'+post.id}>
-									<ListItem key={post.name} button onClick={this.handleClick}>
+									<ListItem key={post.name} button onClick={() => this.handleClick(post.id)}>
 										<ListItemIcon>
 											{post.name}
 										</ListItemIcon>
 										<ListItemText/>
-										{open ? <ExpandLess /> : <ExpandMore />}
+										{openStatusSlots['open-user-'+post.id] ? <ExpandLess /> : <ExpandMore />}
 									</ListItem>
-	      							<Collapse key={post.id} in={open} timeout="auto" unmountOnExit>
+	      							<Collapse key={post.id} in={openStatusSlots['open-user-'+post.id]} timeout="auto" unmountOnExit>
 	        							<List component="div" disablePadding style={{width: '100%'}}>
 	        								{post.posts.map(userpost => (
 												<ListItem button 
