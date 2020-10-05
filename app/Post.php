@@ -7,8 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
 
-    protected $fillable = ['title','slug','content','image','published','category_id','user_id', 'project_id']; 
-    protected $appends = ["image_url", "date_formatted", "excerpt"];
+    protected $fillable = [
+        'title',
+        'slug',
+        'content',
+        'image',
+        'published',
+        'category_id',
+        'user_id',
+        'project_id'
+    ]; 
+
+    protected $appends = [
+        "image_url",
+        "date_formatted",
+        "excerpt"
+    ];
  
  
     /**

@@ -1,26 +1,28 @@
 // resources/assets/js/components/App.js
 
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import { BrowserRouter, Link, Route, Switch, HashRouter, Redirect, useHistory } from 'react-router-dom'
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter, Link, Route, Switch, HashRouter, Redirect, useHistory } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './Header';
 import Home from './Home';
 import Login from './Login';
 import Register from './Register';
-import NotFound from './NotFound'
+import NotFound from './NotFound';
 // User is LoggedIn
-import PrivateRoute from './PrivateRoute'
-import ProtectedRoute from './ProtectedRoute'
+import PrivateRoute from './PrivateRoute';
+import ProtectedRoute from './ProtectedRoute';
 import AdminDashboard from './AdminDashboard';
 import Dashboard from './Dashboard';
-import NewTag from './NewTag'
-import TagsList from './TagsList'
-import PostsList from './PostsList'
-import NewPost from './NewPost'
-import SingleTag from './SingleTag'
-import NewCategory from './NewCategory'
-import CategoriesList from './CategoriesList'
+import NewTag from './NewTag';
+import TagsList from './TagsList';
+import PostsList from './PostsList';
+import NewPost from './NewPost';
+import ShowPost from './ShowPost';
+import UserEdit from './UserEdit';
+import SingleTag from './SingleTag';
+import NewCategory from './NewCategory';
+import CategoriesList from './CategoriesList';
 
 class App extends Component {
     state = {
@@ -172,7 +174,9 @@ class App extends Component {
 						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
 						<ProtectedRoute exact path='/post' perform="post-list" component={PostsList} />
 						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
-						<ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
+            <ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
+            <ProtectedRoute exact path='/post/show/:id' perform="post-list" component={ShowPost} />
+            <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" component={UserEdit} />
 						<ProtectedRoute exact path='/tag' perform="tag-list" component={TagsList} />
 						<ProtectedRoute exact path='/tag/create' perform="tag-create" component={NewTag} />
 						<ProtectedRoute exact path='/category' perform="category-list" component={CategoriesList} />

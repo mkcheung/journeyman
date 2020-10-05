@@ -4,6 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import { 
+	Box,
 	Container,
 	Grid,
 	Paper
@@ -57,7 +58,6 @@ class Home extends Component {
             }
         });
 
-
 	    let postData = postObj.data;
         this.setState({
             loading:false,
@@ -79,26 +79,25 @@ class Home extends Component {
 		}
 
 	    return (
-	    	<Container maxWidth="lg">
-		      	<Grid container spacing={3}>
-			        <Grid item xs={6}>
-			          <Paper>My Posts</Paper>
-	                    {
-	                        posts && posts.map(post => (
-								<Link
-									className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
-									to={`/post/edit/${post.id}`}
-									key={post.id}
-								>
-									{post.title}
-								</Link>
-	                    ))}
-			        </Grid>
-			        <Grid item xs={6}>
-			          <Paper>Testing 123</Paper>
-			        </Grid>
-		       </Grid>
-		    </Container>
+			<div className="container">
+                {
+                    posts && posts.map(post => (
+                	<div>
+	                    <h2>
+							<Link
+								to={`/post/show/${post.id}`}
+								key={post.id}
+							>
+								{post.title}
+							</Link>
+	        			</h2>
+	        			Author: {post.user.name}
+	        			<br/>
+	        			Posted: {post.created_at}
+	            		<hr/>
+                	</div>
+                ))}
+			</div>
 		)
 	}
 }

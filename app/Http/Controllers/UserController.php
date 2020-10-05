@@ -10,8 +10,8 @@ class UserController extends Controller
 
     public function index()
     {
-        $posts = User::get();
-        return $posts->toJson();
+        $users = User::get();
+        return $users->toJson();
     }
     /**
      * Store a newly created resource in storage.

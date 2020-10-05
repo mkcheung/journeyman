@@ -25,7 +25,9 @@ class AdminDashboard extends Component {
         loading: true,
         post_id: [],
 		user: {},
+		allUsers: [],
 		posts: [],
+		userListOpen: false,
 		openStatusSlots: {}
     };
 
@@ -65,8 +67,29 @@ class AdminDashboard extends Component {
         })
     }
 
+    handleUserListClick = () => {
+		let { 
+			userListOpen, 
+		} = this.state;
+
+		
+        this.setState({
+			userListOpen: !userListOpen
+        })
+    }
+
 
     loadData = async (userId) => {
+
+        let allUsers = await axios.get('/api/users/', 
+        {
+        	headers: {
+                'Authorization': 'Bearer '+this.state.token,
+                'Accept': 'application/json'
+            }
+        });
+
+        console.log(allUsers);
 
         let postsObj = await axios.get('/api/posts/', 
         {
@@ -89,7 +112,8 @@ class AdminDashboard extends Component {
         this.setState({
             loading:false,
             posts: postData,
-            openStatusSlots
+            openStatusSlots,
+            allUsers:allUsers.data
         });
 	}
 
@@ -97,9 +121,11 @@ class AdminDashboard extends Component {
 
 		let { 
 			isLoggedIn,
+			allUsers,
 			posts,
 			user,
 			openStatusSlots,
+			userListOpen
 		} = this.state;
 	    
 
@@ -110,6 +136,37 @@ class AdminDashboard extends Component {
 	    return (
 	    	<Container maxWidth="lg">
 		      	<Grid container>
+    				<List
+			      		style={{width: '100%'}}
+			      	>
+	                    {
+	                        	<div>
+									<ListItem button onClick={() => this.handleUserListClick()}>
+										<ListItemIcon>
+											Users
+										</ListItemIcon>
+										<ListItemText/>
+										{userListOpen ? <ExpandLess /> : <ExpandMore />}
+									</ListItem>
+	      							<Collapse in={userListOpen} timeout="auto" unmountOnExit>
+	        							<List component="div" disablePadding style={{width: '100%'}}>
+	        								{ allUsers && allUsers.map(allUser => (
+												<ListItem button 
+														key={allUser.name}>
+													<Link
+														className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
+														to={`/user/edit/${allUser.id}`}
+														key={allUser.id}
+													>
+														{allUser.name}
+													</Link>
+												</ListItem>
+	        									))}
+	        							</List>
+	      							</Collapse>
+      							</div>
+	                    }
+    				</List>
     				<List
 			      		style={{width: '100%'}}
 			      	>

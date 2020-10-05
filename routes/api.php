@@ -49,4 +49,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('posts/getUserPosts', 'PostController@getUserPosts');
     Route::resource('posts', 'PostController');
     Route::resource('tags', 'TagController');
+    Route::resource('users', 'UserController');
 });
