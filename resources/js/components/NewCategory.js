@@ -3,6 +3,7 @@
     import axios from 'axios'
     import React, { Component } from 'react'
     import swal from 'sweetalert';
+    import {withRouter} from 'react-router';
     import { 
       FormControl,
       InputLabel,
@@ -134,4 +135,4 @@
       }
     }
 
-    export default NewCategory
+    export default withRouter(NewCategory)

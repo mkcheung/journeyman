@@ -7,12 +7,27 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:user-list', ['only' => ['index', 'show', 'showUserBlogPosts']]);
+         $this->middleware('permission:user-create', ['only' => ['create','store']]);
+         $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+    }
 
     public function index()
     {
         $users = User::get();
         return $users->toJson();
     }
+
+    public function showUserBlogPosts(Request $request)
+    {
+        $userId = $request->query('userId');
+        $userPosts = User::where('id', '=', $userId)->with('posts')->get();
+        return $userPosts->toJson();
+    }
+
     /**
      * Store a newly created resource in storage.
      *

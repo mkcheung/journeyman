@@ -3,6 +3,7 @@
     import axios from 'axios';
     import React, { Component } from 'react';
     import { Link } from 'react-router-dom';
+    import { withRouter } from "react-router";
 
     class PostsList extends Component {
       constructor () {
@@ -64,4 +65,4 @@
       }
     }
 
-    export default PostsList
+    export default withRouter(PostsList)

@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import Header from './Header';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
+import { withRouter } from "react-router";
 import { 
 	Collapse,
 	Container,
@@ -204,4 +205,4 @@ class AdminDashboard extends Component {
 		)
 	}
 }
-export default AdminDashboard
+export default withRouter(AdminDashboard)

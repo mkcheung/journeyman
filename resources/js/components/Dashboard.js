@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import Header from './Header';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
+import {withRouter} from 'react-router';
 import { 
 	Box,
 	Container,
@@ -82,7 +83,7 @@ class Home extends Component {
 			<div className="container">
                 {
                     posts && posts.map(post => (
-                	<div>
+                	<div key={`post-${post.id}`}>
 	                    <h2>
 							<Link
 								to={`/post/show/${post.id}`}
@@ -101,4 +102,4 @@ class Home extends Component {
 		)
 	}
 }
-export default Home
+export default withRouter(Home)

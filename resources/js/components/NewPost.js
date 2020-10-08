@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import ReactQuill, { Quill }  from 'react-quill'; // ES6
 import ImageUploader from "quill-image-uploader";
 import swal from 'sweetalert';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from "react-router";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
 import { 
@@ -539,5 +539,5 @@ class NewPost extends Component {
     }
 }
 
-export default NewPost;
+export default withRouter(NewPost);
 

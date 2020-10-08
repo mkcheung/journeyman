@@ -10,9 +10,11 @@ import {
     Link as MUILINK,
     Menu,
     MenuItem,
+    TextField,
     Toolbar,
     Typography
 } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
@@ -45,10 +47,13 @@ const styles = theme => ({
 		marginRight: theme.spacing(2),
 	},
 	title: {
-		display: 'none',
 		[theme.breakpoints.up('sm')]: {
 			display: 'block',
 		},
+		paddingTop:'12px'
+	},
+	titleAndUserSelect: {
+		display: 'inherit',
 	},
 	search: {
 		position: 'relative',
@@ -103,14 +108,13 @@ const styles = theme => ({
 
 class Header extends Component {
 	state = {
-		// isLoggedIn: false,
-		// user: {}
 	};
 
 	constructor(props) {
 		super(props);
 		this.handleLogOut = this.handleLogOut.bind(this);
 	}
+
 
 	handleLogOut() {
         let { handleClose } = this.props;
@@ -119,13 +123,44 @@ class Header extends Component {
 		this.props.history.push('/login');
 	}
 
+	handleInputChange = (event, value) => {
+		// NOTE THAT PATH WILL NOT CHANGE, JUST THE PARAMETER
+		// IT IS HANDLED IN componentWillReceiveProps WITHIN USERBLOG.JS
+		this.props.history.push(`/user/getPosts/${value.id}`);
+	}
+
     render() {
         const aStyle = {
 			cursor: 'pointer'
         };
 
-        let { isLoggedIn, handleClick, handleClose, openMenu, classes, theme } = this.props;
+        let { isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors } = this.props;
 
+
+        let dropdownOptions = '<div></div>';
+        if(blogAuthors && blogAuthors.length>0){
+	        dropdownOptions =
+		        <div className={classes.titleAndUserSelect}> 
+					<Typography variant="h6" noWrap className={classes.title}>
+						Phronesis Project
+					</Typography>
+					<div className={classes.search}>
+						<Autocomplete
+							classes={{
+								root: classes.inputRoot,
+								input: classes.inputInput,
+							}}
+							options={blogAuthors}
+		  					getOptionLabel={(blogAuthor) => blogAuthor.name}
+		  					style={{ width: 300 }}
+							onChange={this.handleInputChange}
+							renderInput={(params) => 
+								<TextField {...params} label="Search for a writer..." variant="outlined" />
+							}
+						/>
+					</div>
+				</div>;
+        }
         return (
         	<AppBar position="static">
         		<Toolbar>
@@ -167,22 +202,7 @@ class Header extends Component {
 			                </MenuItem>
 			            }
 		          	</Menu>
-					<Typography variant="h6" noWrap>
-						Phronesis Project
-					</Typography>
-					<div className={classes.search}>
-						<div className={classes.searchIcon}>
-							<SearchIcon />
-						</div>
-					<InputBase
-						placeholder="Search…"
-						classes={{
-							root: classes.inputRoot,
-							input: classes.inputInput,
-						}}
-						inputProps={{ 'aria-label': 'search' }}
-					/>
-					</div>
+					{dropdownOptions}
         		</Toolbar>
 			</AppBar>
         );
