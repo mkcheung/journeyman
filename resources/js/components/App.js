@@ -27,6 +27,7 @@ import CategoriesList from './CategoriesList';
 
 class App extends Component {
     state = {
+        anchorEl: null,
   		isLoggedIn: false,
   		user: {},
   		formSubmitting:false,
@@ -52,7 +53,7 @@ class App extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		if (prevState.openMenu !== this.state.openMenu) {
 			let state = localStorage["appState"];
-            let blogAuthors = localStorage["blogAuthors"] ? localStorage["blogAuthors"] : [] ;
+            let blogAuthors = localStorage["blogAuthors"] ? JSON.parse(localStorage["blogAuthors"]) : [] ;
 
 			if(state) {
                 let AppState = JSON.parse(state);
@@ -76,13 +77,16 @@ class App extends Component {
     handleClick = (event) => {
     	event.preventDefault();
         this.setState({
-			openMenu:true
+			openMenu:true,
+            anchorEl: event.target
+
         });
     };
 
     handleClose = () => {
         this.setState({
 			openMenu:false,
+            anchorEl: null 
         });
     };
 
@@ -158,6 +162,7 @@ class App extends Component {
 	render () {
 
 		let { 
+            anchorEl,
 			isLoggedIn,
 			openMenu,
             user,
@@ -166,7 +171,7 @@ class App extends Component {
 
         let role = user.roles ? user.roles[0] : '';
 
-		let HideHeader = isLoggedIn ? <Header blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
+		let HideHeader = isLoggedIn ? <Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
 
 		return (
 			<HashRouter>

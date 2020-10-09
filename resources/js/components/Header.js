@@ -134,8 +134,7 @@ class Header extends Component {
 			cursor: 'pointer'
         };
 
-        let { isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors } = this.props;
-
+        let { anchorEl, isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors } = this.props;
 
         let dropdownOptions = '<div></div>';
         if(blogAuthors && blogAuthors.length>0){
@@ -174,6 +173,7 @@ class Header extends Component {
 		            </IconButton>
 		            <Menu
 		                id="long-menu"
+                  		anchorEl={anchorEl}
 		                keepMounted
 		                open={openMenu}
 		                onClose={handleClose}
