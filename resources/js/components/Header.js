@@ -154,7 +154,7 @@ class Header extends Component {
 		  					style={{ width: 300 }}
 							onChange={this.handleInputChange}
 							renderInput={(params) => 
-								<TextField {...params} label="Search for a writer..." variant="outlined" />
+								<TextField {...params} variant="outlined" />
 							}
 						/>
 					</div>

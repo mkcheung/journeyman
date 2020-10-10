@@ -19,6 +19,7 @@ import TagsList from './TagsList';
 import PostsList from './PostsList';
 import NewPost from './NewPost';
 import ShowPost from './ShowPost';
+import RecentBlog from './RecentBlog';
 import UserBlog from './UserBlog';
 import UserEdit from './UserEdit';
 import SingleTag from './SingleTag';
@@ -39,21 +40,37 @@ class App extends Component {
 		super();
 	}
 
-    componentDidMount() {
+    async componentDidMount() {
         let state = localStorage["appState"];
-        let blogAuthors = localStorage["blogAuthors"];
+
+
+        let blogAuthors = [];
+        let authorRes = await axios.get('/api/users/showAuthors', 
+            {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+        authorRes.data.forEach(function(author){
+            let temp = {};
+            temp['id'] = author.id;
+            temp['name'] = author.name;
+            blogAuthors.push(temp);
+        });
         
-  		if (state && blogAuthors) {
+        if (state && blogAuthors) {
             let AppState = JSON.parse(state);
-            blogAuthors = JSON.parse(localStorage["blogAuthors"]);
-  			this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState, blogAuthors:blogAuthors});
-  		}
+            this.setState({
+                isLoggedIn: AppState.isLoggedIn, 
+                user: AppState, 
+                blogAuthors:blogAuthors
+            });
+        }
     }
 
 	componentDidUpdate(prevProps, prevState) {
 		if (prevState.openMenu !== this.state.openMenu) {
 			let state = localStorage["appState"];
-            let blogAuthors = localStorage["blogAuthors"] ? JSON.parse(localStorage["blogAuthors"]) : [] ;
 
 			if(state) {
                 let AppState = JSON.parse(state);
@@ -61,7 +78,6 @@ class App extends Component {
 					openMenu:this.state.openMenu,
 					isLoggedIn: AppState.isLoggedIn,
 					user: AppState,
-                    blogAuthors:blogAuthors
 		        });
 		    } else {
 		        this.setState({
@@ -113,20 +129,6 @@ class App extends Component {
 
             let { id, name, email, access_token, roles, permissions, rolesAndPermissions, userSpecificPermissions } = loggedInData.data;
 
-            let blogAuthors = [];
-            let usersRes = await axios.get('/api/users', 
-                {
-                    headers: {
-                        'Authorization': 'Bearer '+access_token,
-                        'Accept': 'application/json'
-                    }
-                });
-            usersRes.data.forEach(function(user){
-                let temp = {};
-                temp['id'] = user.id;
-                temp['name'] = user.name;
-                blogAuthors.push(temp);
-            });
 
             let userData = {
                 id,
@@ -143,11 +145,9 @@ class App extends Component {
                 user: userData
             };
             localStorage["appState"] = JSON.stringify(appState);
-            localStorage["blogAuthors"] = JSON.stringify(blogAuthors);
             this.setState({
                 isLoggedIn: appState.isLoggedIn,
                 user: appState.user,
-                blogAuthors:blogAuthors,
                 error: ''
             });
         } else {
@@ -166,26 +166,27 @@ class App extends Component {
 			isLoggedIn,
 			openMenu,
             user,
-            blogAuthors 
+            blogAuthors,
 		} = this.state;
 
         let role = user.roles ? user.roles[0] : '';
 
-		let HideHeader = isLoggedIn ? <Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
+		// let HideHeader = isLoggedIn ? <Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
 
 		return (
 			<HashRouter>
-				{HideHeader}
+				<Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> 
 					<Switch>
-						<Route exact path='/' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} userRole={role}/>)} />
+                        <Route exact path='/' component={RecentBlog} />
+						<Route exact path='/login' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} userRole={role}/>)} />
 						<Route exact path='/register' component={Register}/>
+                        <Route exact path='/user/getPosts/:id' component={UserBlog} />
+                        <Route exact path='/post' component={PostsList} />
+                        <Route exact path='/post/show/:id' component={ShowPost} />
                         <ProtectedRoute exact path='/adminDashboard' perform="admins-only" component={AdminDashboard}/>
 						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
-						<ProtectedRoute exact path='/post' perform="post-list" component={PostsList} />
 						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
                         <ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
-                        <ProtectedRoute exact path='/post/show/:id' perform="post-list" component={ShowPost} />
-                        <ProtectedRoute exact path='/user/getPosts/:id' perform="post-list" component={UserBlog} />
                         <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" component={UserEdit} />
 						<ProtectedRoute exact path='/tag' perform="tag-list" component={TagsList} />
 						<ProtectedRoute exact path='/tag/create' perform="tag-create" component={NewTag} />

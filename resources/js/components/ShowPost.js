@@ -83,24 +83,18 @@ class ShowPost extends Component {
 
             if(postId !== null){
 
-                let postObj = await axios.get('/api/posts/getUserPosts', 
+                let postObj = await axios.get(`/api/posts/show/${postId}`, 
                 {
                     headers: {
-                        'Authorization': 'Bearer '+this.state.token,
                         'Accept': 'application/json'
-                    },
-                    params: {
-                        userId: appState.user.id
                     }
                 });
 
-
                 let postData = postObj.data;
-                console.log(postData);
 
-                newState['title'] = postData[0]['title'];
-                newState['content'] = postData[0]['content'];
-                newState['post_id'] = postData[0]['id'];
+                newState['title'] = postData['title'];
+                newState['content'] = postData['content'];
+                newState['post_id'] = postData['id'];
 
             }
             this.setState(newState);

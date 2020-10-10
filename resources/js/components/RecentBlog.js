@@ -12,59 +12,42 @@ import {
 } from '@material-ui/core';
 
 
-class UserBlog extends Component {
+class RecentBlog extends Component {
 
     state = {
-        loading: true,
-        post_id: [],
-		user: {},
-		posts: []
+        recentPosts:[]
     };
 
 
-	async componentWillReceiveProps(nextProps) {
-		if (nextProps.match.params.id !== this.state.user.id) {
-			await this.loadData(nextProps.match.params.id);
-		}
-	}
-
     async componentDidMount () {
-
-        const userId = (this.props.match.params.id) ? this.props.match.params.id : null;
-        await this.loadData(userId);
+        await this.loadData();
     }
 
-    loadData = async (userId) => {
+    loadData = async () => {
 
-        let userObj = await axios.get('/api/users/showUserBlogPosts', 
+        let recentPostRes = await axios.get('/api/posts/getRecentPosts', 
         {
-        	headers: {
+            headers: {
                 'Accept': 'application/json'
-            },
-            params: {
-                userId: userId
             }
         });
 
-	    let userData = userObj.data;
+	    let posts = recentPostRes.data;
         this.setState({
-            loading:false,
-            user:userData[0],
-            posts:userData[0]['posts']
+            recentPosts:posts
         });
 	}
 
 	render() {
 
 		let { 
-			posts,
-			user 
+            recentPosts 
 		} = this.state;
 	    
 	    return (
 			<div className="container">
                 {
-                    posts && posts.map(post => (
+                    recentPosts && recentPosts.map(post => (
                 	<div key={`userpost-${post.id}`}>
 	                    <h2>
 							<Link
@@ -74,7 +57,7 @@ class UserBlog extends Component {
 								{post.title}
 							</Link>
 	        			</h2>
-	        			Author: {user.name}
+	        			Author: {post.user.name}
 	        			<br/>
 	        			Posted: {post.created_at}
 	            		<hr/>
@@ -84,4 +67,4 @@ class UserBlog extends Component {
 		)
 	}
 }
-export default withRouter(UserBlog)
+export default withRouter(RecentBlog)

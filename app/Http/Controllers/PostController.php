@@ -15,10 +15,10 @@ class PostController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:post-list', ['only' => ['index', 'show', 'getUserPosts']]);
-         $this->middleware('permission:post-create', ['only' => ['create','store']]);
-         $this->middleware('permission:post-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:post-delete', ['only' => ['destroy']]);
+        $this->middleware('auth', ['except' => ['index', 'getUserPosts', 'getRecentPosts', 'show']]);
+        $this->middleware('permission:post-create', ['only' => ['create','store']]);
+        $this->middleware('permission:post-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:post-delete', ['only' => ['destroy']]);
     }
     
     public function index()
@@ -30,7 +30,13 @@ class PostController extends Controller
     public function getUserPosts(Request $request)
     {
         $userId = $request->query('userId');
-        $posts = Post::where('user_id', '=', $userId)->with('user')->get();
+        $posts = Post::where('user_id', '=', $userId)->with('user')->orderBy('created_at')->get();
+        return $posts->toJson();
+    }
+
+    public function getRecentPosts(Request $request)
+    {
+        $posts = Post::with('user')->limit(10)->get();
         return $posts->toJson();
     }
 

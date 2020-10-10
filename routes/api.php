@@ -14,6 +14,12 @@ use Illuminate\Http\Request;
 */
 
 Route::resource('roles', 'RoleController');
+Route::get('users/showUserBlogPosts', 'UserController@showUserBlogPosts');
+Route::get('users/showAuthors', 'UserController@showAuthors');
+Route::get('posts/', 'PostController@index');
+Route::get('posts/getRecentPosts', 'PostController@getRecentPosts');
+Route::get('posts/getUserPosts', 'PostController@getUserPosts');
+Route::get('posts/show/{id}', 'PostController@show');
 Route::group([
     'prefix' => 'auth'
 ], function () {
@@ -46,9 +52,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('citations', 'CitationController');
     Route::resource('categories', 'CategoryController');
     Route::resource('comments', 'CommentController');
-    Route::get('posts/getUserPosts', 'PostController@getUserPosts');
     Route::resource('posts', 'PostController');
     Route::resource('tags', 'TagController');
-    Route::get('users/showUserBlogPosts', 'UserController@showUserBlogPosts');
     Route::resource('users', 'UserController');
 });
