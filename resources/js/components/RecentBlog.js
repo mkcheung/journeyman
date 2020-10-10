@@ -4,12 +4,14 @@ import Header from './Header';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import {withRouter} from 'react-router';
+import parse from 'html-react-parser';
 import { 
 	Box,
 	Container,
 	Grid,
-	Paper
+	Paper,
 } from '@material-ui/core';
+import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
 
 class RecentBlog extends Component {
@@ -43,7 +45,7 @@ class RecentBlog extends Component {
 		let { 
             recentPosts 
 		} = this.state;
-	    
+
 	    return (
 			<div className="container">
                 {
@@ -56,6 +58,12 @@ class RecentBlog extends Component {
 							>
 								{post.title}
 							</Link>
+							<HTMLEllipsis
+								unsafeHTML={post.content}
+								maxLine='3'
+								ellipsis='...'
+								basedOn='letters'
+							/>
 	        			</h2>
 	        			Author: {post.user.name}
 	        			<br/>

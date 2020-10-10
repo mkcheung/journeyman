@@ -10,6 +10,7 @@ import {
 	Grid,
 	Paper
 } from '@material-ui/core';
+import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
 
 class UserBlog extends Component {
@@ -73,6 +74,12 @@ class UserBlog extends Component {
 							>
 								{post.title}
 							</Link>
+							<HTMLEllipsis
+								unsafeHTML={post.content}
+								maxLine='3'
+								ellipsis='...'
+								basedOn='letters'
+							/>
 	        			</h2>
 	        			Author: {user.name}
 	        			<br/>
