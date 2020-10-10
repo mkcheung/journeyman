@@ -19,7 +19,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
 import { fade, withStyles } from '@material-ui/core/styles';
-const navOps = [
+
+const navOpsLoggedIn = [
     {
         name: 'Dashboard',
         route: '/dashboard'
@@ -37,6 +38,13 @@ const navOps = [
         route: '/post'
     },
 ];
+const navOpsLoggedOut = [
+    {
+        name: 'Home',
+        route: '/'
+    },
+];
+
 const ITEM_HEIGHT = 48;
 
 const styles = theme => ({
@@ -136,6 +144,14 @@ class Header extends Component {
 
         let { anchorEl, isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors } = this.props;
 
+        let navOps = [];
+        
+        if(isLoggedIn){
+        	navOps = navOpsLoggedIn;
+        } else {
+        	navOps = navOpsLoggedOut;
+        }
+
         let dropdownOptions = '<div></div>';
         if(blogAuthors && blogAuthors.length>0){
 	        dropdownOptions =
@@ -190,11 +206,18 @@ class Header extends Component {
 			                </MenuItem>
 			            ))}
 			            {!isLoggedIn ?
-			                <MenuItem key={'login'}>
-			                    <Link to="/login">
-			                        Login
-			                    </Link> | <Link to="/register">Register</Link>
-			                </MenuItem>
+			            	<div>
+				                <MenuItem key={'login'}>
+				                    <Link to="/login">
+				                        Login
+				                    </Link>  
+				                </MenuItem>
+				                <MenuItem key={'register'}>
+				                	<Link to="/register">
+				                		Register
+				                	</Link>
+				                </MenuItem>
+			                </div>
 			            :   <MenuItem key={'logout'}>
 			                    <MUILINK href="#" onClick={this.handleLogOut}>
 			                        Logout
