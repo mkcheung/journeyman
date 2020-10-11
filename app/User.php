@@ -46,7 +46,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['avatar_url'];
+    protected $appends = [
+        'avatar_url',
+        'full_name'
+    ];
  
  
     public function posts()
@@ -62,5 +65,10 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         return Storage::url('avatars/'.$this->id.'/'.$this->avatar);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return ($this->first_name.' '.$this->last_name);    
     }
 }

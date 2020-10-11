@@ -51,13 +51,14 @@ class App extends Component {
                     'Accept': 'application/json'
                 }
             });
+
         authorRes.data.forEach(function(author){
             let temp = {};
             temp['id'] = author.id;
-            temp['name'] = author.name;
+            temp['full_name'] = author.full_name;
             blogAuthors.push(temp);
         });
-        
+
         if (state && blogAuthors) {
             let AppState = JSON.parse(state);
             this.setState({

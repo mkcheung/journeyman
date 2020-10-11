@@ -153,13 +153,13 @@ class AdminDashboard extends Component {
 	        							<List component="div" disablePadding style={{width: '100%'}}>
 	        								{ allUsers && allUsers.map(allUser => (
 												<ListItem button 
-														key={allUser.name}>
+														key={allUser.full_name}>
 													<Link
 														className='list-group-item list-group-item-action d-flex justify-content-between align-items-center'
 														to={`/user/edit/${allUser.id}`}
 														key={allUser.id}
 													>
-														{allUser.name}
+														{allUser.full_name}
 													</Link>
 												</ListItem>
 	        									))}

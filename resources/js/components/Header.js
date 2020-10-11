@@ -166,7 +166,7 @@ class Header extends Component {
 								input: classes.inputInput,
 							}}
 							options={blogAuthors}
-		  					getOptionLabel={(blogAuthor) => blogAuthor.name}
+		  					getOptionLabel={(blogAuthor) => blogAuthor.full_name}
 		  					style={{ width: 300 }}
 							onChange={this.handleInputChange}
 							renderInput={(params) => 

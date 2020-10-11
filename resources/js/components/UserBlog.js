@@ -81,7 +81,7 @@ class UserBlog extends Component {
 								basedOn='letters'
 							/>
 	        			</h2>
-	        			Author: {user.name}
+	        			Author: {user.full_name}
 	        			<br/>
 	        			Posted: {post.created_at}
 	            		<hr/>

@@ -91,13 +91,6 @@ class Login extends Component {
                         </button>
 
                     </form>
-
-                    <Link style={styles.link} to="/register">
-
-                        Register
-
-                    </Link>
-
                 </div>
 
             </div>

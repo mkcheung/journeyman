@@ -65,7 +65,7 @@ class RecentBlog extends Component {
 								basedOn='letters'
 							/>
 	        			</h2>
-	        			Author: {post.user.name}
+	        			Author: {post.user.full_name}
 	        			<br/>
 	        			Posted: {post.created_at}
 	            		<hr/>
