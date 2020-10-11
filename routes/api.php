@@ -48,6 +48,7 @@ Route::group([
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::get('books/searchByTitle', 'BookController@searchByTitle');
+    Route::get('books/showUserBooks', 'BookController@showUserBooks');
     Route::resource('books', 'BookController');
     Route::resource('citations', 'CitationController');
     Route::resource('categories', 'CategoryController');

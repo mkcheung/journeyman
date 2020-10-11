@@ -26,16 +26,20 @@ const navOpsLoggedIn = [
         route: '/dashboard'
     },
     {
+        name: 'Posts',
+        route: '/post'
+    },
+    {
+        name: 'Books',
+        route: '/book/getUserBooks'
+    },
+    {
         name: 'Categories',
         route: '/category'
     },
     {
         name: 'Tags',
         route: '/tag'
-    },
-    {
-        name: 'Posts',
-        route: '/post'
     },
 ];
 const navOpsLoggedOut = [
@@ -152,7 +156,7 @@ class Header extends Component {
         	navOps = navOpsLoggedOut;
         }
 
-        let dropdownOptions = '<div></div>';
+        let dropdownOptions = '';
         if(blogAuthors && blogAuthors.length>0){
 	        dropdownOptions =
 		        <div className={classes.titleAndUserSelect}> 

@@ -25,6 +25,7 @@ import UserEdit from './UserEdit';
 import SingleTag from './SingleTag';
 import NewCategory from './NewCategory';
 import CategoriesList from './CategoriesList';
+import UserBookList from './UserBookList';
 
 class App extends Component {
     state = {
@@ -191,6 +192,7 @@ class App extends Component {
                         <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" component={UserEdit} />
 						<ProtectedRoute exact path='/tag' perform="tag-list" component={TagsList} />
 						<ProtectedRoute exact path='/tag/create' perform="tag-create" component={NewTag} />
+                        <ProtectedRoute exact path='/book/getUserBooks' perform="book-list" component={UserBookList} />
 						<ProtectedRoute exact path='/category' perform="category-list" component={CategoriesList} />
 						<ProtectedRoute exact path='/category/create' perform="category-create" component={NewCategory} />
 						<ProtectedRoute exact path='/:id' perform="post-list" component={SingleTag} />

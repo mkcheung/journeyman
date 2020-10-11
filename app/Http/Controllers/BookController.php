@@ -9,11 +9,12 @@ class BookController extends Controller
 {
     function __construct()
     {
-         $this->middleware('permission:book-list');
+         $this->middleware('permission:book-list', ['only' => ['index','show','showUserBooks']]);
          $this->middleware('permission:book-create', ['only' => ['create','store']]);
          $this->middleware('permission:book-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:book-delete', ['only' => ['destroy']]);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -22,6 +23,13 @@ class BookController extends Controller
     public function index()
     {
         $books = Book::get();
+        return $books->toJson();
+    }
+
+    public function showUserBooks(Request $request)
+    {
+        $userId = $request->query('userId');
+        $books = Book::where('user_id', '=', $userId)->with('citations')->get();
         return $books->toJson();
     }
 
