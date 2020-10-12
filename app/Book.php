@@ -38,10 +38,10 @@ class Book extends Model
     public function getAuthorFullNameAttribute()
     {
     	$author_full_name = '';
-    	if($this->author_middle){
-    		$author_full_name = $this->author_first_name.' '.$this->author_middle.' '.$this->last_name;
+    	if(is_nulL($this->author_middle) || empty($this->author_middle)){
+    		$author_full_name = $this->author_first_name.' '.' '.$this->author_last_name;
     	} else {
-    		$author_full_name = $this->author_first_name.' '.' '.$this->last_name;
+    		$author_full_name = $this->author_first_name.' '.$this->author_middle.' '.$this->author_last_name;
     	}
 
         return $author_full_name;    

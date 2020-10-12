@@ -7,6 +7,7 @@ import { withRouter } from "react-router";
 import { 
 	Collapse,
 	Container,
+	Divider,
 	Grid,
 	List,
 	ListItem,
@@ -104,13 +105,21 @@ class UserBookList extends Component {
 			listOfBooks = 
 				<List component="nav" aria-label="main mailbox folders">
 					{books.map(book => (
-						<ListItem
-							key={`book-${book.id}`}
-							button
-							onClick={(event) => this.handleBookListClick(event, book.id)}
-						>
-							{book.title}
-						</ListItem>
+							<ListItem
+								key={`book-${book.id}`}
+								button
+								onClick={(event) => this.handleBookListClick(event, book.id)}
+								style={{height:'75px'}}
+							>
+								<div>
+									<u>
+										<strong>
+											{book.title}
+										</strong>
+									</u><br/>
+									By: {book.author_full_name}
+								</div>
+							</ListItem>
 					))}
 				</List>
 		}
@@ -120,11 +129,21 @@ class UserBookList extends Component {
 	        citationsFromBook =
 				<List component="nav" style={{height:'85%', overflow:'scroll'}} aria-label="secondary mailbox folder">
 					{selectedBookCitations.map(selectedBookCitation => (
-						<ListItem 
-							key={`selectedBookCitation-${selectedBookCitation.id}`}
-						>
-							{selectedBookCitation.content}
-						</ListItem>
+						<div>
+							<div>
+								<u>
+									<strong>
+										Page:{selectedBookCitation.page}
+									</strong>
+								</u>
+							</div>
+							<ListItem 
+								key={`selectedBookCitation-${selectedBookCitation.id}`}
+							>
+								"{selectedBookCitation.content}"
+							</ListItem>
+							<Divider />
+						</div>
 					))}
 				</List>
         }
