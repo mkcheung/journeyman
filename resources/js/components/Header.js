@@ -160,9 +160,6 @@ class Header extends Component {
         if(blogAuthors && blogAuthors.length>0){
 	        dropdownOptions =
 		        <div className={classes.titleAndUserSelect}> 
-					<Typography variant="h6" noWrap className={classes.title}>
-						Phronesis Project
-					</Typography>
 					<div className={classes.search}>
 						<Autocomplete
 							classes={{
@@ -230,6 +227,9 @@ class Header extends Component {
 			            }
 		          	</Menu>
 					{dropdownOptions}
+					<Typography variant="h6" noWrap className={classes.title}>
+						Phronesis Project
+					</Typography>
         		</Toolbar>
 			</AppBar>
         );

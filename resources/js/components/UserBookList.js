@@ -118,7 +118,7 @@ class UserBookList extends Component {
         let citationsFromBook = '';
         if(selectedBookCitations && selectedBookCitations.length>0){
 	        citationsFromBook =
-				<List component="nav" aria-label="secondary mailbox folder">
+				<List component="nav" style={{height:'85%', overflow:'scroll'}} aria-label="secondary mailbox folder">
 					{selectedBookCitations.map(selectedBookCitation => (
 						<ListItem 
 							key={`selectedBookCitation-${selectedBookCitation.id}`}
