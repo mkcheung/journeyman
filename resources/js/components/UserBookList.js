@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, {Component} from 'react'
 import Header from './Header';
+import  BookUploadModal  from './BookUploadModal';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
@@ -27,7 +28,28 @@ class UserBookList extends Component {
 		books: [],
 		user: {},
 		selectedBookCitations: [],
+		modalOpen: false,
+        jsonFile: {},
+        pages:null,
+        bookTitle:'',
+        author_first_name:'',
+        author_middle:'',
+        author_last_name:''
     };
+
+    constructor(){
+        super();
+        this.fileReader = new FileReader();
+
+        this.fileReader.onload = (event) => {
+			let jsonFile = JSON.parse(event.target.result);
+			let bookTitle = jsonFile.title;
+            this.setState({ 
+            	jsonFile: jsonFile,
+            	bookTitle: bookTitle
+            });
+        };
+    }
 
     async componentDidMount () {
 		let state = localStorage["appState"];
@@ -52,10 +74,85 @@ class UserBookList extends Component {
         	selectedBookCitations
         } = this.state;
 
-        if (prevState.selectedBookCitations != selectedBookCitations) {
+        if ((prevState.selectedBookCitations != selectedBookCitations) || (prevState.loading != loading)) {
             await this.loadData();
         }
     }
+
+	handleOpen = async () => {
+		this.setState({ modalOpen:true });
+	};
+
+	handleClose = async () => {
+		this.setState({ modalOpen:false });
+	};
+
+    onFilesChange = (files) => {
+        console.log(files);
+    }
+
+    onFilesError = (error, file) => {
+        console.log('error code ' + error.code + ': ' + error.message)
+    }
+
+	handleSubmit = async () => {
+
+        const { history } = this.props
+        const { 
+        	jsonFile, 
+        	pages, 
+        	user,
+	        author_first_name,
+	        author_middle,
+	        author_last_name
+        } = this.state;
+
+        let data = {
+        	jsonFile, 
+        	pages,
+        	userId: user.id, 
+	        author_first_name,
+	        author_middle,
+	        author_last_name,
+        }
+
+		axios.post('/api/books', { 
+        	data 
+        },
+        {   
+        	headers: {
+                'Authorization': 'Bearer '+this.state.token,
+                'Accept': 'application/json'
+            },
+        })
+		.then(response => {
+			swal("Done!", "Book Citations Uploaded!", "success");
+            this.setState({
+                loading: true,
+                jsonFile: {},
+			    author_first_name:'',
+			    author_middle:'',
+			    author_last_name:''
+
+            });
+			this.handleClose();
+		})
+		.catch(error => {
+			this.setState({
+		    	errors: error.response.data.errors
+			});
+		});
+	};
+
+	handleFieldChange = async (event) => {
+
+		let { state, pages } = this.state;
+		pages = event.target.value
+		this.setState({
+            [event.target.id]: event.target.value,
+			pages:pages
+		});
+	}
 
     handleBookListClick = (event, bookId) => {
 		event.preventDefault();
@@ -105,6 +202,7 @@ class UserBookList extends Component {
 			listOfBooks = 
 				<List component="nav" aria-label="main mailbox folders">
 					{books.map(book => (
+						<div key={`citationSource-${book.id}`}>
 							<ListItem
 								key={`book-${book.id}`}
 								button
@@ -120,6 +218,8 @@ class UserBookList extends Component {
 									By: {book.author_full_name}
 								</div>
 							</ListItem>
+							<Divider />
+						</div>
 					))}
 				</List>
 		}
@@ -129,7 +229,7 @@ class UserBookList extends Component {
 	        citationsFromBook =
 				<List component="nav" style={{height:'85%', overflow:'scroll'}} aria-label="secondary mailbox folder">
 					{selectedBookCitations.map(selectedBookCitation => (
-						<div>
+						<div key={`selectedBookCitation-${selectedBookCitation.id}`}>
 							<div>
 								<u>
 									<strong>
@@ -137,9 +237,7 @@ class UserBookList extends Component {
 									</strong>
 								</u>
 							</div>
-							<ListItem 
-								key={`selectedBookCitation-${selectedBookCitation.id}`}
-							>
+							<ListItem>
 								"{selectedBookCitation.content}"
 							</ListItem>
 							<Divider />
@@ -152,13 +250,36 @@ class UserBookList extends Component {
 	    	<Container maxWidth="lg">
 		      	<Grid container spacing={3}>
 			        <Grid item xs={12}>
-						<div className='card-header'>Books</div>
+						<div className='card-header'>
+						Books
+						<button style={{float:'right'}} type="button" onClick={this.handleOpen}>
+							Upload Citations
+						</button>
+						</div>
 			        </Grid>
 			        <Grid item xs={6}>
 			        	{listOfBooks}
 			        </Grid>
 			        <Grid item xs={6}>
 			        	{citationsFromBook}
+			        </Grid>
+			        <Grid item xs={12}>
+		        		<BookUploadModal 
+		        			bookTitle={this.state.bookTitle} 
+		        			author_first_name={this.state.author_first_name} 
+		        			author_middle={this.state.author_middle} 
+		        			author_last_name={this.state.author_last_name} 
+		        			handleFieldChange={this.handleFieldChange} 
+		        			pages={this.state.pages} 
+		        			modalOpen={this.state.modalOpen} 
+		        			fileReader={this.fileReader} 
+		        			token={this.state.token} 
+		        			handleSubmit={this.handleSubmit} 
+		        			handleClose={this.handleClose} 
+		        			onFilesChange={this.onFilesChange} 
+		        			onFilesError={this.onFilesError} 
+		        			handleOpen={this.handleOpen} 
+		        		/>
 			        </Grid>
 		        </Grid>
 		    </Container>

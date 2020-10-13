@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use App\Citation;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -51,14 +52,39 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        $bookData = $request->get('data');
+
+        $pagesInBook = $bookData['pages'] ? $bookData['pages'] : '';
+        $author_first_name = $bookData['author_first_name'] ? $bookData['author_first_name'] : '';
+        $author_middle = $bookData['author_middle'] ? $bookData['author_middle'] : '';
+        $author_last_name = $bookData['author_last_name'] ? $bookData['author_last_name'] : '';
+        $userId = $bookData['userId'];
+        $bookTitle = $bookData['jsonFile']['title'];
+        $bookCitations = $bookData['jsonFile']['highlights'];
+        $citationsToCreate = [];
+        $now = \Carbon\Carbon::now();
 
         $book = Book::create([
-          'title' => $request['title'],
-          'author' => $request['author'],
-          'pages' => $request['pages']
+            'title' => $bookTitle,
+            'user_id' => $userId,
+            'author_first_name' => $author_first_name,
+            'author_middle' => $author_middle,
+            'author_last_name' => $author_last_name,
+            'pages' => (int)$pagesInBook
         ]);
 
-        return response()->json('Book created!');
+        foreach($bookCitations as $bookCitation){
+            $citationsToCreate[] = [
+                'book_id' => $book->id,
+                'content' => $bookCitation['text'],
+                'page' => $bookCitation['location']['value'],
+                'created_at' => $now,
+                'updated_at' => $now
+            ];
+        }
+        $results = Citation::insert($citationsToCreate);
+
+        return response()->json([]);
     }
 
     public function show($id)
