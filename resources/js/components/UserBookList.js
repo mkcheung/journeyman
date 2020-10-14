@@ -2,14 +2,17 @@ import axios from 'axios'
 import React, {Component} from 'react'
 import Header from './Header';
 import  BookUploadModal  from './BookUploadModal';
+import  AddChapterModal  from './AddChapterModal';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { 
+	Button,
 	Collapse,
 	Container,
 	Divider,
 	Grid,
+	IconButton,
 	List,
 	ListItem,
 	ListItemIcon,
@@ -17,6 +20,8 @@ import {
 	Paper
 } from '@material-ui/core';
 import { 
+	AddToQueue as AddToQueueIcon,
+	CloudUpload as CloudUploadIcon,
 	ExpandLess,
 	ExpandMore,
 } from '@material-ui/icons';
@@ -34,7 +39,14 @@ class UserBookList extends Component {
         bookTitle:'',
         author_first_name:'',
         author_middle:'',
-        author_last_name:''
+        author_last_name:'',
+        bookTitleForChInput:'',
+        bookIdForChInput:null,
+		chapterModalOpen: false,
+		chapterNum:null,
+		chapterTitle:'',
+		chapterPageBegin:null,
+		chapterPageEnd:null,
     };
 
     constructor(){
@@ -83,8 +95,22 @@ class UserBookList extends Component {
 		this.setState({ modalOpen:true });
 	};
 
+	handleOpenChapterInput = async (bookId) => {
+		const { books } = this.state;
+		let selectedBook = books.find(book => book.id === bookId);
+
+		this.setState({ 
+			bookTitleForChInput: selectedBook['title'],
+			bookIdForChInput: selectedBook['id'],
+			chapterModalOpen:true, 
+		});
+	};
+
 	handleClose = async () => {
-		this.setState({ modalOpen:false });
+		this.setState({
+			modalOpen:false,
+			chapterModalOpen:false,
+		});
 	};
 
     onFilesChange = (files) => {
@@ -130,9 +156,10 @@ class UserBookList extends Component {
             this.setState({
                 loading: true,
                 jsonFile: {},
-			    author_first_name:'',
-			    author_middle:'',
-			    author_last_name:''
+			    author_first_name: '',
+			    author_middle: '',
+			    author_last_name: '',
+            	bookTitle: ''
 
             });
 			this.handleClose();
@@ -143,6 +170,52 @@ class UserBookList extends Component {
 			});
 		});
 	};
+
+	handleChapterSubmit = async () => {
+        const { 
+        	bookIdForChInput,
+        	chapterPageBegin,
+        	chapterPageEnd,
+        	chapterTitle,
+        	chapterNum,
+        	token
+        } = this.state;
+
+        let data = {
+        	bookIdForChInput,
+        	chapterPageBegin,
+        	chapterPageEnd,
+        	chapterTitle,
+        	chapterNum
+        }
+
+		axios.post('/api/chapters', { 
+        	data 
+        },
+        {   
+        	headers: {
+                'Authorization': 'Bearer '+token,
+                'Accept': 'application/json'
+            },
+        })
+        .then(response => {
+			swal("Done!", "Chapter Added!", "success");
+            this.setState({
+			    bookIdForChInput: null,
+			    chapterPageBegin: null,
+			    chapterPageEnd: null,
+			    chapterTitle: '',
+            	chapterNum: null
+
+            });
+			this.handleClose();
+		})
+		.catch(error => {
+			this.setState({
+		    	errors: error.response.data.errors
+			});
+		});
+	}
 
 	handleFieldChange = async (event) => {
 
@@ -217,6 +290,9 @@ class UserBookList extends Component {
 									</u><br/>
 									By: {book.author_full_name}
 								</div>
+								<IconButton style={{float:'right', marginTop:'-6px'}} onClick={()=>this.handleOpenChapterInput(book.id)}>
+									<AddToQueueIcon />
+								</IconButton>
 							</ListItem>
 							<Divider />
 						</div>
@@ -251,10 +327,10 @@ class UserBookList extends Component {
 		      	<Grid container spacing={3}>
 			        <Grid item xs={12}>
 						<div className='card-header'>
-						Books
-						<button style={{float:'right'}} type="button" onClick={this.handleOpen}>
-							Upload Citations
-						</button>
+							Books
+							<Button style={{float:'right', marginTop:'-6px'}} startIcon={<CloudUploadIcon />} onClick={this.handleOpen}>
+								Upload Citations
+							</Button>
 						</div>
 			        </Grid>
 			        <Grid item xs={6}>
@@ -279,6 +355,20 @@ class UserBookList extends Component {
 		        			onFilesChange={this.onFilesChange} 
 		        			onFilesError={this.onFilesError} 
 		        			handleOpen={this.handleOpen} 
+		        		/>
+			        </Grid>
+			        <Grid item xs={12}>
+		        		<AddChapterModal 
+		        			bookTitleForChInput={this.state.bookTitleForChInput} 
+		        			bookIdForChInput={this.state.bookIdForChInput} 
+		        			handleFieldChange={this.handleFieldChange} 
+		        			chapterModalOpen={this.state.chapterModalOpen} 
+		        			chapterNum={this.state.chapterNum}
+		        			chapterPageBegin={this.state.chapterPageBegin}
+		        			chapterPageEnd={this.state.chapterPageEnd} 
+		        			chapterTitle={this.state.chapterTitle} 
+		        			handleChapterSubmit={this.handleChapterSubmit} 
+		        			handleClose={this.handleClose} 
 		        		/>
 			        </Grid>
 		        </Grid>

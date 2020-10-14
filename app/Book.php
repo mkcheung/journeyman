@@ -20,6 +20,11 @@ class Book extends Model
         'author_full_name'
     ];
  
+    public function chapters()
+    {
+        return $this->hasMany(Chapter::class, 'book_id');
+    }
+ 
     public function citations()
     {
         return $this->hasMany(Citation::class, 'book_id');

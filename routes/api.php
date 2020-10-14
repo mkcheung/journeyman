@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('books', 'BookController');
     Route::resource('citations', 'CitationController');
     Route::resource('categories', 'CategoryController');
+    Route::resource('chapters', 'ChapterController');
     Route::resource('comments', 'CommentController');
     Route::resource('posts', 'PostController');
     Route::resource('tags', 'TagController');
