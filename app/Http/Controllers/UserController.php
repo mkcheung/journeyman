@@ -25,7 +25,9 @@ class UserController extends Controller
     public function showUserBlogPosts(Request $request)
     {
         $userId = $request->query('userId');
-        $userPosts = User::where('id', '=', $userId)->with('posts')->get();
+        $userPosts = User::where('id', '=', $userId)->with(['posts' => function ($query) {
+            $query->where('published', '=', 1);
+        }])->get();
         return $userPosts->toJson();
     }
 

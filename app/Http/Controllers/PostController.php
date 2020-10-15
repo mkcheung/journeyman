@@ -36,7 +36,7 @@ class PostController extends Controller
 
     public function getRecentPosts(Request $request)
     {
-        $posts = Post::with('user')->limit(10)->get();
+        $posts = Post::where('published', '=', 1)->with('user')->limit(10)->get();
         return $posts->toJson();
     }
 
