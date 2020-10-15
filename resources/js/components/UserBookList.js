@@ -21,7 +21,9 @@ import {
 } from '@material-ui/core';
 import { 
 	AddToQueue as AddToQueueIcon,
+	Bookmarks as BookmarksIcon,
 	CloudUpload as CloudUploadIcon,
+	Delete as DeleteIcon,
 	ExpandLess,
 	ExpandMore,
 } from '@material-ui/icons';
@@ -103,6 +105,60 @@ class UserBookList extends Component {
 			bookTitleForChInput: selectedBook['title'],
 			bookIdForChInput: selectedBook['id'],
 			chapterModalOpen:true, 
+		});
+	};
+
+	assignChapters = async (bookId) => {
+
+		axios.post('/api/citations/assignChapters', { 
+        	bookId 
+        },
+        {   
+        	headers: {
+                'Authorization': 'Bearer '+this.state.token,
+                'Accept': 'application/json'
+            },
+        })
+		.then(response => {
+			swal("Done!", "Citation Chapters Assigned!", "success");
+			this.loadData();
+		})
+		.catch(error => {
+			this.setState({
+		    	errors: error.response.data.errors
+			});
+		});
+	};
+
+	deleteBook = async (bookId) => {
+
+
+		swal({
+			title: "Are you sure?",
+			text: "This will delete the book as well as all citations and chatpers,",
+			icon: "warning",
+			dangerMode: true,
+		})
+		.then(willDelete => {
+
+			if (willDelete) {
+				axios.delete(`/api/books/${bookId}`,
+		        {   
+		        	headers: {
+		                'Authorization': 'Bearer '+this.state.token,
+		                'Accept': 'application/json'
+		            },
+		        })
+				.then(response => {
+					swal("Deleted!", "Book has been deleted!", "success");
+					this.loadData();
+				})
+				.catch(error => {
+					this.setState({
+				    	errors: error.response.data.errors
+					});
+				});
+			}
 		});
 	};
 
@@ -276,24 +332,34 @@ class UserBookList extends Component {
 				<List component="nav" aria-label="main mailbox folders">
 					{books.map(book => (
 						<div key={`citationSource-${book.id}`}>
-							<ListItem
-								key={`book-${book.id}`}
-								button
-								onClick={(event) => this.handleBookListClick(event, book.id)}
-								style={{height:'75px'}}
-							>
-								<div>
-									<u>
-										<strong>
-											{book.title}
-										</strong>
-									</u><br/>
-									By: {book.author_full_name}
-								</div>
-								<IconButton style={{float:'right', marginTop:'-6px'}} onClick={()=>this.handleOpenChapterInput(book.id)}>
+							<div>
+								<ListItem
+									key={`book-${book.id}`}
+									button
+									onClick={(event) => this.handleBookListClick(event, book.id)}
+									style={{height:'75px'}}
+								>
+									<div>
+										<u>
+											<strong>
+												{book.title}
+											</strong>
+										</u><br/>
+										By: {book.author_full_name}
+									</div>
+								</ListItem>
+							</div>
+							<div>
+								<IconButton onClick={()=>this.handleOpenChapterInput(book.id)}>
 									<AddToQueueIcon />
 								</IconButton>
-							</ListItem>
+								<IconButton onClick={()=>this.assignChapters(book.id)}>
+									<BookmarksIcon />
+								</IconButton>
+								<IconButton onClick={()=>this.deleteBook(book.id)}>
+									<DeleteIcon />
+								</IconButton>
+							</div>
 							<Divider />
 						</div>
 					))}

@@ -46,6 +46,12 @@ class CitationController extends Controller
         return response()->json('Citation created!');
     }
 
+
+    public function assignChapters(Request $request)
+    {
+        Citation::placeCitationWithinChapter($request['bookId']);
+    }
+
     /**
      * Display the specified resource.
      *

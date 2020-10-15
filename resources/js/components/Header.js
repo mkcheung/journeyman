@@ -62,7 +62,7 @@ const styles = theme => ({
 		[theme.breakpoints.up('sm')]: {
 			display: 'block',
 		},
-		paddingTop:'12px'
+		paddingTop:'10px'
 	},
 	titleAndUserSelect: {
 		display: 'inherit',
@@ -188,6 +188,9 @@ class Header extends Component {
 		            >
 		                <MenuIcon />
 		            </IconButton>
+					<Typography variant="h6" noWrap>
+						Phronesis Project
+					</Typography>
 		            <Menu
 		                id="long-menu"
                   		anchorEl={anchorEl}
@@ -227,9 +230,6 @@ class Header extends Component {
 			            }
 		          	</Menu>
 					{dropdownOptions}
-					<Typography variant="h6" noWrap className={classes.title}>
-						Phronesis Project
-					</Typography>
         		</Toolbar>
 			</AppBar>
         );

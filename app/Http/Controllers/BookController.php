@@ -132,6 +132,13 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->chapters->each(function($chapter){
+            $chapter->delete();
+        });
+        $book->citations->each(function($citation){
+            $citation->delete();
+        });
+        $book->delete();
+        return;
     }
 }
