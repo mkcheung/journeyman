@@ -6,10 +6,21 @@ import { Link, Redirect } from 'react-router-dom';
 import {withRouter} from 'react-router';
 import { 
 	Box,
+	Button,
+    IconButton,
 	Container,
 	Grid,
-	Paper
+	Paper,
+	Switch
 } from '@material-ui/core';
+import { 
+	ToggleButton
+} from '@material-ui/lab';
+import { 
+	Check as CheckIcon,
+	Delete as DeleteIcon,
+	Edit as EditIcon
+} from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
 
@@ -67,6 +78,74 @@ class Home extends Component {
         });
 	}
 
+    redirectToEdit = async (postId) => {
+
+		this.props.history.push(`/post/edit/${postId}`);
+	}
+
+	deleteBook = async (postId) => {
+		let { user } = this.state;
+    	const userId = user.id;
+
+		swal({
+			title: "Are you sure?",
+			text: "This will delete the blog post.",
+			icon: "warning",
+			dangerMode: true,
+		})
+		.then(willDelete => {
+
+			if (willDelete) {
+				axios.delete(`/api/posts/${postId}`,
+		        {   
+		        	headers: {
+		                'Authorization': 'Bearer '+this.state.token,
+		                'Accept': 'application/json'
+		            },
+		        })
+				.then(response => {
+					swal("Deleted!", "Post deleted!", "success");
+					this.loadData(userId);
+				})
+				.catch(error => {
+					this.setState({
+				    	errors: error.response.data.errors
+					});
+				});
+			}
+		});
+	};
+
+	togglePublished = async (postId, published) => {
+		let { posts, user } = this.state;
+    	const userId = user.id;
+        
+		let post = posts.find(post => post.id === postId);
+		published = !published;
+		published = published ? 1 : 0 ;
+
+        post['published'] = published;
+
+        let successMsg = post.published ? 'published.' : 'set to private.';
+
+        if (postId){
+            let results = await axios.post('/api/posts/'+postId,
+                { 
+                    data: post,
+                    _method: 'patch'                  
+                },
+                {   
+                    headers: {
+                        'Authorization': 'Bearer '+this.state.token,
+                        'Accept': 'application/json'
+                    }
+                }
+            );
+            await this.loadData(userId);
+        } 
+	}
+
+
 	render() {
 
 		let { 
@@ -102,6 +181,22 @@ class Home extends Component {
 	        			Author: {post.user.full_name}
 	        			<br/>
 	        			Posted: {post.created_at}
+	        			<div style={{float:'right', top:'-27px', position:'relative'}}>
+							<Switch
+								checked={post.published === 1 ? true : false}
+								onChange={() => {
+									this.togglePublished(post.id, post.published === 1);
+								}}
+								name="published"
+								inputProps={{ 'aria-label': 'secondary checkbox' }}
+							/>
+							<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
+								<EditIcon style={{color:'white'}} />
+							</Button>
+							<Button style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
+								<DeleteIcon style={{color:'white'}} />
+							</Button>
+	            		</div>
 	            		<hr/>
                 	</div>
                 ))}

@@ -73,7 +73,7 @@ class PostController extends Controller
           'title' => $request['title'],
           'slug' => str_slug($request->title, '-'),
           'content' => $request['content'],
-          'published' => $request['publish'],
+          'published' => $request['published'],
           'category' => $request['category'],
           'user_id' => $request['user_id']
         ]);
@@ -123,7 +123,7 @@ class PostController extends Controller
         $post->title = $data['data']['title'];
         $post->content = $data['data']['content'];
         $post->slug = str_slug($data['data']['title'], '-');
-        $post->published = $data['data']['publish'];
+        $post->published = $data['data']['published'];
         $post->user_id = $data['data']['user_id'];
         $post->save();
         return redirect('posts');
@@ -132,14 +132,13 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        $post = Post::findOrFail($id);
         $post = $post->delete();
-        return redirect('posts');
+        return;
     }
 }
 

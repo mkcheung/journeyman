@@ -42,7 +42,7 @@ class NewPost extends Component {
         title: '',
         selectedTags:[],
         slug:'',
-        publish:false,
+        published:false,
         open: false,
         user: {},
     };
@@ -233,7 +233,7 @@ class NewPost extends Component {
                 newState['title'] = postData['title'];
                 newState['content'] = postData['content'];
                 newState['post_id'] = postData['id'];
-                newState['publish'] = postData['published'] ? true : false;
+                newState['published'] = postData['published'] ? true : false;
 
             }
             this.setState(newState);
@@ -327,7 +327,7 @@ class NewPost extends Component {
             id: this.state.post_id ? this.state.post_id : null,
             title: this.state.title,
             slug: this.state.slug,
-            publish: this.state.publish,
+            published: this.state.published,
             content: this.state.content,
             category_id: this.state.category_id,
             selectedTags: this.state.selectedTags,
@@ -446,9 +446,9 @@ class NewPost extends Component {
                                         <FormControlLabel
                                             control={
                                                 <Checkbox
-                                                    checked={this.state.publish}
+                                                    checked={this.state.published}
                                                     onChange={this.handleChkboxToggle}
-                                                    name="publish"
+                                                    name="published"
                                                     color="primary"
                                                 />
                                             }

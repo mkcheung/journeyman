@@ -135,7 +135,7 @@ class UserBookList extends Component {
 
 		swal({
 			title: "Are you sure?",
-			text: "This will delete the book as well as all citations and chatpers,",
+			text: "This will delete the book as well as all citations and chapters.",
 			icon: "warning",
 			dangerMode: true,
 		})
