@@ -80,7 +80,7 @@ class PostController extends Controller
 
         $post->tags()->sync($selectedTagIds);
 
-        return response()->json('Post created!');
+        return response()->json($post);
     }
 
     /**

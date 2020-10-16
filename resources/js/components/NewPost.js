@@ -159,6 +159,13 @@ class NewPost extends Component {
             await this.loadData(postId);
         }
     }
+
+    async componentWillReceiveProps(nextProps) {
+
+        if (nextProps.match.params.id !== this.state.post_id) {
+            await this.loadData(nextProps.match.params.id);
+        }
+    }
   
     attachQuillRefs = () => {
     // Ensure React-Quill reference is available:
@@ -321,8 +328,6 @@ class NewPost extends Component {
     handleCreateUpdatePost = async (event) => {
         event.preventDefault();
 
-        const { history } = this.props;
-
         const post = {
             id: this.state.post_id ? this.state.post_id : null,
             title: this.state.title,
@@ -360,6 +365,7 @@ class NewPost extends Component {
                 }
             );
             swal("Done!", "Post Created.", "success");
+            this.props.history.push(`/post/edit/${results.data.id}`);
         }
 
     }
