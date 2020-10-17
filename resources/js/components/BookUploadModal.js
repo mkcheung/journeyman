@@ -3,6 +3,7 @@ import Files from 'react-files'
 import { makeStyles } from '@material-ui/core/styles';
 import { 
 	Button,
+	CircularProgress,
 	Container,
 	FormControl,
 	FormHelperText,
@@ -47,9 +48,11 @@ export default function BookUploadModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
 
-  const body = (
-        <Grid container spacing={3}>
-            <div style={modalStyle} className={classes.paper}>
+  let bookLoadingDisplay = '';
+  if(props.modalLoading == true){
+  	bookLoadingDisplay = <CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />;
+  } else {
+  	bookLoadingDisplay = <div style={modalStyle} className={classes.paper}>
 				<h2 id="simple-modal-title">Add New Book and Citations</h2>
 				<form noValidate autoComplete="off">
 					
@@ -108,7 +111,12 @@ export default function BookUploadModal(props) {
 					</Grid>
 					<br/>
 				</form>
-			</div>
+			</div>;
+  }
+
+  const body = (
+        <Grid container spacing={3}>
+            {bookLoadingDisplay}
 	    </Grid>
   );
 

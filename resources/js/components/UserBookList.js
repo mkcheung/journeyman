@@ -33,6 +33,7 @@ import { makeStyles } from '@material-ui/core/styles';
 class UserBookList extends Component {
     state = {
         loading: true,
+        modalLoading:false,
 		books: [],
 		user: {},
 		selectedBookCitations: [],
@@ -86,10 +87,11 @@ class UserBookList extends Component {
     async componentDidUpdate(prevProps, prevState) {
         const {
         	loading,
+        	modalLoading,
         	selectedBookCitations
         } = this.state;
 
-        if ((prevState.selectedBookCitations != selectedBookCitations) || (prevState.loading != loading)) {
+        if ((prevState.selectedBookCitations != selectedBookCitations) || (prevState.loading != loading) || (prevState.modalLoading != modalLoading)) {
             await this.loadData();
         }
     }
@@ -179,6 +181,10 @@ class UserBookList extends Component {
     }
 
 	handleSubmit = async () => {
+
+        await this.setState({
+            modalLoading: true,
+        });
 
         const { history } = this.props
         const { 
@@ -435,7 +441,8 @@ class UserBookList extends Component {
 		        			handleClose={this.handleClose} 
 		        			onFilesChange={this.onFilesChange} 
 		        			onFilesError={this.onFilesError} 
-		        			handleOpen={this.handleOpen} 
+		        			handleOpen={this.handleOpen}
+		        			modalLoading={this.state.modalLoading} 
 		        		/>
 			        </Grid>
 			        <Grid item xs={12}>
