@@ -10,6 +10,7 @@ class Citation extends Model
 
     protected $fillable = [
     	'book_id',
+        'chapter',
     	'content',
     	'page'
     ]; 
@@ -23,7 +24,6 @@ class Citation extends Model
     	$citations = self::select('id', 'book_id', 'page')->where('book_id', '=', $bookId)->get()->toArray();
     	$chapters = Chapter::select('id', 'page_begin', 'page_end', 'chapter_number')->where('book_id', '=', $bookId)->get()->toArray();
 
-
 		foreach($citations as $citation){
 
 			if(is_null($citation['book_id'])){
@@ -36,7 +36,7 @@ class Citation extends Model
 					($citation['page'] >= $chapter['page_begin']) && 
 					($citation['page'] <= $chapter['page_end'])
 				){
-					Citation::find($citation['id'])->update(['chapter_id' => $chapter['id']]);
+					Citation::find($citation['id'])->update(['chapter' => $chapter['chapter_number']]);
 				}
 			}
 		}

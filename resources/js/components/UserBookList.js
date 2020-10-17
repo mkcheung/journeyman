@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 import Header from './Header';
 import  BookUploadModal  from './BookUploadModal';
 import  AddChapterModal  from './AddChapterModal';
+import  ChapterSelectionModal  from './ChapterSelectionModal';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
@@ -36,7 +37,10 @@ class UserBookList extends Component {
         modalLoading:false,
         deleteInProgress:false,
 		books: [],
+		chapters: [],
 		user: {},
+		selectedBookId:null,
+		selectedChapter:null,
 		selectedBookCitations: [],
 		modalOpen: false,
         jsonFile: {},
@@ -48,6 +52,7 @@ class UserBookList extends Component {
         bookTitleForChInput:'',
         bookIdForChInput:null,
 		chapterModalOpen: false,
+		chapterSelectionModalOpen: false,
 		chapterNum:null,
 		chapterTitle:'',
 		chapterPageBegin:null,
@@ -109,6 +114,15 @@ class UserBookList extends Component {
 			bookTitleForChInput: selectedBook['title'],
 			bookIdForChInput: selectedBook['id'],
 			chapterModalOpen:true, 
+		});
+	};
+
+	handleOpenChapterSelectionModal = async (bookId, chapters) => {
+
+		this.setState({ 
+			chapters: chapters,
+			chapterSelectionModalOpen:true, 
+			selectedBookId:bookId
 		});
 	};
 
@@ -174,6 +188,7 @@ class UserBookList extends Component {
 		this.setState({
 			modalOpen:false,
 			chapterModalOpen:false,
+			chapterSelectionModalOpen:false
 		});
 	};
 
@@ -314,6 +329,36 @@ class UserBookList extends Component {
         });
     }
 
+    handleChapterSelect = async (event) => {
+
+		let { 
+			books,
+			selectedBookId
+		} = this.state;
+
+		let selectedChapterId = event.target.value;
+		let bookCitations = '';
+		let citations = [];
+	    for (let key in books) {
+	        if (books[key].id == selectedBookId && books[key].chapters) {
+	            bookCitations = books[key].citations;
+	            break;
+	        }
+	    }
+	    for (let key in bookCitations) {
+
+	        if (bookCitations[key].chapter == selectedChapterId) {
+	            citations.push(bookCitations[key]);
+	        }
+	    }
+
+        this.setState({
+			selectedChapter:selectedChapterId,
+			selectedBookCitations: citations,
+			chapterSelectionModalOpen: false
+        });
+    };
+
 
     loadData = async () => {
 
@@ -348,10 +393,12 @@ class UserBookList extends Component {
 	    
 
 		let listOfBooks = '';
+
         if(books && books.length>0){
 			listOfBooks = 
 				<List component="nav" aria-label="main mailbox folders">
 					{books.map(book => (
+
 						<div key={`citationSource-${book.id}`}>
 							<div>
 								<ListItem
@@ -380,6 +427,7 @@ class UserBookList extends Component {
 								<IconButton onClick={()=>this.deleteBook(book.id)}>
 									<DeleteIcon />
 								</IconButton>
+								{ (book.chapters.length > 0) ? <Button variant="outlined" onClick={()=>this.handleOpenChapterSelectionModal(book.id, book.chapters)} >Chapters</Button> : '' }
 							</div>
 							<Divider />
 						</div>
@@ -471,6 +519,15 @@ class UserBookList extends Component {
 		        			chapterPageEnd={this.state.chapterPageEnd} 
 		        			chapterTitle={this.state.chapterTitle} 
 		        			handleChapterSubmit={this.handleChapterSubmit} 
+		        			handleClose={this.handleClose} 
+		        		/>
+			        </Grid>
+			        <Grid item xs={12}>
+		        		<ChapterSelectionModal 
+		        			chapters={this.state.chapters}
+		        			chapterSelectionModalOpen={this.state.chapterSelectionModalOpen} 
+		        			selectedChapter={this.state.selectedChapter}
+		        			handleChapterSelect={this.handleChapterSelect}
 		        			handleClose={this.handleClose} 
 		        		/>
 			        </Grid>

@@ -14,7 +14,7 @@ class AddChapterToCitations extends Migration
     public function up()
     {
         Schema::table('citations', function (Blueprint $table) {
-            $table->bigInteger('chapter_id')->nullable(true)->after('book_id');
+            $table->bigInteger('chapter')->nullable(true)->after('book_id');
         });
     }
 
@@ -26,7 +26,7 @@ class AddChapterToCitations extends Migration
     public function down()
     {
         Schema::table('citations', function (Blueprint $table) {
-            $table->dropColumn(['chapter_id']);
+            $table->dropColumn(['chapter']);
         });
     }
 }

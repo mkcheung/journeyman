@@ -30,7 +30,7 @@ class BookController extends Controller
     public function showUserBooks(Request $request)
     {
         $userId = $request->query('userId');
-        $books = Book::where('user_id', '=', $userId)->with('citations')->get();
+        $books = Book::where('user_id', '=', $userId)->with('citations')->with('chapters')->get();
         return $books->toJson();
     }
 
