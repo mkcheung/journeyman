@@ -34,6 +34,7 @@ class UserBookList extends Component {
     state = {
         loading: true,
         modalLoading:false,
+        deleteInProgress:false,
 		books: [],
 		user: {},
 		selectedBookCitations: [],
@@ -143,6 +144,10 @@ class UserBookList extends Component {
 			dangerMode: true,
 		})
 		.then(willDelete => {
+
+			this.setState({
+				deleteInProgress:true
+			});
 
 			if (willDelete) {
 				axios.delete(`/api/books/${bookId}`,
@@ -326,6 +331,7 @@ class UserBookList extends Component {
         const books = userBooks.data;
         this.setState({
             loading:false,
+			deleteInProgress:false,
             books: books
         });
         return books;
@@ -335,6 +341,7 @@ class UserBookList extends Component {
 
 		let { 
 			books,
+			deleteInProgress,
 			selectedBookCitations,
 			loading
 		} = this.state;
@@ -409,9 +416,17 @@ class UserBookList extends Component {
 				</List>
         }
 
-	    return (
-	    	<Container maxWidth="lg">
-		      	<Grid container spacing={3}>
+        let generalBookCitationDisplay = '';
+        if(deleteInProgress === true){
+			generalBookCitationDisplay = 
+        		<Grid container spacing={3}>
+			        <Grid item xs={12}>
+			        	<CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />
+			        </Grid>
+		        </Grid>;
+        } else {
+        	generalBookCitationDisplay = 
+        		<Grid container spacing={3}>
 			        <Grid item xs={12}>
 						<div className='card-header'>
 							Books
@@ -459,7 +474,12 @@ class UserBookList extends Component {
 		        			handleClose={this.handleClose} 
 		        		/>
 			        </Grid>
-		        </Grid>
+		        </Grid>;
+        }
+
+	    return (
+	    	<Container maxWidth="lg">
+		      	{generalBookCitationDisplay}
 		    </Container>
 		)
 	}
