@@ -93,13 +93,6 @@ class AuthController extends Controller
 
         $tokenResult = $user->createToken('Personal Access Token');
 
-        // $token = $tokenResult->token;
-
-        // if ($request->remember_me) {
-        //     $token->expires_at = Carbon::now()->addWeeks(1);
-        // }
-
-        // $token->save();
         $userSpecificPermissions = $user->getPermissionNames();
         $userRolePermissions = $user->getPermissionsViaRoles()->pluck('name');
         $roles = $user->getRoleNames();
@@ -115,6 +108,7 @@ class AuthController extends Controller
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
+            'full_name' => $user->full_name,
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'roles' => $roles,

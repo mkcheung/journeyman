@@ -129,12 +129,13 @@ class App extends Component {
 
         if (loggedInData.status == 200) {
 
-            let { id, name, email, access_token, roles, permissions, rolesAndPermissions, userSpecificPermissions } = loggedInData.data;
+            let { id, name, full_name, email, access_token, roles, permissions, rolesAndPermissions, userSpecificPermissions } = loggedInData.data;
 
 
             let userData = {
                 id,
                 name,
+                full_name,
                 email,
                 access_token,
                 roles,
@@ -174,10 +175,9 @@ class App extends Component {
         let role = user.roles ? user.roles[0] : '';
 
 		// let HideHeader = isLoggedIn ? <Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
-
 		return (
 			<HashRouter>
-				<Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> 
+				<Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} userName={user.full_name} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> 
 					<Switch>
                         <Route exact path='/' component={RecentBlog} />
 						<Route exact path='/login' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} userRole={role}/>)} />

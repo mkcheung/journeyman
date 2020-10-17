@@ -8,6 +8,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { 
 	Button,
+	CircularProgress,
 	Collapse,
 	Container,
 	Divider,
@@ -283,15 +284,21 @@ class UserBookList extends Component {
 		});
 	}
 
-    handleBookListClick = (event, bookId) => {
+    handleBookListClick = async (event, bookId) => {
 		event.preventDefault();
+
+        await this.setState({
+            loading: true,
+            selectedBookCitations: []
+        });
+
 		let { 
 			books
 		} = this.state;
 
 		let selectedBook = books.find(book => book.id === bookId);
 
-        this.setState({
+        await this.setState({
             selectedBookCitations: selectedBook.citations
         });
     }
@@ -323,6 +330,7 @@ class UserBookList extends Component {
 		let { 
 			books,
 			selectedBookCitations,
+			loading
 		} = this.state;
 	    
 
@@ -367,7 +375,14 @@ class UserBookList extends Component {
 		}
 
         let citationsFromBook = '';
-        if(selectedBookCitations && selectedBookCitations.length>0){
+        if (loading === true) {
+        	citationsFromBook = 
+				<List >
+					<div style={{verticalAlign: 'top', marginLeft:'3px',marginRight:'3px',marginTop:'50px',position:'relative' }} >
+						<CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />
+					</div>
+				</List>;
+        } else if(loading === false && selectedBookCitations && selectedBookCitations.length>0){
 	        citationsFromBook =
 				<List component="nav" style={{height:'85%', overflow:'scroll'}} aria-label="secondary mailbox folder">
 					{selectedBookCitations.map(selectedBookCitation => (

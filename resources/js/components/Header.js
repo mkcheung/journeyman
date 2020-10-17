@@ -146,7 +146,7 @@ class Header extends Component {
 			cursor: 'pointer'
         };
 
-        let { anchorEl, isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors } = this.props;
+        let { anchorEl, isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors, userName } = this.props;
 
         let navOps = [];
         
@@ -154,7 +154,20 @@ class Header extends Component {
         	navOps = navOpsLoggedIn;
         } else {
         	navOps = navOpsLoggedOut;
+        	userName = '';
         }
+
+
+
+        let loggedInUserName = '';
+        if(userName && userName.length>0){
+			loggedInUserName = 
+				<div style={{marginLeft:'500px', color:'white'}}>
+					<Typography  variant="h6" noWrap>
+						Welcome {userName}!
+					</Typography>
+				</div>;
+		}
 
         let dropdownOptions = '';
         if(blogAuthors && blogAuthors.length>0){
@@ -230,6 +243,7 @@ class Header extends Component {
 			            }
 		          	</Menu>
 					{dropdownOptions}
+					{loggedInUserName}
         		</Toolbar>
 			</AppBar>
         );
