@@ -1,9 +1,9 @@
 import axios from 'axios'
 import React, {Component} from 'react'
 import Header from './Header';
-import  BookUploadModal  from './BookUploadModal';
-import  AddChapterModal  from './AddChapterModal';
-import  ChapterSelectionModal  from './ChapterSelectionModal';
+import BookUploadModal from './BookUploadModal';
+import AddChapterModal from './AddChapterModal';
+import ChapterSelectionModal from './ChapterSelectionModal';
 import Footer from './Footer';
 import { Link, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";

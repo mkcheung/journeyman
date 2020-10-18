@@ -8,10 +8,12 @@ import swal from 'sweetalert';
 import { withRouter } from "react-router";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
+import BookChapterSelectionModal from './BookChapterSelectionModal';
 import { 
     Button,
     Checkbox,
     Chip,
+    CircularProgress,
     Container,
     FormControl,
     FormControlLabel,
@@ -31,6 +33,8 @@ class NewPost extends Component {
 
     state = {
         loading: true,
+        books: [],
+        chapters: [],
         categories: [],
         citations: [],
         tags:[],
@@ -44,6 +48,9 @@ class NewPost extends Component {
         slug:'',
         published:false,
         open: false,
+        bookSelectionModalOpen: false,
+        bookSelectedId: null,
+        chapterSelectedId:null,
         user: {},
     };
 
@@ -243,6 +250,21 @@ class NewPost extends Component {
                 newState['published'] = postData['published'] ? true : false;
 
             }
+
+            let userBooks = await axios.get('/api/books/showUserBooks', 
+            {
+                headers: {
+                    'Authorization': 'Bearer '+this.state.token,
+                    'Accept': 'application/json'
+                },
+                params: {
+                    userId: this.state.user.id
+                }
+            });
+
+            const books = userBooks.data;
+
+            newState['books'] = books;
             this.setState(newState);
 
         } catch (error) {
@@ -406,6 +428,90 @@ class NewPost extends Component {
         });
     }
 
+    handleClose = async () => {
+        this.setState({
+            bookSelectionModalOpen:false
+        });
+    };
+
+    handleOpenChapterSelectionModal = async () => {
+
+        this.setState({ 
+            bookSelectionModalOpen:true, 
+        });
+    };
+
+    handleBookChapterSelect = async (event) => {
+
+        let { 
+            books,
+            bookSelectedId
+        } = this.state;
+
+        let selectorName = event.target.name;
+        let bookCitations = '';
+        let chapters = [];
+        let citations = [];
+
+        if(event.target.value == 0){
+            this.setState({
+                book_title:'',
+                bookSelectedId:null,
+                chapterSelectedId:null,
+                chapters:[],
+                citations: [],
+                chapterSelectionModalOpen: false
+            });
+            return;
+        }
+
+        if(selectorName === 'book'){
+            bookSelectedId = event.target.value;
+
+            let selectedBook = books.find(book => book.id == bookSelectedId);
+            if(selectedBook.chapters != null && selectedBook.chapters.length > 0){
+                chapters = selectedBook.chapters;
+                this.setState({
+                    book_title:selectedBook.title,
+                    bookSelectedId:bookSelectedId,
+                    chapters: chapters,
+                });
+            } else {
+                citations = selectedBook.citations;
+                this.setState({
+                    book_title:selectedBook.title,
+                    bookSelectedId:bookSelectedId,
+                    chapterSelectedId:null,
+                    chapters:[],
+                    citations: citations,
+                    chapterSelectionModalOpen: false
+                });
+            }
+        }
+
+
+        if(selectorName === 'chapter'){
+            let chapterSelectedId = event.target.value;
+            let selectedBook = books.find(book => book.id == this.state.bookSelectedId);
+            let bookCitations = selectedBook.citations;
+            let citations = [];
+
+            for (let key in bookCitations) {
+                if (bookCitations[key].chapter == chapterSelectedId) {
+                    citations.push(bookCitations[key]);
+                }
+            }
+
+            this.setState({
+                book_title:selectedBook.title,
+                chapterSelectedId:chapterSelectedId,
+                citations: citations,
+                chapterSelectionModalOpen: false
+            });
+
+        }
+    };
+
     render () {
         let { 
             book_title,
@@ -513,6 +619,7 @@ class NewPost extends Component {
                                         book_title_search_term={book_title_search_term} 
                                         handleFieldChange={this.handleFieldChange}
                                         handleGetCitations={this.handleGetCitations}
+                                        handleOpenChapterSelectionModal={this.handleOpenChapterSelectionModal}
                                         citations={citations}
                                         handleClick={this.handleClick}
                                     />
@@ -538,6 +645,17 @@ class NewPost extends Component {
                                 </Grid>
                             </Grid>
                         </form>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <BookChapterSelectionModal 
+                            books={this.state.books}
+                            chapters={this.state.chapters}
+                            bookSelectionModalOpen={this.state.bookSelectionModalOpen} 
+                            bookSelectedId={this.state.bookSelectedId}
+                            chapterSelectedId={this.state.chapterSelectedId}
+                            handleBookChapterSelect={this.handleBookChapterSelect}
+                            handleClose={this.handleClose} 
+                        />
                     </Grid>
                 </Grid>
             </Container>
