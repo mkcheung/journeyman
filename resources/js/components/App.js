@@ -6,26 +6,26 @@ import { BrowserRouter, Link, Route, Switch, HashRouter, Redirect, useHistory } 
 import Footer from './Footer';
 import Header from './Header';
 import Home from './Home';
-import Login from './Login';
-import Register from './Register';
+import Login from './Auth/Login';
+import Register from './Auth/Register';
 import NotFound from './NotFound';
 // User is LoggedIn
-import PrivateRoute from './PrivateRoute';
-import ProtectedRoute from './ProtectedRoute';
-import AdminDashboard from './AdminDashboard';
-import Dashboard from './Dashboard';
-import NewTag from './NewTag';
-import TagsList from './TagsList';
-import PostsList from './PostsList';
-import NewPost from './NewPost';
-import ShowPost from './ShowPost';
-import RecentBlog from './RecentBlog';
-import UserBlog from './UserBlog';
-import UserEdit from './UserEdit';
-import SingleTag from './SingleTag';
-import NewCategory from './NewCategory';
-import CategoriesList from './CategoriesList';
-import UserBookList from './UserBookList';
+import PrivateRoute from './Routes/PrivateRoute';
+import ProtectedRoute from './Routes/ProtectedRoute';
+import AdminDashboard from './Home/AdminDashboard';
+import Dashboard from './Home/Dashboard';
+import NewTag from './Tags/NewTag';
+import SingleTag from './Tags/SingleTag';
+import TagsList from './Tags/TagsList';
+import NewPost from './Posts/NewPost';
+import PostsList from './Posts/PostsList';
+import ShowPost from './Posts/ShowPost';
+import RecentBlog from './Home/RecentBlog';
+import UserBlog from './Users/UserBlog';
+import UserEdit from './Users/UserEdit';
+import NewCategory from './Categories/NewCategory';
+import CategoriesList from './Categories/CategoriesList';
+import UserBookList from './Users/UserBookList';
 
 class App extends Component {
     state = {

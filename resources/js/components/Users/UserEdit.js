@@ -7,7 +7,6 @@ import ImageUploader from "quill-image-uploader";
 import swal from 'sweetalert';
 import {withRouter} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import BookCitationList  from './BookCitationList';
 import { 
     Button,
     Checkbox,
