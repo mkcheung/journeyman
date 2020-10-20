@@ -1,11 +1,13 @@
 import React from 'react';
 import Files from 'react-files'
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { 
 	Button,
 	CircularProgress,
+	Checkbox,
 	Container,
 	FormControl,
+	FormControlLabel,
 	FormHelperText,
 	Grid,
 	Input,
@@ -14,6 +16,16 @@ import {
 	Paper,
 	TextField
 } from '@material-ui/core';
+import { green } from '@material-ui/core/colors';
+const GreenCheckbox = withStyles({
+	root: {
+		color: green[400],
+		'&$checked': {
+			color: green[600],
+		},
+	},
+	checked: {},
+})((props) => <Checkbox color="default" {...props} />);
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
@@ -43,25 +55,67 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function BookUploadModal(props) {
-  const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
-  const [open, setOpen] = React.useState(false);
+	const classes = useStyles();
+	// getModalStyle is not a pure function, we roll the style only on the first render
+	const [modalStyle] = React.useState(getModalStyle);
+	const [open, setOpen] = React.useState(false);
 
-  let bookLoadingDisplay = '';
-  if(props.modalLoading == true){
-  	bookLoadingDisplay = <CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />;
-  } else {
-  	bookLoadingDisplay = <div style={modalStyle} className={classes.paper}>
+	let bookLoadingDisplay = '';
+
+	let bookTitleDisplay = '';
+	let fileUploadComponent = '';
+	let handleSubmitButtonTitle = '';
+
+	if(props.addBookOnly===true){
+		bookTitleDisplay = 
+			<Grid item xs={12}>
+				<InputLabel htmlFor="title">Title:</InputLabel>
+				<TextField id="bookTitle" aria-describedby="my-helper-text" value={props.bookTitle} onChange={props.handleFieldChange} />
+			</Grid>;
+		fileUploadComponent='';
+		handleSubmitButtonTitle='Add Book';
+	} else {
+		bookTitleDisplay = 
+			<Grid item xs={12}>
+				<InputLabel htmlFor="title">Title:</InputLabel>
+				{props.bookTitle}
+			</Grid>;
+
+		fileUploadComponent = <div className="files">
+			<Files
+				className='files-dropzone'
+				onChange={file => {
+				props.fileReader.readAsText(file[0]);
+			}}
+				onError={props.onFilesError}
+				accepts={['.json', '.pdf']}
+				multiple
+				maxFiles={3}
+				maxFileSize={10000000}
+				minFileSize={0}
+				clickable
+			>
+			Drop json file here or click to upload
+			</Files>
+		</div>;
+
+		handleSubmitButtonTitle='Upload Citations';
+	}
+
+	if(props.modalLoading == true){
+  		bookLoadingDisplay = <CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />;
+	} else {
+  		bookLoadingDisplay = <div style={modalStyle} className={classes.paper}>
 				<h2 id="simple-modal-title">Add New Book and Citations</h2>
 				<form noValidate autoComplete="off">
 					
 					<Grid item xs={12}>
+						<FormControlLabel
+							control={<GreenCheckbox checked={props.addBookOnly} onChange={props.handleAddBook} name="add_book_only" />}
+							label="Add Book Only:"
+						/>
 					
-						<Grid item xs={12}>
-							<InputLabel htmlFor="title">Title:</InputLabel>
-							{props.bookTitle}
-						</Grid>
+						{bookTitleDisplay}
 						<br/>
 						
 						<Grid item xs={12}>
@@ -84,29 +138,13 @@ export default function BookUploadModal(props) {
 							<TextField id="pages" aria-describedby="my-helper-text" onChange={props.handleFieldChange} />
 						</Grid>
 						<br/>
-				        <div className="files">
-				            <Files
-				                className='files-dropzone'
-				                onChange={file => {
-				              props.fileReader.readAsText(file[0]);
-				          }}
-				                onError={props.onFilesError}
-				                accepts={['.json', '.pdf']}
-				                multiple
-				                maxFiles={3}
-				                maxFileSize={10000000}
-				                minFileSize={0}
-				                clickable
-				            >
-				                Drop json file here or click to upload
-				            </Files>
-				        </div>
+				        {fileUploadComponent}
 					</Grid>
 					<br/>
 					
 					<Grid item xs={12}>
 						<Button variant="contained" color="primary" onClick={() => { props.handleSubmit() }}>
-							Upload Citations
+							{handleSubmitButtonTitle}
 						</Button>
 					</Grid>
 					<br/>

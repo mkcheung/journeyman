@@ -34,6 +34,7 @@ import { makeStyles } from '@material-ui/core/styles';
 class UserBookList extends Component {
     state = {
         loading: true,
+        addBookOnly: false,
         modalLoading:false,
         deleteInProgress:false,
 		books: [],
@@ -208,6 +209,7 @@ class UserBookList extends Component {
 
         const { history } = this.props
         const { 
+        	bookTitle,
         	jsonFile, 
         	pages, 
         	user,
@@ -217,6 +219,7 @@ class UserBookList extends Component {
         } = this.state;
 
         let data = {
+        	bookTitle,
         	jsonFile, 
         	pages,
         	userId: user.id, 
@@ -238,12 +241,14 @@ class UserBookList extends Component {
 			swal("Done!", "Book Citations Uploaded!", "success");
             this.setState({
                 loading: true,
+                addBookOnly: false,
+                modalLoading:false,
                 jsonFile: {},
 			    author_first_name: '',
 			    author_middle: '',
 			    author_last_name: '',
-            	bookTitle: ''
-
+            	bookTitle: '',
+            	pages:null
             });
 			this.handleClose();
 		})
@@ -382,6 +387,12 @@ class UserBookList extends Component {
         return books;
 	}
 
+	handleAddBook = (e) => {
+		this.setState({
+			addBookOnly: e.target.checked
+		});
+	}
+
 	render() {
 
 		let { 
@@ -492,6 +503,8 @@ class UserBookList extends Component {
 			        <Grid item xs={12}>
 		        		<BookUploadModal 
 		        			bookTitle={this.state.bookTitle} 
+		        			addBookOnly={this.state.addBookOnly}
+		        			handleAddBook={this.handleAddBook}
 		        			author_first_name={this.state.author_first_name} 
 		        			author_middle={this.state.author_middle} 
 		        			author_last_name={this.state.author_last_name} 

@@ -59,8 +59,8 @@ class BookController extends Controller
         $author_middle = $bookData['author_middle'] ? $bookData['author_middle'] : '';
         $author_last_name = $bookData['author_last_name'] ? $bookData['author_last_name'] : '';
         $userId = $bookData['userId'];
-        $bookTitle = $bookData['jsonFile']['title'];
-        $bookCitations = $bookData['jsonFile']['highlights'];
+        $bookTitle = (!empty($bookData['jsonFile'])) ? $bookData['jsonFile']['title'] : $bookData['bookTitle'];
+        $bookCitations = (!empty($bookData['jsonFile'])) ? $bookData['jsonFile']['highlights'] : null;
         $citationsToCreate = [];
         $now = \Carbon\Carbon::now();
 
@@ -73,16 +73,18 @@ class BookController extends Controller
             'pages' => (int)$pagesInBook
         ]);
 
-        foreach($bookCitations as $bookCitation){
-            $citationsToCreate[] = [
-                'book_id' => $book->id,
-                'content' => $bookCitation['text'],
-                'page' => $bookCitation['location']['value'],
-                'created_at' => $now,
-                'updated_at' => $now
-            ];
+        if($bookCitations){
+            foreach($bookCitations as $bookCitation){
+                $citationsToCreate[] = [
+                    'book_id' => $book->id,
+                    'content' => $bookCitation['text'],
+                    'page' => $bookCitation['location']['value'],
+                    'created_at' => $now,
+                    'updated_at' => $now
+                ];
+            }
+            $results = Citation::insert($citationsToCreate);
         }
-        $results = Citation::insert($citationsToCreate);
 
         return response()->json([]);
     }
