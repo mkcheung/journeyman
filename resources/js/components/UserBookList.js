@@ -396,7 +396,7 @@ class UserBookList extends Component {
 
         if(books && books.length>0){
 			listOfBooks = 
-				<List component="nav" aria-label="main mailbox folders">
+				<List component="nav" style={{maxHeight:'675px', overflow:'scroll'}} aria-label="main mailbox folders">
 					{books.map(book => (
 
 						<div key={`citationSource-${book.id}`}>
@@ -445,7 +445,7 @@ class UserBookList extends Component {
 				</List>;
         } else if(loading === false && selectedBookCitations && selectedBookCitations.length>0){
 	        citationsFromBook =
-				<List component="nav" style={{height:'85%', overflow:'scroll'}} aria-label="secondary mailbox folder">
+				<List component="nav" style={{maxHeight:'675px', overflow:'scroll'}} aria-label="secondary mailbox folder">
 					{selectedBookCitations.map(selectedBookCitation => (
 						<div key={`selectedBookCitation-${selectedBookCitation.id}`}>
 							<div>
