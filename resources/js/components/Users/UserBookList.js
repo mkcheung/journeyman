@@ -5,6 +5,7 @@ import Footer from './../Footer';
 import BookUploadModal from './../Books/BookUploadModal';
 import AddChapterModal from './../Books/AddChapterModal';
 import ChapterSelectionModal from './../Books/ChapterSelectionModal';
+import CitationModal from './../Books/CitationModal';
 import { Link, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { 
@@ -19,9 +20,11 @@ import {
 	ListItem,
 	ListItemIcon,
 	ListItemText,
-	Paper
+	Paper,
+	TextareaAutosize
 } from '@material-ui/core';
 import { 
+	AddComment as AddCommentIcon,  
 	AddToQueue as AddToQueueIcon,
 	Bookmarks as BookmarksIcon,
 	CloudUpload as CloudUploadIcon,
@@ -38,6 +41,7 @@ class UserBookList extends Component {
         modalLoading:false,
         deleteInProgress:false,
 		books: [],
+		content: '',
 		chapters: [],
 		user: {},
 		selectedBookId:null,
@@ -45,6 +49,7 @@ class UserBookList extends Component {
 		selectedBookCitations: [],
 		modalOpen: false,
         jsonFile: {},
+        citationPage:null,
         pages:null,
         bookTitle:'',
         author_first_name:'',
@@ -53,6 +58,7 @@ class UserBookList extends Component {
         bookTitleForChInput:'',
         bookIdForChInput:null,
 		chapterModalOpen: false,
+		citationModalOpen: false,
 		chapterSelectionModalOpen: false,
 		chapterNum:null,
 		chapterTitle:'',
@@ -115,6 +121,19 @@ class UserBookList extends Component {
 			bookTitleForChInput: selectedBook['title'],
 			bookIdForChInput: selectedBook['id'],
 			chapterModalOpen:true, 
+		});
+	};
+
+	handleOpenAddCitationInput = async (bookId) => {
+		const { books } = this.state;
+		let selectedBook = books.find(book => book.id === bookId);
+
+		this.setState({ 
+			bookTitleForChInput: selectedBook['title'],
+			bookIdForChInput: selectedBook['id'],
+			citationModalOpen: true, 
+			chapters: selectedBook.chapters ? selectedBook.chapters : [],
+			bookIdForChInput: bookId
 		});
 	};
 
@@ -189,7 +208,8 @@ class UserBookList extends Component {
 		this.setState({
 			modalOpen:false,
 			chapterModalOpen:false,
-			chapterSelectionModalOpen:false
+			chapterSelectionModalOpen:false,
+			citationModalOpen: false
 		});
 	};
 
@@ -296,6 +316,53 @@ class UserBookList extends Component {
             	chapterNum: null
 
             });
+			this.handleClose();
+		})
+		.catch(error => {
+			this.setState({
+		    	errors: error.response.data.errors
+			});
+		});
+	}
+
+	handleCitationSubmit = async () => {
+        const { 
+		    bookTitleForChInput,
+		    bookIdForChInput,
+		    selectedChapter,
+		    citationPage,
+		    content,
+        	token
+        } = this.state;
+
+        let data = {
+        	book_id: bookIdForChInput,
+        	content: content,
+		    chapter: selectedChapter ? selectedChapter : null,
+		    page: citationPage,
+        }
+
+		axios.post('/api/citations', { 
+        	data 
+        },
+        {   
+        	headers: {
+                'Authorization': 'Bearer '+token,
+                'Accept': 'application/json'
+            },
+        })
+        .then(async response => {
+			swal("Done!", "Citation Added!", "success");
+            this.setState({
+			    bookTitleForChInput: '',
+			    bookIdForChInput: null,
+			    selectedChapter: null,
+			    citationPage: null,
+			    content: '',
+            	chapterNum: null
+
+            });
+        	await this.loadData();
 			this.handleClose();
 		})
 		.catch(error => {
@@ -429,6 +496,9 @@ class UserBookList extends Component {
 								</ListItem>
 							</div>
 							<div>
+								<IconButton onClick={()=>this.handleOpenAddCitationInput(book.id)}>
+									<AddCommentIcon />
+								</IconButton>
 								<IconButton onClick={()=>this.handleOpenChapterInput(book.id)}>
 									<AddToQueueIcon />
 								</IconButton>
@@ -542,6 +612,19 @@ class UserBookList extends Component {
 		        			selectedChapter={this.state.selectedChapter}
 		        			handleChapterSelect={this.handleChapterSelect}
 		        			handleClose={this.handleClose} 
+		        		/>
+			        </Grid>
+			        <Grid item xs={12}>
+		        		<CitationModal 
+		        			chapters={this.state.chapters}
+		        			bookTitleForChInput={this.state.bookTitleForChInput}
+		        			citationModalOpen={this.state.citationModalOpen} 
+		        			content={this.state.content}
+		        			citationPage={this.state.citationPage}
+		        			bookIdForChInput={this.state.bookIdForChInput}
+		        			handleClose={this.handleClose} 
+		        			handleFieldChange={this.handleFieldChange} 
+		        			handleCitationSubmit={this.handleCitationSubmit}
 		        		/>
 			        </Grid>
 		        </Grid>;

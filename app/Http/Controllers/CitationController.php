@@ -38,9 +38,10 @@ class CitationController extends Controller
     {
 
         $citation = Citation::create([
-          'book_id' => $request['book_id'],
-          'content' => $request['content'],
-          'page' => $request['page']
+          'book_id' => $request['data']['book_id'],
+          'content' => $request['data']['content'],
+          'page' => $request['data']['page'],
+          'chapter' => (!empty($request['data']) && $request['data']['chapter']) ? (int) $request['data']['chapter'] : null
         ]);
 
         return response()->json('Citation created!');
