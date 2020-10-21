@@ -21,7 +21,8 @@ import {
 	ListItemIcon,
 	ListItemText,
 	Paper,
-	TextareaAutosize
+	TextareaAutosize,
+	Tooltip,
 } from '@material-ui/core';
 import { 
 	AddComment as AddCommentIcon,  
@@ -496,18 +497,26 @@ class UserBookList extends Component {
 								</ListItem>
 							</div>
 							<div>
-								<IconButton onClick={()=>this.handleOpenAddCitationInput(book.id)}>
-									<AddCommentIcon />
-								</IconButton>
-								<IconButton onClick={()=>this.handleOpenChapterInput(book.id)}>
-									<AddToQueueIcon />
-								</IconButton>
-								<IconButton onClick={()=>this.assignChapters(book.id)}>
-									<BookmarksIcon />
-								</IconButton>
-								<IconButton onClick={()=>this.deleteBook(book.id)}>
-									<DeleteIcon />
-								</IconButton>
+	          					<Tooltip title="Add Citation" placement="top-start">
+									<IconButton onClick={()=>this.handleOpenAddCitationInput(book.id)}>
+										<AddCommentIcon />
+									</IconButton>
+								</Tooltip>
+	          					<Tooltip title="Add Chapter" placement="top-start">
+									<IconButton onClick={()=>this.handleOpenChapterInput(book.id)}>
+										<AddToQueueIcon />
+									</IconButton>
+								</Tooltip>
+	          					<Tooltip title="Process Citations with Chapters" placement="top-start">
+									<IconButton onClick={()=>this.assignChapters(book.id)}>
+										<BookmarksIcon />
+									</IconButton>
+								</Tooltip>
+	          					<Tooltip title="Delete Book" placement="top-start">
+									<IconButton onClick={()=>this.deleteBook(book.id)}>
+										<DeleteIcon />
+									</IconButton>
+								</Tooltip>
 								{ (book.chapters.length > 0) ? <Button variant="outlined" onClick={()=>this.handleOpenChapterSelectionModal(book.id, book.chapters)} >Chapters</Button> : '' }
 							</div>
 							<Divider />
