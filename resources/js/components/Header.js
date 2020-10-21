@@ -132,7 +132,7 @@ class Header extends Component {
         let { handleClose } = this.props;
 		localStorage.clear();
 		handleClose();
-		this.props.history.push('/login');
+		this.props.history.push('/');
 	}
 
 	handleInputChange = (event, value) => {

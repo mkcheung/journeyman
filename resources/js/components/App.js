@@ -62,9 +62,10 @@ class App extends Component {
 
         if (state && blogAuthors) {
             let AppState = JSON.parse(state);
+
             this.setState({
                 isLoggedIn: AppState.isLoggedIn, 
-                user: AppState, 
+                user: AppState.user, 
                 blogAuthors:blogAuthors
             });
         }
@@ -79,14 +80,13 @@ class App extends Component {
 		        this.setState({
 					openMenu:this.state.openMenu,
 					isLoggedIn: AppState.isLoggedIn,
-					user: AppState,
+					user: AppState.user,
 		        });
 		    } else {
 		        this.setState({
 					openMenu:this.state.openMenu,
 					isLoggedIn: false,
-					user: {},
-                    blogAuthors:[]
+					user: {}
 		        });
 		    }
 		}
