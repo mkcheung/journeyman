@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('citations/assignChapters', 'CitationController@assignChapters');
     Route::resource('books', 'BookController');
     Route::resource('citations', 'CitationController');
+    Route::get('categories/showUserCategories', 'CategoryController@showUserCategories');
     Route::resource('categories', 'CategoryController');
     Route::resource('chapters', 'ChapterController');
     Route::resource('comments', 'CommentController');

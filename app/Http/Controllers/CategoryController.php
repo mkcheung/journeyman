@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
   function __construct()
   {
-       $this->middleware('permission:category-list');
+       $this->middleware('permission:category-list', ['only' => ['index','show','showUserCategories']]);
        $this->middleware('permission:category-create', ['only' => ['create','store']]);
        $this->middleware('permission:category-edit', ['only' => ['edit','update']]);
        $this->middleware('permission:category-delete', ['only' => ['destroy']]);
@@ -22,15 +22,24 @@ class CategoryController extends Controller
         return $categories->toJson();
     }
 
+    public function showUserCategories(Request $request)
+    {
+        $userId = $request->query('userId');
+        $categories = Category::where('user_id', '=', $userId)->with('posts')->get();
+        return $categories->toJson();
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+          'userId' => 'required',
           'title' => 'required',
           'description' => 'required',
           'slug' => 'required'
         ]);
 
         $category = Category::create([
+          'user_id' => $validatedData['userId'],
           'title' => $validatedData['title'],
           'description' => $validatedData['description'],
           'slug' => $validatedData['slug']

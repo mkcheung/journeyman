@@ -9,7 +9,8 @@ class Category extends Model
     protected $fillable = [
     	'title',
     	'description',
-    	'slug'
+    	'slug',
+    	'user_id'
     ];
 
     public function posts()
