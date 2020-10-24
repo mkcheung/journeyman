@@ -108,7 +108,6 @@ class App extends Component {
         });
     };
 
-
     handleLogin = (event) => {
     
         event.preventDefault();
@@ -129,17 +128,19 @@ class App extends Component {
 
         if (loggedInData.status == 200) {
 
-            let { id, name, full_name, email, access_token, roles, permissions, rolesAndPermissions, userSpecificPermissions } = loggedInData.data;
+            let { id, name, full_name, first_name, last_name, email, access_token, roles, permissions, rolesAndPermissions, userSpecificPermissions } = loggedInData.data;
 
 
             let userData = {
                 id,
                 name,
                 full_name,
+                first_name,
                 email,
                 access_token,
-                roles,
+                last_name,
                 permissions,
+                roles,
                 rolesAndPermissions: JSON.parse(rolesAndPermissions),
                 userSpecificPermissions,
             };
@@ -162,6 +163,50 @@ class App extends Component {
         }
     }
 
+    handleUserProfileUpdate = async (event, updatedUser) => {
+        event.preventDefault();
+
+        let user = updatedUser;
+        user['full_name'] = user['first_name'] + ' ' + user['last_name'];
+        if (user.id){
+            let results = await axios.post('/api/users/'+user.id,
+                { 
+                    data: user,
+                    _method: 'patch'                  
+                },
+                {   
+                    headers: {
+                        'Authorization': 'Bearer '+user.access_token,
+                        'Accept': 'application/json'
+                    }
+                }
+            );
+
+
+            let state = localStorage["appState"];
+            let AppState = JSON.parse(state);
+            let userPriorState = AppState.user;
+
+            let userNewState = {
+                ...userPriorState,
+                ...user
+            }
+            let newAppState = {
+                isLoggedIn: true,
+                user: userNewState
+            };
+            localStorage["appState"] = JSON.stringify(newAppState);
+
+            await this.setState({
+                user:userNewState
+            });
+
+            swal("Done!", "User Updated.", "success");
+        }
+    }
+
+
+
 	render () {
 
 		let { 
@@ -174,10 +219,14 @@ class App extends Component {
 
         let role = user.roles ? user.roles[0] : '';
 
-		// let HideHeader = isLoggedIn ? <Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> : null ; 
+        // passed down methods to protected routes
+        let pdm =  {
+            handleUserProfileUpdate:this.handleUserProfileUpdate
+        }
+
 		return (
 			<HashRouter>
-				<Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} userName={user.full_name} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> 
+				<Header anchorEl={anchorEl} blogAuthors={blogAuthors} token={user.access_token} user={user} isLoggedIn={isLoggedIn} handleClick={this.handleClick} handleClose={this.handleClose} openMenu={openMenu} /> 
 					<Switch>
                         <Route exact path='/' component={RecentBlog} />
 						<Route exact path='/login' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} userRole={role}/>)} />
@@ -189,7 +238,7 @@ class App extends Component {
 						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
 						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
                         <ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
-                        <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" component={UserEdit} />
+                        <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" pdm={pdm} component={UserEdit}/>
 						<ProtectedRoute exact path='/tag' perform="tag-list" component={TagsList} />
 						<ProtectedRoute exact path='/tag/create' perform="tag-create" component={NewTag} />
                         <ProtectedRoute exact path='/book/getUserBooks' perform="book-list" component={UserBookList} />

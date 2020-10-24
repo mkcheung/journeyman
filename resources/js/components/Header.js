@@ -16,7 +16,10 @@ import {
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import { 
+	Search as SearchIcon,
+	PersonPin as PersonPinIcon
+}from '@material-ui/icons';
 
 import { fade, withStyles } from '@material-ui/core/styles';
 
@@ -141,12 +144,22 @@ class Header extends Component {
 		this.props.history.push(`/user/getPosts/${value.id}`);
 	}
 
+    handleSetUserProfile = async (event) => {
+        event.preventDefault();
+
+        let { 
+            user
+        } = this.props;
+
+		this.props.history.push(`/user/edit/${user.id}`);
+    }
+
     render() {
         const aStyle = {
 			cursor: 'pointer'
         };
 
-        let { anchorEl, isLoggedIn, handleClick, handleClose, openMenu, classes, theme, blogAuthors, userName } = this.props;
+        let { anchorEl, isLoggedIn, handleClick, handleClose, user, openMenu, classes, theme, blogAuthors, userName } = this.props;
 
         let navOps = [];
         
@@ -154,18 +167,21 @@ class Header extends Component {
         	navOps = navOpsLoggedIn;
         } else {
         	navOps = navOpsLoggedOut;
-        	userName = '';
         }
 
 
 
         let loggedInUserName = '';
-        if(userName && userName.length>0){
+        if(user.full_name && user.full_name.length>0){
 			loggedInUserName = 
 				<div style={{marginLeft:'500px', color:'white'}}>
-					<Typography  variant="h6" noWrap>
-						Welcome {userName}!
-					</Typography>
+
+					<IconButton style={{color:'white'}} onClick={(e) => this.handleSetUserProfile(e)}>
+						<PersonPinIcon /> 
+						<h6>
+							Welcome {user.full_name}!
+						</h6>
+					</IconButton>
 				</div>;
 		}
 

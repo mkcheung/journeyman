@@ -1,5 +1,3 @@
- // resources/assets/js/components/UserEdit.js
-
 import axios from 'axios'
 import React, { Component } from 'react'
 import ReactQuill, { Quill }  from 'react-quill'; // ES6
@@ -32,52 +30,10 @@ class UserEdit extends Component {
         user: {},
     };
 
-
-  modules = {
-    // #3 Add "image" to the toolbar
-    toolbar: [
-    [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-    [{size: []}],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [{'list': 'ordered'}, {'list': 'bullet'}, 
-     {'indent': '-1'}, {'indent': '+1'}],
-    ['link', 'image', 'video'],
-    ['clean']
-    ],
-    // # 4 Add module and upload function
-    imageUploader: {
-      upload: file => {
-        return new Promise((resolve, reject) => {
-          const formData = new FormData();
-          formData.append("image", file);
-
-          fetch(
-            "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
-            {
-              method: "POST",
-              body: formData
-            }
-          )
-            .then(response => response.json())
-            .then(result => {
-              resolve(result.data.url);
-            })
-            .catch(error => {
-              reject("Upload failed");
-              console.error("Error:", error);
-            });
-        });
-      }
-    }
-  };
-
     constructor(props) {
         super(props);
-
-        this.quillRef = null;
-        this.reactQuillRef = null;
+        this.handleUserProfileUpdate = props.handleUserProfileUpdate.bind(this);
     }
-    // reactQuillRef = React.createRef();
 
     async componentDidMount () {
         let state = localStorage["appState"];
@@ -94,8 +50,6 @@ class UserEdit extends Component {
                 }
             );
         }
-        const userId = (this.props.match.params.id) ? this.props.match.params.id : null;
-        await this.loadData(userId);
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -104,76 +58,29 @@ class UserEdit extends Component {
         } = this.state;
 
         if (prevState.loading === true) {
-            const userId = (this.props.match.params.id) ? this.props.match.params.id : null;
             await this.loadData(userId);
         }
     }
 
-    loadData = async (userId = null) => {
-        let categoryOptions = [];
-        let tagOptions = [];
-        try {
-
-            if(userId !== null){
-                let userObj = await axios.get('/api/users/'+userId, 
-                    {
-                        headers: {
-                            'Authorization': 'Bearer '+this.state.token,
-                            'Accept': 'application/json'
-                        }
-                    }
-                );
-
-                let user = userObj.data;
-console.log(userObj);
-console.log(user);
-                newState['user'] = user;
-            }
-            this.setState(newState);
-
-        } catch (error) {
-            console.log(error);
-        }
+    loadData = async () => {
     };
 
     handleFieldChange = async (event) => {
+
+        let {
+            user
+        } = this.state;
+
         this.setState({
-            [event.target.id]: event.target.value,
-            [event.target.slug]: event.target.value,
-            [event.target.content]: event.target.value,
-            [event.target.category_id]: event.target.value,
-            [event.target.book_title_search_term]: event.target.value,
+            user: {
+                ...user,
+                [event.target.id]: event.target.value
+            }
         });
     }
 
     handleClick = (e) => {
         e.preventDefault();
-
-
-    }
-
-    onTagsChange = (event, values) => {
-        this.setState({
-            selectedTags: values
-        });
-    }
-
-    handleCreateUpdatePost = async (event) => {
-
-    }
-
-    hasErrorFor = (field) => {
-        return !!this.state.errors[field]
-    }
-
-    renderErrorFor = (field) => {
-        if(this.hasErrorFor(field)) {
-            return (
-                <span className='invalid-feedback'>
-                    <strong>{this.state.errors[field][0]}</strong>
-                </span>
-            )
-        }
     }
 
     handleChange = async (event) => {
@@ -184,47 +91,65 @@ console.log(user);
         });
     };
 
-    handleChkboxToggle = async (event) => {
-        this.setState({
-            ...this.state,
-            [event.target.name]: event.target.checked
-        });
-    };
-
     render () {
         let { 
             user
         } = this.state;
 
-        let {name} = user ? user : null;
-console.log(name);
-        const buttonTitle = 'Update';
-
         return (
-
             <Container maxWidth="lg">
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <div className='card-header'>User Profile</div>
                     </Grid>
                     <Grid item xs={12}>
-                        <form onSubmit={this.handleCreateUpdatePost}>
+                        <form onSubmit={(e) => this.handleUserProfileUpdate(e, this.state.user)}>
                             <Grid container>
                                 <Grid item xs={12}>
-                                    <InputLabel htmlFor="name">Title:</InputLabel>
+                                    <InputLabel htmlFor="name">Username:</InputLabel>
                                     <TextField 
                                         id="name" 
                                         title='name' 
                                         onChange={this.handleFieldChange} 
-                                        value={name}
+                                        value={user.name}
                                     />
-                                    {this.renderErrorFor('name')}
+                                </Grid>
+                            </Grid>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <InputLabel htmlFor="first_name">First Name:</InputLabel>
+                                    <TextField 
+                                        id="first_name" 
+                                        title='first_name' 
+                                        onChange={this.handleFieldChange} 
+                                        value={user.first_name}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <InputLabel htmlFor="last_name">Last Name:</InputLabel>
+                                    <TextField 
+                                        id="last_name" 
+                                        title='last_name' 
+                                        onChange={this.handleFieldChange} 
+                                        value={user.last_name}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container>
+                                <Grid item xs={12}>
+                                    <InputLabel htmlFor="email">Email:</InputLabel>
+                                    <TextField 
+                                        id="email" 
+                                        title='email' 
+                                        onChange={this.handleFieldChange} 
+                                        value={user.email}
+                                    />
                                 </Grid>
                             </Grid>
                             <Grid container>
                                 <Grid item xs={12}>
                                     <Button  style={{float:'right'}} type="submit" variant="contained" color="primary" >
-                                       {buttonTitle}
+                                       Update
                                     </Button>
                                 </Grid>
                             </Grid>

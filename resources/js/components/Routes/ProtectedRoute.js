@@ -17,7 +17,8 @@ const ProtectedRoute = ({ component: Component, ...rest}) => {
     const roles = (appState && appState.user.roles) ? appState.user.roles : null ;
 
     const perform = rest.perform;
- 
+
+    const pdm = rest.pdm;
 
     return (
 
@@ -33,6 +34,10 @@ const ProtectedRoute = ({ component: Component, ...rest}) => {
                         return <Redirect to="/dashboard"/>
 
                     } else {
+                        props = {
+                            ...props,
+                            ...pdm
+                        }
                         return <Component {...props} />
                     }
 

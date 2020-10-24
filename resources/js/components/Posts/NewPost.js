@@ -389,7 +389,6 @@ class NewPost extends Component {
             swal("Done!", "Post Created.", "success");
             this.props.history.push(`/post/edit/${results.data.id}`);
         }
-
     }
 
     hasErrorFor = (field) => {

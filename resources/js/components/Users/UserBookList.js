@@ -228,7 +228,6 @@ class UserBookList extends Component {
             modalLoading: true,
         });
 
-        const { history } = this.props
         const { 
         	bookTitle,
         	jsonFile, 
