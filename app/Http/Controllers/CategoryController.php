@@ -54,4 +54,28 @@ class CategoryController extends Controller
 
         return $category->toJson();
     }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+          'title' => 'required',
+          'description' => 'required',
+          'slug' => 'required'
+        ]);
+
+        $category = Category::findOrFail((int)$id);
+
+        $category['title'] = $validatedData['title'];
+        $category['description'] = $validatedData['description'];
+        $category['slug'] = $validatedData['slug'];
+        $category->save();
+        return redirect('posts');
+    }
 }

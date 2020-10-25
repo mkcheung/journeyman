@@ -46,21 +46,24 @@ export default function SimpleModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
 
+  let modalTitle = props.update ? 'Update Category' : 'New Category';
+  let buttonTag = props.update ? 'Update Category' : 'Create Category';
+
   const body = (
         <Grid container spacing={3}>
             <div style={modalStyle} className={classes.paper}>
-				<h2 id="simple-modal-title">New Category</h2>
+				<h2 id="simple-modal-title">{modalTitle}</h2>
 				<form noValidate autoComplete="off">
 					
 					<Grid item xs={12}>
 						<InputLabel htmlFor="title">Category Name:</InputLabel>
-						<TextField id="title" aria-describedby="my-helper-text" onChange={props.handleFieldChange} />
+						<TextField id="title" value={props.newCategory['title']} aria-describedby="my-helper-text" onChange={props.handleFieldChange} />
 					</Grid>
 					<br/>
 					
 					<Grid item xs={12}>
 						<InputLabel htmlFor="slug">Slug:</InputLabel>
-						<TextField id="slug" aria-describedby="my-helper-text" onChange={props.handleFieldChange} />
+						<TextField id="slug" value={props.newCategory['slug']}  aria-describedby="my-helper-text" onChange={props.handleFieldChange} />
 					</Grid>
 					<br/>
 					
@@ -72,6 +75,7 @@ export default function SimpleModal(props) {
 							rowsMax={4}
 							defaultValue="Description"
 							variant="outlined"
+							value={props.newCategory['description']}
 							onChange={props.handleFieldChange}
 						/>
 					</Grid>
@@ -79,7 +83,7 @@ export default function SimpleModal(props) {
 					
 					<Grid item xs={12}>
 						<Button variant="contained" color="primary" onClick={() => { props.handleSubmit() }}>
-							Create Category
+							{buttonTag}
 						</Button>
 					</Grid>
 					<br/>

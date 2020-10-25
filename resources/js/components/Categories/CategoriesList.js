@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import { 
 	List as ListIcon,  
+	Edit as EditIcon,  
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
@@ -28,6 +29,7 @@ class CategoriesList extends Component {
 		categories: [],
 		selectedCategoryPosts: [],
 		open: false,
+		update: false,
 		newCategory: {
 			title: '',
 			description: '',
@@ -41,10 +43,11 @@ class CategoriesList extends Component {
 
     async componentDidUpdate(prevProps, prevState) {
         const {
+        	categories,
         	loading
         } = this.state;
 
-        if (prevState.loading === true || prevState.categories != categories) {
+        if (prevState.loading === true ) {
             await this.loadData();
         }
     }
@@ -93,36 +96,71 @@ class CategoriesList extends Component {
 	}
 
 	handleOpen = async () => {
-		this.setState({ open:true });
+		this.setState({ 
+			open:true,
+			update:false
+		});
 	};
 
 	handleClose = async () => {
-		this.setState({ open:false });
+		this.setState({ 
+			open:false,
+			newCategory: {
+				title: '',
+				description: '',
+				slug: ''
+			}
+		});
 	};
 
 	handleSubmit = async () => {
 
         const { history } = this.props
-        const { newCategory } = this.state;
+        const { 
+        	newCategory,
+        	update
+        } = this.state;
 
         let state = localStorage["appState"];
         let appState = JSON.parse(state);
 
-		let results = await axios.post('/api/categories', 
-			{
-				...newCategory,
-				userId: appState.user.id	
-			},
-			{
-                headers: {
-                    'Authorization': 'Bearer '+appState.user.access_token,
-                    'Accept': 'application/json'
+        if(update){
+			let results = await axios.post('/api/categories/'+newCategory['id'], 
+                { 
+                    ...newCategory,
+                    _method: 'patch'                  
                 },
-			}
-		);
-		swal("Done!", "Category Created!", "success");
+				{
+	                headers: {
+	                    'Authorization': 'Bearer '+appState.user.access_token,
+	                    'Accept': 'application/json'
+	                },
+				}
+			);
+			swal("Done!", "Category Updated!", "success");
+        } else {
+			let results = await axios.post('/api/categories', 
+				{
+					...newCategory,
+					userId: appState.user.id	
+				},
+				{
+	                headers: {
+	                    'Authorization': 'Bearer '+appState.user.access_token,
+	                    'Accept': 'application/json'
+	                },
+				}
+			);
+			swal("Done!", "Category Created!", "success");
+        }
         this.setState({
+        	update: false,
             loading: true,
+			newCategory: {
+				title: '',
+				description: '',
+				slug: ''
+			}
         });
 		this.handleClose();
         await this.loadData();
@@ -141,12 +179,31 @@ class CategoriesList extends Component {
 			categories
 		} = this.state;
 
-		let selectedBook = categories.find(category => category.id === categoryId);
+		let selectedCategory = categories.find(category => category.id === categoryId);
 
         await this.setState({
-            selectedCategoryPosts: selectedBook.posts
+            selectedCategoryPosts: selectedCategory.posts
         });
     }
+
+    handleCategoryEdit = async (event, categoryId) => {
+		event.preventDefault();
+
+		let { state, newCategory } = this.state;
+
+		let { 
+			categories
+		} = this.state;
+
+		let selectedCategory = categories.find(category => category.id === categoryId);
+
+        await this.setState({
+            open: true,
+            update: true,
+            newCategory: selectedCategory
+        });
+    }
+
 
 
 	render () {
@@ -155,7 +212,9 @@ class CategoriesList extends Component {
         	categories, 
         	loading,
         	open, 
+        	update,
         	selectedCategoryPosts,
+        	newCategory
         } = this.state;
 
         let state = localStorage["appState"];
@@ -170,7 +229,7 @@ class CategoriesList extends Component {
 								<ListItem
 									key={`category-${category.id}`}
 									button
-									onClick={(event) => this.handleOpen}
+									onClick={(event) => this.handleCategoryPostsClick(event, category.id)}
 									style={{height:'75px'}}
 								>
 									<div>
@@ -181,14 +240,14 @@ class CategoriesList extends Component {
 										</u><br/>
 										Description: {category.description}
 									</div>
-									<div>
-			          					<Tooltip title="Show Category Posts" placement="top-start">
-											<IconButton onClick={(event) => this.handleCategoryPostsClick(event, category.id)}>
-												<ListIcon />
-											</IconButton>
-										</Tooltip>
-									</div>
 								</ListItem>
+							</div>
+							<div>
+	          					<Tooltip title="Edit Category" placement="top-start">
+									<IconButton onClick={(event) => this.handleCategoryEdit(event, category.id)}>
+										<EditIcon />
+									</IconButton>
+								</Tooltip>
 							</div>
 							<Divider />
 						</div>
@@ -255,7 +314,7 @@ class CategoriesList extends Component {
 			        </Grid>
 		        </Grid>
 		        <Grid item xs={12}>
-		        	<SimpleModal open={open} handleFieldChange={this.handleFieldChange} handleSubmit={this.handleSubmit} handleClose={this.handleClose} />
+		        	<SimpleModal open={open} update={update} newCategory={newCategory} handleFieldChange={this.handleFieldChange} handleSubmit={this.handleSubmit} handleClose={this.handleClose} />
 		        </Grid>
 		    </Container>
         );
