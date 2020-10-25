@@ -168,8 +168,11 @@ class NewPost extends Component {
     }
 
     async componentWillReceiveProps(nextProps) {
+        const {
+            post_id
+        } = this.state;
 
-        if (nextProps.match.params.id !== this.state.post_id) {
+        if (nextProps.match.params.id !== post_id) {
             await this.loadData(nextProps.match.params.id);
         }
     }
@@ -189,12 +192,18 @@ class NewPost extends Component {
     loadData = async (postId = null) => {
         let categoryOptions = [];
         let tagOptions = [];
+
+        let {
+            token,
+            user
+        } = this.state; 
+
         try {
 
             let tagRes = await axios.get('/api/tags', 
                 {
                     headers: {
-                        'Authorization': 'Bearer '+this.state.token,
+                        'Authorization': 'Bearer '+token,
                         'Accept': 'application/json'
                     }
                 });
@@ -210,7 +219,7 @@ class NewPost extends Component {
             let categoryRes = await axios.get('/api/categories', 
                 {
                     headers: {
-                        'Authorization': 'Bearer '+this.state.token,
+                        'Authorization': 'Bearer '+token,
                         'Accept': 'application/json'
                     }
                 });
@@ -236,7 +245,7 @@ class NewPost extends Component {
                 let postObj = await axios.get('/api/posts/'+postId, 
                     {
                         headers: {
-                            'Authorization': 'Bearer '+this.state.token,
+                            'Authorization': 'Bearer '+token,
                             'Accept': 'application/json'
                         }
                     }
@@ -254,11 +263,11 @@ class NewPost extends Component {
             let userBooks = await axios.get('/api/books/showUserBooks', 
             {
                 headers: {
-                    'Authorization': 'Bearer '+this.state.token,
+                    'Authorization': 'Bearer '+token,
                     'Accept': 'application/json'
                 },
                 params: {
-                    userId: this.state.user.id
+                    userId: user.id
                 }
             });
 
@@ -314,12 +323,16 @@ class NewPost extends Component {
         this.setState({
             loading: true
         });
-        const { book_title_search_term } = this.state;
+
+        const { 
+            book_title_search_term,
+            token,
+        } = this.state;
 
         await axios.get('/api/books/searchByTitle', 
         {
             headers: {
-                'Authorization': 'Bearer '+this.state.token,
+                'Authorization': 'Bearer '+token,
                 'Accept': 'application/json'
             },
             params: {
@@ -349,27 +362,39 @@ class NewPost extends Component {
 
     handleCreateUpdatePost = async (event) => {
         event.preventDefault();
+        
+        const { 
+            category_id,
+            content,
+            post_id,
+            published,
+            selectedTags,
+            slug,
+            title,
+            token,
+            user_id,
+        } = this.state;
 
         const post = {
-            id: this.state.post_id ? this.state.post_id : null,
-            title: this.state.title,
-            slug: this.state.slug,
-            published: this.state.published,
-            content: this.state.content,
-            category_id: this.state.category_id,
-            selectedTags: this.state.selectedTags,
-            user_id: this.state.user_id
+            id: post_id ? post_id : null,
+            title: title,
+            slug: slug,
+            published: published,
+            content: content,
+            category_id: category_id,
+            selectedTags: selectedTags,
+            user_id: user_id
         };
 
-        if (this.state.post_id){
-            let results = await axios.post('/api/posts/'+this.state.post_id,
+        if (post_id){
+            let results = await axios.post('/api/posts/'+post_id,
                 { 
                     data: post,
                     _method: 'patch'                  
                 },
                 {   
                     headers: {
-                        'Authorization': 'Bearer '+this.state.token,
+                        'Authorization': 'Bearer '+token,
                         'Accept': 'application/json'
                     }
                 }
@@ -381,7 +406,7 @@ class NewPost extends Component {
                 post,
                 {   
                     headers: {
-                        'Authorization': 'Bearer '+this.state.token,
+                        'Authorization': 'Bearer '+token,
                         'Accept': 'application/json'
                     }
                 }
@@ -491,7 +516,7 @@ class NewPost extends Component {
 
         if(selectorName === 'chapter'){
             let chapterSelectedId = event.target.value;
-            let selectedBook = books.find(book => book.id == this.state.bookSelectedId);
+            let selectedBook = books.find(book => book.id == bookSelectedId);
             let bookCitations = selectedBook.citations;
             let citations = [];
 
@@ -513,10 +538,22 @@ class NewPost extends Component {
 
     render () {
         let { 
+            bookSelectedId,
+            bookSelectionModalOpen,
+            books,
             book_title,
             book_title_search_term,
+            categories,
+            category_id,
+            chapters,
+            chapterSelectedId,
             citations,
-            post_id
+            content,
+            post_id,
+            published,
+            slug,
+            tags,
+            title
         } = this.state;
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
@@ -538,7 +575,7 @@ class NewPost extends Component {
                                             id="title" 
                                             title='title' 
                                             onChange={this.handleFieldChange} 
-                                            value={this.state.title}
+                                            value={title}
                                         />
                                         {this.renderErrorFor('title')}
                                     </Grid>
@@ -549,7 +586,7 @@ class NewPost extends Component {
                                                 title='slug' 
                                                 onChange={this.handleFieldChange} 
                                                 aria-describedby="my-helper-text" 
-                                                value={this.state.slug}
+                                                value={slug}
                                             />
                                             {this.renderErrorFor('slug')}
                                     </Grid>
@@ -557,7 +594,7 @@ class NewPost extends Component {
                                         <FormControlLabel
                                             control={
                                                 <Checkbox
-                                                    checked={this.state.published}
+                                                    checked={published}
                                                     onChange={this.handleChkboxToggle}
                                                     name="published"
                                                     color="primary"
@@ -573,7 +610,7 @@ class NewPost extends Component {
                                             <Autocomplete
                                                 multiple
                                                 id="selectedTags"
-                                                options={this.state.tags}
+                                                options={tags}
                                                 getOptionLabel={(option) => option.value}
                                                 onChange={this.onTagsChange}
                                                 renderInput={(params) => (
@@ -592,7 +629,7 @@ class NewPost extends Component {
                                             <InputLabel htmlFor="age-native-simple">Category</InputLabel>
                                             <Select
                                                 native
-                                                value={this.state.category_id}
+                                                value={category_id}
                                                 onChange={this.handleChange}
                                                 title='category_id'
                                                 inputProps={{
@@ -603,8 +640,8 @@ class NewPost extends Component {
                                             <option value='0'></option>
                                             {
                                                 Object
-                                                .keys(this.state.categories)
-                                                .map(key => <option key={key} value = {this.state.categories[key].id}>{this.state.categories[key].value}</option>)
+                                                .keys(categories)
+                                                .map(key => <option key={key} value = {categories[key].id}>{categories[key].value}</option>)
                                             }
                                             </Select>
                                         </FormControl>
@@ -627,7 +664,7 @@ class NewPost extends Component {
                                     <ReactQuill 
                                         theme="snow"
                                         modules={this.modules}
-                                        value={this.state.content}
+                                        value={content}
                                         formats={this.formats}
                                         ref={(el) => { this.reactQuillRef = el }}
                                         onChange={this.handleEditorChange} 
@@ -647,11 +684,11 @@ class NewPost extends Component {
                     </Grid>
                     <Grid item xs={12}>
                         <BookChapterSelectionModal 
-                            books={this.state.books}
-                            chapters={this.state.chapters}
-                            bookSelectionModalOpen={this.state.bookSelectionModalOpen} 
-                            bookSelectedId={this.state.bookSelectedId}
-                            chapterSelectedId={this.state.chapterSelectedId}
+                            books={books}
+                            chapters={chapters}
+                            bookSelectionModalOpen={bookSelectionModalOpen} 
+                            bookSelectedId={bookSelectedId}
+                            chapterSelectedId={chapterSelectedId}
                             handleBookChapterSelect={this.handleBookChapterSelect}
                             handleClose={this.handleClose} 
                         />
