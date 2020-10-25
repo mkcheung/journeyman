@@ -54,16 +54,24 @@ class Home extends Component {
 
     async componentDidMount () {
 
-    	const userId = this.state.user.id;
+        let { 
+            user
+        } = this.state;
+
+    	const userId = user.id;
         await this.loadData(userId);
     }
 
     loadData = async (userId) => {
+    	
+        let { 
+            token
+        } = this.state;
 
         let postObj = await axios.get('/api/posts/getUserPosts', 
         {
         	headers: {
-                'Authorization': 'Bearer '+this.state.token,
+                'Authorization': 'Bearer '+token,
                 'Accept': 'application/json'
             },
             params: {
@@ -84,7 +92,12 @@ class Home extends Component {
 	}
 
 	deleteBook = async (postId) => {
-		let { user } = this.state;
+
+		let { 
+			token,
+			user 
+		} = this.state;
+
     	const userId = user.id;
 
 		swal({
@@ -99,7 +112,7 @@ class Home extends Component {
 				axios.delete(`/api/posts/${postId}`,
 		        {   
 		        	headers: {
-		                'Authorization': 'Bearer '+this.state.token,
+		                'Authorization': 'Bearer '+token,
 		                'Accept': 'application/json'
 		            },
 		        })
@@ -117,7 +130,13 @@ class Home extends Component {
 	};
 
 	togglePublished = async (postId, published) => {
-		let { posts, user } = this.state;
+
+		let { 
+			posts,
+			token,
+			user 
+		} = this.state;
+
     	const userId = user.id;
         
 		let post = posts.find(post => post.id === postId);
@@ -136,7 +155,7 @@ class Home extends Component {
                 },
                 {   
                     headers: {
-                        'Authorization': 'Bearer '+this.state.token,
+                        'Authorization': 'Bearer '+token,
                         'Accept': 'application/json'
                     }
                 }

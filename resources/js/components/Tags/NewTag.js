@@ -26,11 +26,18 @@
       handleCreateNewTag (event) {
         event.preventDefault()
 
-        const { history } = this.props
+        const { 
+          history 
+        } = this.props
+
+        const { 
+          description,
+          title 
+        } = this.state;
 
         const tag = {
-          title: this.state.title,
-          description: this.state.description
+          title: title,
+          description: description
         }
 
         axios.post('/api/tags', tag)
@@ -61,6 +68,12 @@
       }
 
       render () {
+        
+        const { 
+          description,
+          title 
+        } = this.state;
+
         return (
           <div className='container py-4'>
             <div className='row justify-content-center'>
@@ -76,7 +89,7 @@
                           type='text'
                           classtitle={`form-control ${this.hasErrorFor('title') ? 'is-invalid' : ''}`}
                           title='title'
-                          value={this.state.title}
+                          value={title}
                           onChange={this.handleFieldChange}
                         />
                         {this.renderErrorFor('title')}

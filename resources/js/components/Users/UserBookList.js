@@ -115,7 +115,9 @@ class UserBookList extends Component {
 	};
 
 	handleOpenChapterInput = async (bookId) => {
-		const { books } = this.state;
+		const { 
+			books
+		} = this.state;
 		let selectedBook = books.find(book => book.id === bookId);
 
 		this.setState({ 
@@ -126,7 +128,9 @@ class UserBookList extends Component {
 	};
 
 	handleOpenAddCitationInput = async (bookId) => {
-		const { books } = this.state;
+		const { 
+			books
+		} = this.state;
 		let selectedBook = books.find(book => book.id === bookId);
 
 		this.setState({ 
@@ -149,12 +153,16 @@ class UserBookList extends Component {
 
 	assignChapters = async (bookId) => {
 
+		const { 
+			token
+		} = this.state;
+
 		axios.post('/api/citations/assignChapters', { 
         	bookId 
         },
         {   
         	headers: {
-                'Authorization': 'Bearer '+this.state.token,
+                'Authorization': 'Bearer '+token,
                 'Accept': 'application/json'
             },
         })
@@ -180,6 +188,10 @@ class UserBookList extends Component {
 		})
 		.then(willDelete => {
 
+			const { 
+				token
+			} = this.state;
+
 			this.setState({
 				deleteInProgress:true
 			});
@@ -188,7 +200,7 @@ class UserBookList extends Component {
 				axios.delete(`/api/books/${bookId}`,
 		        {   
 		        	headers: {
-		                'Authorization': 'Bearer '+this.state.token,
+		                'Authorization': 'Bearer '+token,
 		                'Accept': 'application/json'
 		            },
 		        })
@@ -229,13 +241,14 @@ class UserBookList extends Component {
         });
 
         const { 
+	        author_first_name,
+	        author_middle,
+	        author_last_name,
         	bookTitle,
         	jsonFile, 
         	pages, 
-        	user,
-	        author_first_name,
-	        author_middle,
-	        author_last_name
+	        token,
+        	user
         } = this.state;
 
         let data = {
@@ -253,7 +266,7 @@ class UserBookList extends Component {
         },
         {   
         	headers: {
-                'Authorization': 'Bearer '+this.state.token,
+                'Authorization': 'Bearer '+token,
                 'Accept': 'application/json'
             },
         })
@@ -374,7 +387,9 @@ class UserBookList extends Component {
 
 	handleFieldChange = async (event) => {
 
-		let { state, pages } = this.state;
+		let { 
+			pages
+		} = this.state;
 		pages = event.target.value
 		this.setState({
             [event.target.id]: event.target.value,
@@ -434,14 +449,19 @@ class UserBookList extends Component {
 
     loadData = async () => {
 
+		let { 
+			token,
+			user
+		} = this.state;
+
         let userBooks = await axios.get('/api/books/showUserBooks', 
         {
         	headers: {
-                'Authorization': 'Bearer '+this.state.token,
+                'Authorization': 'Bearer '+token,
                 'Accept': 'application/json'
             },
             params: {
-                userId: this.state.user.id
+                userId: user.id
             }
         });
 
@@ -463,12 +483,33 @@ class UserBookList extends Component {
 	render() {
 
 		let { 
+			addBookOnly,
+			author_first_name,
+			author_middle,
+			author_last_name,
 			books,
+			bookIdForChInput,
+			bookTitle,
+			bookTitleForChInput,
+			chapterModalOpen,
+			chapterNum,
+			chapterPageBegin,
+			chapterPageEnd,
+			chapters,
+			chapterSelectionModalOpen,
+			chapterTitle,
+			citationModalOpen,
+			citationPage,
+			content,
 			deleteInProgress,
+			modalLoading,
+			modalOpen,
+			pages,
 			selectedBookCitations,
+			selectedChapter,
+			token,
 			loading
 		} = this.state;
-	    
 
 		let listOfBooks = '';
 
@@ -580,56 +621,56 @@ class UserBookList extends Component {
 			        </Grid>
 			        <Grid item xs={12}>
 		        		<BookUploadModal 
-		        			bookTitle={this.state.bookTitle} 
-		        			addBookOnly={this.state.addBookOnly}
+		        			bookTitle={bookTitle} 
+		        			addBookOnly={addBookOnly}
 		        			handleAddBook={this.handleAddBook}
-		        			author_first_name={this.state.author_first_name} 
-		        			author_middle={this.state.author_middle} 
-		        			author_last_name={this.state.author_last_name} 
+		        			author_first_name={author_first_name} 
+		        			author_middle={author_middle} 
+		        			author_last_name={author_last_name} 
 		        			handleFieldChange={this.handleFieldChange} 
-		        			pages={this.state.pages} 
-		        			modalOpen={this.state.modalOpen} 
+		        			pages={pages} 
+		        			modalOpen={modalOpen} 
 		        			fileReader={this.fileReader} 
-		        			token={this.state.token} 
+		        			token={token} 
 		        			handleSubmit={this.handleSubmit} 
 		        			handleClose={this.handleClose} 
 		        			onFilesChange={this.onFilesChange} 
 		        			onFilesError={this.onFilesError} 
 		        			handleOpen={this.handleOpen}
-		        			modalLoading={this.state.modalLoading} 
+		        			modalLoading={modalLoading} 
 		        		/>
 			        </Grid>
 			        <Grid item xs={12}>
 		        		<AddChapterModal 
-		        			bookTitleForChInput={this.state.bookTitleForChInput} 
-		        			bookIdForChInput={this.state.bookIdForChInput} 
+		        			bookTitleForChInput={bookTitleForChInput} 
+		        			bookIdForChInput={bookIdForChInput} 
 		        			handleFieldChange={this.handleFieldChange} 
-		        			chapterModalOpen={this.state.chapterModalOpen} 
-		        			chapterNum={this.state.chapterNum}
-		        			chapterPageBegin={this.state.chapterPageBegin}
-		        			chapterPageEnd={this.state.chapterPageEnd} 
-		        			chapterTitle={this.state.chapterTitle} 
+		        			chapterModalOpen={chapterModalOpen} 
+		        			chapterNum={chapterNum}
+		        			chapterPageBegin={chapterPageBegin}
+		        			chapterPageEnd={chapterPageEnd} 
+		        			chapterTitle={chapterTitle} 
 		        			handleChapterSubmit={this.handleChapterSubmit} 
 		        			handleClose={this.handleClose} 
 		        		/>
 			        </Grid>
 			        <Grid item xs={12}>
 		        		<ChapterSelectionModal 
-		        			chapters={this.state.chapters}
-		        			chapterSelectionModalOpen={this.state.chapterSelectionModalOpen} 
-		        			selectedChapter={this.state.selectedChapter}
+		        			chapters={chapters}
+		        			chapterSelectionModalOpen={chapterSelectionModalOpen} 
+		        			selectedChapter={selectedChapter}
 		        			handleChapterSelect={this.handleChapterSelect}
 		        			handleClose={this.handleClose} 
 		        		/>
 			        </Grid>
 			        <Grid item xs={12}>
 		        		<CitationModal 
-		        			chapters={this.state.chapters}
-		        			bookTitleForChInput={this.state.bookTitleForChInput}
-		        			citationModalOpen={this.state.citationModalOpen} 
-		        			content={this.state.content}
-		        			citationPage={this.state.citationPage}
-		        			bookIdForChInput={this.state.bookIdForChInput}
+		        			chapters={chapters}
+		        			bookTitleForChInput={bookTitleForChInput}
+		        			citationModalOpen={citationModalOpen} 
+		        			content={content}
+		        			citationPage={citationPage}
+		        			bookIdForChInput={bookIdForChInput}
 		        			handleClose={this.handleClose} 
 		        			handleFieldChange={this.handleFieldChange} 
 		        			handleCitationSubmit={this.handleCitationSubmit}

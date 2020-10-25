@@ -87,7 +87,11 @@ class CategoriesList extends Component {
 
 	handleFieldChange = async (event) => {
 
-		let { state, newCategory } = this.state;
+		let { 
+			state,
+			newCategory 
+		} = this.state;
+
 		newCategory[event.target.id] = event.target.value
 		this.setState({
 			...state,
@@ -189,10 +193,9 @@ class CategoriesList extends Component {
     handleCategoryEdit = async (event, categoryId) => {
 		event.preventDefault();
 
-		let { state, newCategory } = this.state;
-
 		let { 
-			categories
+			categories,
+			newCategory
 		} = this.state;
 
 		let selectedCategory = categories.find(category => category.id === categoryId);

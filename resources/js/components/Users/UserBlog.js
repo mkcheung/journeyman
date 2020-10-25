@@ -24,7 +24,12 @@ class UserBlog extends Component {
 
 
 	async componentWillReceiveProps(nextProps) {
-		if (nextProps.match.params.id !== this.state.user.id) {
+		
+        const { 
+            user 
+        } = this.state;
+
+		if (nextProps.match.params.id !== user.id) {
 			await this.loadData(nextProps.match.params.id);
 		}
 	}

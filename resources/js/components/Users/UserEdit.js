@@ -103,7 +103,7 @@ class UserEdit extends Component {
                         <div className='card-header'>User Profile</div>
                     </Grid>
                     <Grid item xs={12}>
-                        <form onSubmit={(e) => this.handleUserProfileUpdate(e, this.state.user)}>
+                        <form onSubmit={(e) => this.handleUserProfileUpdate(e, user)}>
                             <Grid container>
                                 <Grid item xs={12}>
                                     <InputLabel htmlFor="name">Username:</InputLabel>

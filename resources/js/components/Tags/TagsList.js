@@ -58,7 +58,11 @@ class TagsList extends Component {
 
     handleFieldChange = async (event) => {
 
-        let { state, newTag } = this.state;
+        let { 
+            state,
+            newTag 
+        } = this.state;
+        
         newTag[event.target.id] = event.target.value
         this.setState({
             ...state,

@@ -22,7 +22,11 @@
       }
 
       render () {
-        const { posts } = this.state
+
+        const { 
+          posts
+        } = this.state;
+
         return (
           <div className='container py-4'>
             <div className='row justify-content-center'>
