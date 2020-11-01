@@ -45,6 +45,10 @@ class PostController extends Controller
         $postId = $request->query('postId');
         $posts = Post::where('id', '=', (int)$postId)->where('parent', '=', 1)->with('user')->with('allDescendantPosts')->get()->all();
 
+        if(empty($posts)){
+            return json_encode($posts);
+        }
+
         $descendantPosts = [];
         $descendantPosts[] = [
             'title' => $posts[0]['title'],
@@ -64,8 +68,18 @@ class PostController extends Controller
         $this->processDescendants($posts[0]['allDescendantPosts'], $descendantPosts);
 
 
+        usort($descendantPosts,[$this,"compareValues"]);
+
         return json_encode($descendantPosts);
     }
+
+    private static function compareValues($a, $b){
+        if ($a["id"] == $b["id"]) {
+            return 0;
+        }
+        return ($a["id"] < $b["id"]) ? -1 : 1;
+    }
+
 
     private function processDescendants($post, &$descendantPosts){
 

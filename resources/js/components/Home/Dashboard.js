@@ -72,14 +72,10 @@ class Home extends Component {
             post_id,
 			user 
 		} = this.state;
-        	console.log(nextProps.match.params.id);
-        	console.log(post_id);
-        	console.log(nextProps.match.params.id !== null);
+
         if (nextProps.match.params.id !== undefined) {
-        	console.log(nextProps.match.params.id);
             await this.loadData(null, nextProps.match.params.id);
         } else {
-        	console.log('here load user data '+user.id);
             await this.loadData(user.id);
         }
     }
@@ -105,7 +101,6 @@ class Home extends Component {
 	                postId: postId
 	            }
 	        });
-
 		    postData = postObj.data;
     	} else {
 
@@ -122,9 +117,21 @@ class Home extends Component {
 
 		    postData = postObj.data;
     	}
+
+    	let newState = {};
+    	if (postData.length <= 0){
+    		newState = {
+	            loading:false,
+    		};
+    	} else {
+    		newState = {
+	            loading:false,
+	            posts: postData
+    		};
+    	}
+
         this.setState({
-            loading:false,
-            posts: postData
+        	...newState
         });
 	}
 
@@ -220,6 +227,7 @@ class Home extends Component {
 			user 
 		} = this.state;
 	    
+	    const showDescendantPosts = this.props.match.params.id ? true : false;
 
         if (isLoggedIn === false) {
             this.props.history.push('/login');
@@ -256,9 +264,13 @@ class Home extends Component {
 								name="published"
 								inputProps={{ 'aria-label': 'secondary checkbox' }}
 							/>
-							<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
-								<ListIcon style={{color:'white'}} />
-							</Button>
+							{
+								(showDescendantPosts === false && post.descendant_post_id !== null )&& 
+
+									<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
+										<ListIcon style={{color:'white'}} />
+									</Button>
+							}
 							<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
 								<EditIcon style={{color:'white'}} />
 							</Button>
