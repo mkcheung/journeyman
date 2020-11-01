@@ -19,7 +19,8 @@ import {
 import { 
 	Check as CheckIcon,
 	Delete as DeleteIcon,
-	Edit as EditIcon
+	Edit as EditIcon,
+	List as ListIcon
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
@@ -29,7 +30,7 @@ class Home extends Component {
     state = {
 		isLoggedIn: false,
         loading: true,
-        post_id: [],
+        post_id: null,
 		user: {},
 		posts: []
     };
@@ -59,31 +60,77 @@ class Home extends Component {
         } = this.state;
 
     	const userId = user.id;
-        await this.loadData(userId);
+        if (this.props.match.params.id !== null && this.props.match.params.id !== undefined) {
+            await this.loadData(null, this.props.match.params.id);
+        } else {
+            await this.loadData(userId);
+        }
     }
 
-    loadData = async (userId) => {
+    async componentWillReceiveProps(nextProps) {
+        const {
+            post_id,
+			user 
+		} = this.state;
+        	console.log(nextProps.match.params.id);
+        	console.log(post_id);
+        	console.log(nextProps.match.params.id !== null);
+        if (nextProps.match.params.id !== undefined) {
+        	console.log(nextProps.match.params.id);
+            await this.loadData(null, nextProps.match.params.id);
+        } else {
+        	console.log('here load user data '+user.id);
+            await this.loadData(user.id);
+        }
+    }
+
+    loadData = async (userId=null, postId=null) => {
     	
+    		
         let { 
             token
         } = this.state;
 
-        let postObj = await axios.get('/api/posts/getUserPosts', 
-        {
-        	headers: {
-                'Authorization': 'Bearer '+token,
-                'Accept': 'application/json'
-            },
-            params: {
-                userId: userId
-            }
-        });
+	    let postData = [];
 
-	    let postData = postObj.data;
+    	if(postId !== null){
+
+	        let postObj = await axios.get('/api/posts/getPostAndDecendants', 
+	        {
+	        	headers: {
+	                'Authorization': 'Bearer '+token,
+	                'Accept': 'application/json'
+	            },
+	            params: {
+	                postId: postId
+	            }
+	        });
+
+		    postData = postObj.data;
+    	} else {
+
+	        let postObj = await axios.get('/api/posts/getUserPosts', 
+	        {
+	        	headers: {
+	                'Authorization': 'Bearer '+token,
+	                'Accept': 'application/json'
+	            },
+	            params: {
+	                userId: userId
+	            }
+	        });
+
+		    postData = postObj.data;
+    	}
         this.setState({
             loading:false,
             posts: postData
         });
+	}
+
+    loadPostDescendants = async (postId) => {
+    	
+        this.props.history.push(`/dashboard/${postId}`);
 	}
 
     redirectToEdit = async (postId) => {
@@ -209,6 +256,9 @@ class Home extends Component {
 								name="published"
 								inputProps={{ 'aria-label': 'secondary checkbox' }}
 							/>
+							<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
+								<ListIcon style={{color:'white'}} />
+							</Button>
 							<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
 								<EditIcon style={{color:'white'}} />
 							</Button>

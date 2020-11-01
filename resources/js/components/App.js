@@ -235,7 +235,8 @@ class App extends Component {
                         <Route exact path='/post' component={PostsList} />
                         <Route exact path='/post/show/:id' component={ShowPost} />
                         <ProtectedRoute exact path='/adminDashboard' perform="admins-only" component={AdminDashboard}/>
-						<ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
+                        <ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
+                        <ProtectedRoute exact path='/dashboard/:id' perform="home-list" component={Dashboard}/>
 						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
                         <ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
                         <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" pdm={pdm} component={UserEdit}/>

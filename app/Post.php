@@ -11,7 +11,9 @@ class Post extends Model
         'title',
         'slug',
         'content',
+        'descendant_post_id',
         'image',
+        'parent',
         'published',
         'category_id',
         'user_id',
@@ -46,6 +48,16 @@ class Post extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class, 'post_id')->with('user', 'post');
+    }
+
+    public function descendantPosts()
+    {
+        return $this->hasMany(Post::class, 'id', 'descendant_post_id');
+    }
+
+    public function allDescendantPosts()
+    {
+        return $this->descendantPosts()->with('allDescendantPosts');
     }
  
  

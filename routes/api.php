@@ -19,6 +19,7 @@ Route::get('users/showAuthors', 'UserController@showAuthors');
 Route::get('posts/', 'PostController@index');
 Route::get('posts/getRecentPosts', 'PostController@getRecentPosts');
 Route::get('posts/getUserPosts', 'PostController@getUserPosts');
+Route::get('posts/getPostAndDecendants', 'PostController@getPostAndDecendants');
 Route::get('posts/show/{id}', 'PostController@show');
 Route::group([
     'prefix' => 'auth'

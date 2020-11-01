@@ -16,7 +16,6 @@ import {
 	Tooltip
 } from '@material-ui/core';
 import { 
-	List as ListIcon,  
 	Edit as EditIcon,  
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
