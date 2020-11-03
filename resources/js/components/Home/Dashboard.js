@@ -11,7 +11,8 @@ import {
 	Container,
 	Grid,
 	Paper,
-	Switch
+	Switch,
+	Tooltip,
 } from '@material-ui/core';
 import { 
 	ToggleButton
@@ -20,7 +21,8 @@ import {
 	Check as CheckIcon,
 	Delete as DeleteIcon,
 	Edit as EditIcon,
-	List as ListIcon
+	List as ListIcon,
+	PlaylistAdd as PlaylistAddIcon
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 
@@ -145,6 +147,10 @@ class Home extends Component {
 		this.props.history.push(`/post/edit/${postId}`);
 	}
 
+    redirectToAddChapter = async (postId) => {
+		this.props.history.push(`/post/create/chapter/${postId}`);
+	}
+
 	deleteBook = async (postId) => {
 
 		let { 
@@ -232,56 +238,78 @@ class Home extends Component {
         if (isLoggedIn === false) {
             this.props.history.push('/login');
 		}
-
+		let latestPostInChapter = null;
 	    return (
-			<div className="container">
-                {
-                    posts && posts.map(post => (
-                	<div key={`post-${post.id}`}>
-	                    <h2>
-							<Link
-								to={`/post/show/${post.id}`}
-								key={post.id}
-							>
-								{post.title}
-							</Link>
-							<HTMLEllipsis
-								unsafeHTML={post.content}
-								maxLine='3'
-								ellipsis='...'
-								basedOn='letters'
-							/>
-	        			</h2>
-	        			Author: {post.user.full_name}
-	        			<br/>
-	        			Posted: {post.created_at}
-	        			<div style={{float:'right', top:'-27px', position:'relative'}}>
-							<Switch
-								checked={post.published === 1 ? true : false}
-								onChange={() => {
-									this.togglePublished(post.id, post.published === 1);
-								}}
-								name="published"
-								inputProps={{ 'aria-label': 'secondary checkbox' }}
-							/>
-							{
-								(showDescendantPosts === false && post.descendant_post_id !== null )&& 
 
-									<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
-										<ListIcon style={{color:'white'}} />
-									</Button>
-							}
-							<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
-								<EditIcon style={{color:'white'}} />
+            <Container maxWidth="lg">
+				<div className="container">
+	                {
+	                    posts && posts.map(post => (
+
+	                	<div key={`post-${post.id}`}>
+		                    <h2>
+								<Link
+									to={`/post/show/${post.id}`}
+									key={post.id}
+								>
+									{post.title}
+								</Link>
+								<HTMLEllipsis
+									unsafeHTML={post.content}
+									maxLine='3'
+									ellipsis='...'
+									basedOn='letters'
+								/>
+		        			</h2>
+		        			Author: {post.user.full_name}
+		        			<br/>
+		        			Posted: {post.created_at}
+		        			<div style={{float:'right', top:'-27px', position:'relative'}}>
+								<Switch
+									checked={post.published === 1 ? true : false}
+									onChange={() => {
+										this.togglePublished(post.id, post.published === 1);
+									}}
+									name="published"
+									inputProps={{ 'aria-label': 'secondary checkbox' }}
+								/>
+								{
+									(showDescendantPosts === false && post.descendant_post_id !== null )&& 
+
+										<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
+											<ListIcon style={{color:'white'}} />
+										</Button>
+								}
+								{
+									(showDescendantPosts === false && post.descendant_post_id == null) &&
+							            <Tooltip title="Add Chapter" placement="bottom">
+							                <Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToAddChapter(post.id)}>
+							                    <PlaylistAddIcon style={{color:'white'}} />
+							                </Button>
+							            </Tooltip>
+								}
+								<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
+									<EditIcon style={{color:'white'}} />
+								</Button>
+								<Button style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
+									<DeleteIcon style={{color:'white'}} />
+								</Button>
+		            		</div>
+		            		<hr/>
+	                	</div>
+	                ))}
+				</div>
+				{
+					(showDescendantPosts === true )&& 
+					<div className="container">
+	  					<Tooltip title="Add Chapter" placement="bottom">
+							<Button style={{height:'47px', top:'-1px', float:'right'}} variant="contained" color="primary" onClick={()=>this.redirectToAddChapter(this.props.match.params.id)}>
+								<PlaylistAddIcon style={{color:'white'}} />
 							</Button>
-							<Button style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
-								<DeleteIcon style={{color:'white'}} />
-							</Button>
-	            		</div>
-	            		<hr/>
-                	</div>
-                ))}
-			</div>
+						</Tooltip>
+					</div>
+				}
+            </Container>
 		)
 	}
 }

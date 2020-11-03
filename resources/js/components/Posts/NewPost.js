@@ -23,8 +23,12 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    TextField
+    TextField,
+    Tooltip,
 } from '@material-ui/core';
+import { 
+    PlaylistAdd as PlaylistAddIcon
+} from '@material-ui/icons';
 
 
 Quill.register("modules/imageUploader", ImageUploader);
@@ -51,6 +55,7 @@ class NewPost extends Component {
         bookSelectionModalOpen: false,
         bookSelectedId: null,
         chapterSelectedId:null,
+        parentPostId:null,
         user: {},
     };
 
@@ -153,7 +158,8 @@ class NewPost extends Component {
         }
         this.attachQuillRefs()
         const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
-        await this.loadData(postId);
+        const parentPostId = (this.props.match.params.parentId) ? this.props.match.params.parentId : null;
+        await this.loadData(postId, parentPostId);
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -163,7 +169,8 @@ class NewPost extends Component {
 
         if (prevState.loading === true) {
             const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
-            await this.loadData(postId);
+            const parentPostId = (this.props.match.params.parentId) ? this.props.match.params.parentId : null;
+            await this.loadData(postId, parentPostId);
         }
     }
 
@@ -189,7 +196,7 @@ class NewPost extends Component {
         if (quillRef != null) this.quillRef = quillRef;
     }
 
-    loadData = async (postId = null) => {
+    loadData = async (postId = null, parentPostId=null) => {
         let categoryOptions = [];
         let tagOptions = [];
 
@@ -238,7 +245,8 @@ class NewPost extends Component {
                 categories: categoryOptions,
                 loading:false,
                 tags: tagOptions,
-                user_id:appState.user.id
+                user_id:appState.user.id,
+                parentPostId:parentPostId
             };
 
             if(postId !== null){
@@ -373,6 +381,7 @@ class NewPost extends Component {
             title,
             token,
             user_id,
+            parentPostId
         } = this.state;
 
         const post = {
@@ -383,7 +392,8 @@ class NewPost extends Component {
             content: content,
             category_id: category_id,
             selectedTags: selectedTags,
-            user_id: user_id
+            user_id: user_id,
+            parentPostId
         };
 
         if (post_id){
@@ -401,7 +411,7 @@ class NewPost extends Component {
             );
             swal("Done!", "Post Updated.", "success");
         } else {
-            // let results = await axios.post('/api/posts', post);
+
             let results = await axios.post('/api/posts/',
                 post,
                 {   
@@ -557,13 +567,14 @@ class NewPost extends Component {
         } = this.state;
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
+        const headerTitle = (post_id) ? 'Update' : 'Create New';
 
         return (
 
             <Container maxWidth="lg">
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <div className='card-header'>Create New Post</div>
+                        <div className='card-header'>{headerTitle} Post</div>
                     </Grid>
                     <Grid item xs={12}>
                         <form onSubmit={this.handleCreateUpdatePost}>

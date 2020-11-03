@@ -135,16 +135,39 @@ class PostController extends Controller
             $selectedTagIds[] = $selectedTag['id'];
         }
 
+        $parentId = null;
+        if($request['parentPostId'] !== null){
+
+            $descendantPosts = [];
+            $posts = Post::where('id', '=', (int)$request['parentPostId'])->with('allDescendantPosts')->get();
+
+            $this->processDescendants($posts[0]['allDescendantPosts'], $descendantPosts);
+            usort($descendantPosts,[$this,"compareValues"]);
+
+            foreach($descendantPosts as $descendantPost){
+                $parentId = $descendantPost['id'];
+            }
+
+            $parentId = $parentId ? $parentId : (int)$request['parentPostId'];
+        }
+
         $post = Post::create([
           'title' => $request['title'],
           'slug' => str_slug($request->title, '-'),
           'content' => $request['content'],
+          'parent' => is_null($parentId) ? 1 : 0,
           'published' => $request['published'],
           'category' => $request['category'],
           'user_id' => $request['user_id']
         ]);
 
         $post->tags()->sync($selectedTagIds);
+
+        if(!is_null($parentId)){
+            $parentPost = Post::findOrFail($parentId);
+            $parentPost->descendant_post_id = $post->id;
+            $parentPost->save();
+        }
 
         return response()->json($post);
     }

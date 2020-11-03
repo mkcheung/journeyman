@@ -238,6 +238,7 @@ class App extends Component {
                         <ProtectedRoute exact path='/dashboard' perform="home-list" component={Dashboard}/>
                         <ProtectedRoute exact path='/dashboard/:id' perform="home-list" component={Dashboard}/>
 						<ProtectedRoute exact path='/post/create' perform="post-create" component={NewPost} />
+                        <ProtectedRoute exact path='/post/create/chapter/:parentId/' perform="post-create" component={NewPost} />
                         <ProtectedRoute exact path='/post/edit/:id' perform="post-edit" component={NewPost} />
                         <ProtectedRoute exact path='/user/edit/:id' perform="user-edit" pdm={pdm} component={UserEdit}/>
 						<ProtectedRoute exact path='/tag' perform="tag-list" component={TagsList} />
