@@ -266,6 +266,7 @@ class NewPost extends Component {
                 newState['title'] = postData['title'];
                 newState['content'] = postData['content'];
                 newState['post_id'] = postData['id'];
+                newState['image'] = postData['image'];
                 newState['published'] = postData['published'] ? true : false;
 
             }
@@ -637,9 +638,8 @@ class NewPost extends Component {
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
-                                    <h1>Insert Material</h1>
-                                        <label className="label_imagem_artigo"> Imagem do artigo: </label>
-                                        <input className="input_imagem_artigo" type="file"  onChange={this.onChange} />
+                                    <h2>Insert Blog Header Image</h2>
+                                        <input className="input_imagem_artigo" type="file" onChange={this.onChange} />
                                         <div className="imgPreview">
                                             { 
                                                 imagePreviewUrl ?  (<img className="add_imagem" Name="add_imagem" src={imagePreviewUrl} />) : ( 'Upload image' )
@@ -689,6 +689,16 @@ class NewPost extends Component {
                                             }
                                             </Select>
                                         </FormControl>
+                                    </Grid>
+                                    <Grid style={{'textAlign':'center', 'marginLeft':'-85px'}} item xs={12}>
+                                        <div>
+                                            <h4>
+                                                <u>
+                                                    Header Image Preview
+                                                </u>
+                                            </h4>
+                                            <img style={{'width':'400px'}} src={this.state.image} />
+                                        </div>
                                     </Grid>
                                 </Grid>
                             </Grid>
