@@ -33,6 +33,7 @@
         "html-react-parser": "^0.14.0",
         "luxon": "^1.25.0",
         "quill-image-uploader": "^1.2.2",
+        "react-dropzone": "^11.2.4",
         "react-files": "^2.4.8",
         "react-flash-message": "^1.0.2",
         "react-lines-ellipsis": "^0.14.1",

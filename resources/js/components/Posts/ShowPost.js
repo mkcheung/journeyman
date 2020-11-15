@@ -32,6 +32,7 @@ class ShowPost extends Component {
         post_id: null,
         content:'',
         title: '',
+        image: null,
         open: false,
         user: {},
     };
@@ -95,6 +96,7 @@ class ShowPost extends Component {
                 newState['title'] = postData['title'];
                 newState['content'] = postData['content'];
                 newState['post_id'] = postData['id'];
+                newState['image'] = postData['image'];
 
             }
             this.setState(newState);
@@ -108,7 +110,8 @@ class ShowPost extends Component {
         let { 
             post_id,
             title,
-            content
+            content,
+            image
         } = this.state;
 
         return (
@@ -116,10 +119,21 @@ class ShowPost extends Component {
             <Container maxWidth="lg">
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <div className='card-header'>{title}</div>
+                        
                     </Grid>
                     <Grid item xs={12}>
-                        <Box component="span" display="block" p={1} m={1} bgcolor="background.paper" dangerouslySetInnerHTML={{__html: content}}>
+                        <Box component="span" display="block" p={1} m={1} bgcolor="background.paper" >
+
+                            <h4>
+                                <div style={{textAlign:'center'}}>
+                                    <u>
+                                        {title}
+                                    </u><br/>
+                                    <img style={{'width':'600px'}}src={image} />
+                                </div>
+                            </h4>
+                            <div dangerouslySetInnerHTML={{__html: content}}>
+                            </div>
                         </Box>
                     </Grid>
                 </Grid>

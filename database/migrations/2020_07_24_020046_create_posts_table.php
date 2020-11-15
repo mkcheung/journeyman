@@ -18,7 +18,6 @@ class CreatePostsTable extends Migration
             $table->string('title');
             $table->string('slug', 355);
             $table->text('content')->nullable();
-            $table->string('image')->nullable();
             $table->tinyInteger('published')->default(1)->comment('1=published 2=draft');
             $table->bigInteger('category_id')->nullable()->unsigned();
             $table->bigInteger('user_id')->nullable()->unsigned();

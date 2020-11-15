@@ -57,6 +57,8 @@ class NewPost extends Component {
         chapterSelectedId:null,
         parentPostId:null,
         user: {},
+        image: '',
+        imagePreviewUrl: false
     };
 
 
@@ -381,7 +383,8 @@ class NewPost extends Component {
             title,
             token,
             user_id,
-            parentPostId
+            parentPostId,
+            image,
         } = this.state;
 
         const post = {
@@ -393,7 +396,8 @@ class NewPost extends Component {
             category_id: category_id,
             selectedTags: selectedTags,
             user_id: user_id,
-            parentPostId
+            parentPostId,
+            image
         };
 
         if (post_id){
@@ -546,6 +550,23 @@ class NewPost extends Component {
         }
     };
 
+    onChange = (e) => {
+        let files = e.target.files || e.dataTransfer.files;
+        if (!files.length)
+        return;
+        this.createImage(files[0]);
+    }
+
+    createImage = (file) => {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            this.setState({
+                image: e.target.result
+            })
+        };
+        reader.readAsDataURL(file);
+    }
+
     render () {
         let { 
             bookSelectedId,
@@ -563,7 +584,8 @@ class NewPost extends Component {
             published,
             slug,
             tags,
-            title
+            title,
+            imagePreviewUrl
         } = this.state;
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
@@ -614,6 +636,17 @@ class NewPost extends Component {
                                             label="Publish"
                                         />
                                     </Grid>
+                                    <Grid item xs={12}>
+                                    <h1>Insert Material</h1>
+                                        <label className="label_imagem_artigo"> Imagem do artigo: </label>
+                                        <input className="input_imagem_artigo" type="file"  onChange={this.onChange} />
+                                        <div className="imgPreview">
+                                            { 
+                                                imagePreviewUrl ?  (<img className="add_imagem" Name="add_imagem" src={imagePreviewUrl} />) : ( 'Upload image' )
+                                            }
+                                        </div>
+                                    </Grid>
+
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Grid item xs={12}>

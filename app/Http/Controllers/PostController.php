@@ -153,6 +153,7 @@ class PostController extends Controller
 
         $post = Post::create([
           'title' => $request['title'],
+          'image' => $request['image'],
           'slug' => str_slug($request->title, '-'),
           'content' => $request['content'],
           'parent' => is_null($parentId) ? 1 : 0,
@@ -205,12 +206,17 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $data = $request->all();
         $post = Post::findOrFail((int)$id);
 
         $post->title = $data['data']['title'];
         $post->content = $data['data']['content'];
+        if($data['data']['image']) {
+            $post->image = $data['data']['image'];
+            $destinationPath = public_path('post_images') . '/'.$post->title;
+            file_put_contents($destinationPath, file_get_contents($post->image));
+        }
+
         $post->slug = str_slug($data['data']['title'], '-');
         $post->published = $data['data']['published'];
         $post->user_id = $data['data']['user_id'];
