@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Post;
+use App\User;
 use App\Http\Controllers\PostController;
 use Tests\TestCase;
 use Illuminate\Http\Request;
@@ -14,6 +15,35 @@ use Mockery;
 
 class PostControllerTest extends TestCase
 {
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function testIndex()
+    {
+        $postIndex = collect(['test']);
+        // Mock
+        $controller = new PostController();
+        $user = \Mockery::mock('overload:' . User::class);
+        $user->shouldReceive('with')
+            ->with('posts')
+            ->andReturn($user)
+            ->once();
+        $user->shouldReceive('get')
+            ->andReturn($user)
+            ->once();
+
+        $user->shouldReceive('toJson')
+            ->andReturn($postIndex)
+            ->once();
+
+
+        // Fire
+        $response = $controller->index();
+        // Assert
+        self::assertJson($response);
+    }
     /**
      * A basic feature test example.
      *
