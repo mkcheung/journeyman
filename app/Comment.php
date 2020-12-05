@@ -6,7 +6,17 @@ use Illuminate\Database\Eloquent\Model;
  
 class Comment extends Model
 {
-    protected $appends = ['date_formatted'];
+
+    protected $fillable = [
+        'approved',
+        'comment',
+        'post_id',
+        'user_id',
+    ]; 
+
+    protected $appends = [
+        "date_formatted",
+    ];
  
     public function post()
     {

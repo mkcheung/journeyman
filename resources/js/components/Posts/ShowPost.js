@@ -8,12 +8,14 @@ import swal from 'sweetalert';
 import {withRouter} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
+import CommentBox  from '../Comments/CommentBox';
 import { 
     Box,
     Button,
     Checkbox,
     Chip,
     Container,
+    Divider,
     FormControl,
     FormControlLabel,
     FormLabel,
@@ -34,7 +36,9 @@ class ShowPost extends Component {
         title: '',
         image: null,
         open: false,
+        showCommentBox: false,
         user: {},
+        comments:[]
     };
 
     constructor(props) {
@@ -62,10 +66,11 @@ class ShowPost extends Component {
 
     async componentDidUpdate(prevProps, prevState) {
         const {
-            loading
+            loading,
+            comments
         } = this.state;
 
-        if (prevState.loading === true) {
+        if ((prevState.loading === true) || (prevState.comments != comments)) {
             const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
             await this.loadData(postId);
         }
@@ -92,11 +97,11 @@ class ShowPost extends Component {
                 });
 
                 let postData = postObj.data;
-
                 newState['title'] = postData['title'];
                 newState['content'] = postData['content'];
                 newState['post_id'] = postData['id'];
                 newState['image'] = postData['image'];
+                newState['comments'] = postData['comments'];
 
             }
             this.setState(newState);
@@ -106,14 +111,100 @@ class ShowPost extends Component {
         }
     };
 
-    render () {
+    handleCommentBoxAppear = async () => {
+        let { 
+            showCommentBox,
+        } = this.state;
+
+        showCommentBox = !showCommentBox;
+
+        this.setState({ 
+            showCommentBox:showCommentBox,
+        });
+    };
+
+    handleCommentSubmit = async (commentText) => {
+        let { 
+            post_id,
+            showCommentBox,
+            token,
+            user,
+        } = this.state;
+
+        const comment = {
+            post_id:post_id,
+            commentText: commentText,
+            user_id: user.id,
+        };
+
+        let results = await axios.post('/api/comments/',
+            comment,
+            {   
+                headers: {
+                    'Authorization': 'Bearer '+token,
+                    'Accept': 'application/json'
+                }
+            }
+        );
+        swal("Done!", "Comment added.", "success");
+        this.setState({ 
+            showCommentBox:!showCommentBox,
+            comments:results.data
+        });
+    };
+
+    render() {
         let { 
             post_id,
             title,
+            comments,
             content,
+            showCommentBox,
             image
         } = this.state;
 
+
+        const buttonTitle = (post_id) ? 'Update' : 'Create';
+
+        let commBox = <div></div>;
+
+        if (showCommentBox) {
+          commBox = <div>
+                        <CommentBox handleCommentSubmit={this.handleCommentSubmit} handleCommentBoxAppear={this.handleCommentBoxAppear} />
+                    </div>
+        } else {
+          commBox =  <Button style={{float:'right'}} type="submit" variant="contained" color="primary"  onClick={this.handleCommentBoxAppear}>
+                        Comment
+                     </Button>
+        }
+
+
+        let listOfComments = '';
+
+        if(comments && comments.length>0){
+            listOfComments =
+                <Grid container spacing={3}>
+                    {comments.map(comment => (
+                        <Grid item key={`comment-${comment.id}`} xs={12}>
+                            <div>
+                                <div>
+                                    <u>
+                                        <strong>
+                                            {comment.user.full_name }
+                                        </strong>
+                                    </u>
+                                    <span> </span>
+                                    {comment.created_at}
+                                </div>
+                                <div>
+                                    {comment.comment}
+                                </div>
+                                <Divider />
+                            </div>
+                        </Grid>
+                    ))}
+                </Grid>
+        }
         return (
 
             <Container maxWidth="lg">
@@ -137,6 +228,12 @@ class ShowPost extends Component {
                         </Box>
                     </Grid>
                 </Grid>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        {commBox}
+                    </Grid>
+                </Grid>
+                {listOfComments}
             </Container>
         );
     }
