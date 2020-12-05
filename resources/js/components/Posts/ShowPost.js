@@ -9,6 +9,7 @@ import {withRouter} from 'react-router-dom';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BookCitationList  from './BookCitationList';
 import CommentBox  from '../Comments/CommentBox';
+import CommentList  from '../Comments/CommentList';
 import { 
     Box,
     Button,
@@ -182,28 +183,7 @@ class ShowPost extends Component {
         let listOfComments = '';
 
         if(comments && comments.length>0){
-            listOfComments =
-                <Grid container spacing={3}>
-                    {comments.map(comment => (
-                        <Grid item key={`comment-${comment.id}`} xs={12}>
-                            <div>
-                                <div>
-                                    <u>
-                                        <strong>
-                                            {comment.user.full_name }
-                                        </strong>
-                                    </u>
-                                    <span> </span>
-                                    {comment.created_at}
-                                </div>
-                                <div>
-                                    {comment.comment}
-                                </div>
-                                <Divider />
-                            </div>
-                        </Grid>
-                    ))}
-                </Grid>
+            listOfComments = <CommentList comments={comments}/>
         }
         return (
 
