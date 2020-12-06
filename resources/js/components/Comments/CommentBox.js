@@ -21,12 +21,12 @@ export default function CommentBox(props) {
                 style = {{width:'1225px'}}
             />
             <div style = {{marginTop:'50px'}}>
-            <Button style={{float:'right'}} type="submit" variant="contained" color="primary" onClick={() => {handleCommentSubmit(comment)}}>
-                Add Comment
-            </Button>
-            <Button style={{float:'right', marginRight:'10px'}} type="submit" variant="contained" color="primary" onClick={handleCommentBoxAppear}>
-                Cancel
-            </Button>
+                <Button style={{float:'right'}} type="submit" variant="contained" color="primary" onClick={() => {handleCommentSubmit(comment)}}>
+                    Add Comment
+                </Button>
+                <Button style={{float:'right', marginRight:'10px'}} type="submit" variant="contained" color="primary" onClick={handleCommentBoxAppear}>
+                    Cancel
+                </Button>
             </div>
         </div>
     );

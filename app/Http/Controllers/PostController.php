@@ -181,7 +181,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::where('id', $id)->with('comments')->first();
+        $post = Post::where('id', $id)->with('comments', 'comments.replies', 'comments.replies.user')->first();
         return $post->toJson();
     }
 

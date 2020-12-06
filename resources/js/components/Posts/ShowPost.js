@@ -1,7 +1,7 @@
  // resources/assets/js/components/NewPost.js
 
-import axios from 'axios'
-import React, { Component } from 'react'
+import axios from 'axios';
+import React, { Component } from 'react';
 import ReactQuill, { Quill }  from 'react-quill'; // ES6
 import ImageUploader from "quill-image-uploader";
 import swal from 'sweetalert';
@@ -183,6 +183,7 @@ class ShowPost extends Component {
         let listOfComments = '';
 
         if(comments && comments.length>0){
+            console.log(comments);
             listOfComments = <CommentList comments={comments}/>
         }
         return (

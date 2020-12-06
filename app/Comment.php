@@ -28,6 +28,11 @@ class Comment extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
  
+    public function replies()
+    {
+        return $this->hasMany(Reply::class, 'comment_id');
+    }
+ 
     public function getDateFormattedAttribute()
     {
         return \Carbon\Carbon::parse($this->created_at)->format('Y/m/d h:i a');

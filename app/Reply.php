@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
 {
+
+    protected $fillable = [
+        'approved',
+        'reply',
+        'comment_id',
+        'user_id',
+    ]; 
     protected $appends = ['date_formatted'];
  
     public function comment()
