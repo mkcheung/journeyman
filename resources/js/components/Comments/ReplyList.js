@@ -9,14 +9,11 @@ import {
 import ReplyBox  from '../Comments/ReplyBox';
 
 export default function ReplyList(props) {
-
     const [replyBoxAppear, handleReplyBoxAppear] = useState(false);
+    const [repliesToComment, setRepliesToComment] = useState('');
 
 
     const handleReplySubmit = async (reply, commentId, userId, token) => {
-        console.log(reply);
-        console.log(commentId);
-        console.log(userId);
 
         const replyObj = {
             user_id:userId,
@@ -33,15 +30,15 @@ export default function ReplyList(props) {
                 }
             }
         );
-        swal("Done!", "Reply added.", "success");
-        this.setState({ 
-            replyBoxAppear:!replyBoxAppear,
-        });
+        setRepliesToComment(results.data);
+        handleReplyBoxAppear(false);
     }
 
     let {
         comment,
     } = props;
+
+    let replies = repliesToComment.length > 0 ? repliesToComment : comment.replies;
 
     let replyBox = <div></div>;
 
@@ -55,7 +52,6 @@ export default function ReplyList(props) {
                   </Button>
     }
 
-    console.log(comment.replies);
     return (
         <Grid item key={`comment-${comment.id}`} xs={12}>
             <div>
@@ -76,8 +72,8 @@ export default function ReplyList(props) {
                         {replyBox}
                     </Grid>
                 </Grid>
-                {comment.replies && comment.replies.map(reply => (
-                    <Grid item key={`reply-${reply.id}`} xs={12}>
+                {replies && replies.map(reply => (
+                    <Grid item key={`reply-${reply.id}`} style={{marginLeft:'60px'}}>
                         <div>
                             <u>
                                 <strong>

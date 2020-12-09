@@ -71,7 +71,7 @@ class ShowPost extends Component {
             comments
         } = this.state;
 
-        if ((prevState.loading === true) || (prevState.comments != comments)) {
+        if ((prevState.loading === true)) {
             const postId = (this.props.match.params.id) ? this.props.match.params.id : null;
             await this.loadData(postId);
         }
@@ -149,8 +149,9 @@ class ShowPost extends Component {
         );
         swal("Done!", "Comment added.", "success");
         this.setState({ 
+            comments:results.data,
+            loading: true,
             showCommentBox:!showCommentBox,
-            comments:results.data
         });
     };
 
@@ -183,7 +184,6 @@ class ShowPost extends Component {
         let listOfComments = '';
 
         if(comments && comments.length>0){
-            console.log(comments);
             listOfComments = <CommentList comments={comments}/>
         }
         return (

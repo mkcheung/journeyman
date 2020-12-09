@@ -18,7 +18,7 @@ export default function CommentList(props) {
         <Container maxWidth="lg">
             <Grid container spacing={3}>
                 {comments.map(comment => (
-                    <ReplyList comment={comment} />
+                    <ReplyList key={`comment_replies-${comment.id}`}  comment={comment} />
                 ))}
             </Grid>
         </Container>
