@@ -15,6 +15,7 @@ import {
     Button,
     Checkbox,
     Chip,
+    CircularProgress,
     Container,
     Divider,
     FormControl,
@@ -147,7 +148,6 @@ class ShowPost extends Component {
                 }
             }
         );
-        swal("Done!", "Comment added.", "success");
         this.setState({ 
             comments:results.data,
             loading: true,
@@ -162,7 +162,8 @@ class ShowPost extends Component {
             comments,
             content,
             showCommentBox,
-            image
+            image,
+            loading
         } = this.state;
 
 
@@ -186,35 +187,49 @@ class ShowPost extends Component {
         if(comments && comments.length>0){
             listOfComments = <CommentList comments={comments}/>
         }
-        return (
 
-            <Container maxWidth="lg">
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Box component="span" display="block" p={1} m={1} bgcolor="background.paper" >
+        let showPostDisplay = '';
+        if (loading === true) {
+            showPostDisplay = 
+                <div style={{verticalAlign: 'top', marginLeft:'3px',marginRight:'3px',marginTop:'450px',position:'relative' }} >
+                    <CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />
+                </div>
+        } else {
+            showPostDisplay = 
+                <div>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box component="span" display="block" p={1} m={1} bgcolor="background.paper" >
 
-                            <h4>
-                                <div style={{textAlign:'center'}}>
-                                    <u>
-                                        {title}
-                                    </u><br/>
-                                    <img style={{'width':'600px'}}src={image} />
+                                <h4>
+                                    <div style={{textAlign:'center'}}>
+                                        <u>
+                                            {title}
+                                        </u><br/>
+                                        <img style={{'width':'600px'}}src={image} />
+                                    </div>
+                                </h4>
+                                <div dangerouslySetInnerHTML={{__html: content}}>
                                 </div>
-                            </h4>
-                            <div dangerouslySetInnerHTML={{__html: content}}>
-                            </div>
-                        </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        {commBox}
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            {commBox}
+                        </Grid>
                     </Grid>
-                </Grid>
-                {listOfComments}
+                    {listOfComments}
+                </div>
+        }
+
+
+        return (
+            <Container maxWidth="lg">
+                {showPostDisplay}
             </Container>
         );
     }
