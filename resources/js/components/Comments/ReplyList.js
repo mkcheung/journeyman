@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { 
     Button,
+    Chip,
     Container,
     Divider,
     TextField,
@@ -47,13 +48,16 @@ export default function ReplyList(props) {
                     <ReplyBox handleReplySubmit={handleReplySubmit} handleReplyBoxAppear={handleReplyBoxAppear} commentId={comment.id}/>
                 </div>
     } else {
-      replyBox =  <Button style={{float:'right'}} type="submit" variant="contained" color="primary" onClick={() => handleReplyBoxAppear(true)}>
-                    Reply
-                  </Button>
+      replyBox =  
+                  <Chip
+                    label='Reply'
+                    onClick={() => handleReplyBoxAppear(true)}
+                    style={{marginLeft:'50px', marginBottom:'25px'}}
+                  />
     }
 
     return (
-        <Grid item key={`comment-${comment.id}`} xs={12}>
+        <Grid item key={`comment-${comment.id}`} xs={12} style={{marginBottom:'25px'}}>
             <div>
                 <div>
                     <u>
@@ -88,7 +92,6 @@ export default function ReplyList(props) {
                         </div>
                     </Grid>
                 ))}
-                <Divider />
             </div>
         </Grid>
     );

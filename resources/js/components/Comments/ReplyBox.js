@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { 
+    Chip,
     Button,
     TextField,
 } from '@material-ui/core';
@@ -23,15 +24,11 @@ export default function ReplyBox(props) {
                 title='reply' 
                 onChange={e => setReply(e.target.value)} 
                 value={reply}
-                style = {{width:'1225px'}}
+                style = {{ width:'1225px', marginLeft:'60px'}}
             />
-            <div style = {{marginTop:'50px'}}>
-                <Button style={{float:'right'}} type="submit" variant="contained" color="primary" onClick={() => {handleReplySubmit(reply, commentId, userId, token)}}>
-                    Add Reply
-                </Button>
-                <Button style={{float:'right', marginRight:'10px'}} type="submit" variant="contained" color="primary" onClick={() => handleReplyBoxAppear(false)}>
-                    Cancel
-                </Button>
+            <div style = {{marginTop:'25px'}}>
+                <Chip label='Add Reply' style={{float:'right', marginLeft:'15px'}} onClick={() => handleReplySubmit(reply, commentId, userId, token)}/>
+                <Chip label='Cancel' style={{float:'right', marginRight:'10px'}} onClick={() => handleReplyBoxAppear(false)}/>
             </div>
         </div>
     );
