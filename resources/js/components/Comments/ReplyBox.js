@@ -27,8 +27,8 @@ export default function ReplyBox(props) {
                 style = {{ width:'1225px', marginLeft:'60px'}}
             />
             <div style = {{marginTop:'25px'}}>
-                <Chip label='Add Reply' style={{float:'right', marginLeft:'15px'}} onClick={() => handleReplySubmit(reply, commentId, userId, token)}/>
-                <Chip label='Cancel' style={{float:'right', marginRight:'10px'}} onClick={() => handleReplyBoxAppear(false)}/>
+                <Chip size='small' label='Add Reply' style={{float:'right', marginLeft:'15px'}} onClick={() => handleReplySubmit(reply, commentId, userId, token)}/>
+                <Chip size='small' label='Cancel' style={{float:'right', marginRight:'10px'}} onClick={() => handleReplyBoxAppear(false)}/>
             </div>
         </div>
     );
