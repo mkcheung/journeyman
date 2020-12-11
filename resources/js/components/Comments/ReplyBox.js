@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
     Chip,
     Button,
-    TextField,
+    TextareaAutosize,
 } from '@material-ui/core';
 
 export default function ReplyBox(props) {
@@ -19,12 +19,13 @@ export default function ReplyBox(props) {
     } = props;
     return (
         <div>
-            <TextField 
+            <TextareaAutosize
                 id='reply' 
                 title='reply' 
                 onChange={e => setReply(e.target.value)} 
                 value={reply}
-                style = {{ width:'1225px', marginLeft:'60px'}}
+                style = {{ width:'1125px', marginLeft:'60px'}}
+                rowsMin={5}
             />
             <div style = {{marginTop:'25px'}}>
                 <Chip size='small' label='Add Reply' style={{float:'right', marginLeft:'15px'}} onClick={() => handleReplySubmit(reply, commentId, userId, token)}/>

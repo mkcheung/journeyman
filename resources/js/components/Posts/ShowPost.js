@@ -162,10 +162,10 @@ class ShowPost extends Component {
             comments,
             content,
             showCommentBox,
+            user,
             image,
             loading
         } = this.state;
-
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
 
@@ -176,7 +176,7 @@ class ShowPost extends Component {
                         <CommentBox handleCommentSubmit={this.handleCommentSubmit} handleCommentBoxAppear={this.handleCommentBoxAppear} />
                     </div>
         } else {
-          commBox =  <Button style={{float:'right'}} type="submit" variant="contained" color="primary"  onClick={this.handleCommentBoxAppear}>
+          commBox =  (Object.keys(user).length > 0) && <Button style={{float:'right'}} type="submit" variant="contained" color="primary"  onClick={this.handleCommentBoxAppear}>
                         Comment
                      </Button>
         }

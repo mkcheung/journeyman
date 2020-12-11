@@ -13,6 +13,13 @@ export default function ReplyList(props) {
     const [replyBoxAppear, handleReplyBoxAppear] = useState(false);
     const [repliesToComment, setRepliesToComment] = useState('');
 
+    let user = {};
+    let state = localStorage["appState"];
+
+    if (state) {
+        let appState = JSON.parse(state);
+        user = appState.user;
+     }
 
     const handleReplySubmit = async (reply, commentId, userId, token) => {
 
@@ -49,7 +56,7 @@ export default function ReplyList(props) {
                 </div>
     } else {
       replyBox =  
-                  <Chip
+                  (Object.keys(user).length > 0) && <Chip
                     label='Reply'
                     onClick={() => handleReplyBoxAppear(true)}
                     style={{marginLeft:'50px', marginBottom:'25px'}}

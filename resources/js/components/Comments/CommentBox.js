@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { 
     Button,
     TextField,
+    TextareaAutosize,
 } from '@material-ui/core';
 
 export default function CommentBox(props) {
@@ -13,12 +14,13 @@ export default function CommentBox(props) {
     } = props;
     return (
         <div>
-            <TextField 
+            <TextareaAutosize 
                 id='comment' 
                 title='comment' 
                 onChange={e => setComment(e.target.value)} 
                 value={comment}
                 style = {{width:'1225px'}}
+                rowsMin={5}
             />
             <div style = {{marginTop:'50px'}}>
                 <Button style={{float:'right'}} type="submit" variant="contained" color="primary" onClick={() => {handleCommentSubmit(comment)}}>
