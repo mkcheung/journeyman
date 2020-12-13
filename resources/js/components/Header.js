@@ -166,23 +166,6 @@ export default function Header(props) {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleMobileMenuClose = () => {
-        setMobileMoreAnchorEl(null);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        handleMobileMenuClose();
-    };
-
-    const handleMobileMenuOpen = (event) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
-
-    const aStyle = {
-        cursor: 'pointer'
-    };
-
     let navOps = [];
     
     if(isLoggedIn){
