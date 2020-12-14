@@ -1,78 +1,78 @@
-import axios from 'axios'
-import React, {Component} from 'react'
-import Header from './../Header';
-import Footer from './../Footer';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { 
+    Button,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    TextField,
+    TextareaAutosize,
+} from '@material-ui/core';
 import { Link, Redirect } from 'react-router-dom';
 import {withRouter} from 'react-router';
-import parse from 'html-react-parser';
-import { 
-	Box,
-	Container,
-	Grid,
-	Paper,
-} from '@material-ui/core';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import { makeStyles } from '@material-ui/core/styles';
 
+export default function RecentBlog() {
+    const [recentPosts, setPosts] = useState([]);
 
-class RecentBlog extends Component {
+    useEffect( () => {
+        async function loadData(){
+            let recentPostRes = await axios.get('/api/posts/getRecentPosts', 
+            {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
 
-    state = {
-        recentPosts:[]
-    };
+            let posts = recentPostRes.data;
+            setPosts(posts);
+        }
+        loadData();
+    }, []);
 
-
-    async componentDidMount () {
-        await this.loadData();
-    }
-
-    loadData = async () => {
-
-        let recentPostRes = await axios.get('/api/posts/getRecentPosts', 
-        {
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
-	    let posts = recentPostRes.data;
-        this.setState({
-            recentPosts:posts
-        });
-	}
-
-	render() {
-
-		let { 
-            recentPosts 
-		} = this.state;
-
-	    return (
-			<div className="container">
+    return (
+            <div>
+                <Drawer
+                    variant="permanent"
+                >
+                    <List>
+                        {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                            <ListItem button key={text}>
+                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                            <ListItemText primary={text} />
+                            </ListItem>
+                        ))}
+                    </List>
+                </Drawer>
                 {
                     recentPosts && recentPosts.map(post => (
-                	<div key={`userpost-${post.id}`}>
-	                    <h2>
-							<Link
-								to={`/post/show/${post.id}`}
-								key={post.id}
-							>
-								{post.title}
-							</Link>
-							<HTMLEllipsis
-								unsafeHTML={post.content}
-								maxLine='3'
-								ellipsis='...'
-								basedOn='letters'
-							/>
-	        			</h2>
-	        			Author: {post.user.full_name}
-	        			<br/>
-	        			Posted: {post.created_at}
-	            		<hr/>
-                	</div>
+                    <div key={`userpost-${post.id}`}>
+                        <h2>
+                            <Link
+                                to={`/post/show/${post.id}`}
+                                key={post.id}
+                            >
+                                {post.title}
+                            </Link>
+                            <HTMLEllipsis
+                                unsafeHTML={post.content}
+                                maxLine='3'
+                                ellipsis='...'
+                                basedOn='letters'
+                            />
+                        </h2>
+                        Author: {post.user.full_name}
+                        <br/>
+                        Posted: {post.created_at}
+                        <hr/>
+                    </div>
                 ))}
-			</div>
-		)
-	}
+            </div>
+    )
 }
-export default withRouter(RecentBlog)
+// export default withRouter(RecentBlog)
