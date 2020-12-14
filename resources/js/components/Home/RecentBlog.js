@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { 
     Button,
-    Drawer,
     List,
     ListItem,
     ListItemIcon,
@@ -36,19 +35,7 @@ export default function RecentBlog() {
     }, []);
 
     return (
-            <div>
-                <Drawer
-                    variant="permanent"
-                >
-                    <List>
-                        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                            <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
-                    </List>
-                </Drawer>
+            <div className="container">
                 {
                     recentPosts && recentPosts.map(post => (
                     <div key={`userpost-${post.id}`}>
@@ -75,4 +62,3 @@ export default function RecentBlog() {
             </div>
     )
 }
-// export default withRouter(RecentBlog)

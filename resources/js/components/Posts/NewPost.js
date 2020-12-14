@@ -729,7 +729,7 @@ class NewPost extends Component {
                             </Grid>
                             <Grid container>
                                 <Grid item xs={12}>
-                                    <Button  style={{float:'right'}} type="submit" variant="contained" color="primary" >
+                                    <Button style={{float:'right'}} type="submit" variant="contained" color="primary" >
                                        {buttonTitle}
                                     </Button>
                                 </Grid>
