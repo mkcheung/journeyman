@@ -145,7 +145,11 @@ export default function Header(props) {
     }
 
     const handleInputChange = (event, value) => {
-        history.push(`/user/getPosts/${value.id}`);
+        if(value === null){
+            history.push(`/`);
+        } else {
+            history.push(`/user/getPosts/${value.id}`);
+        }
     }
 
     const handleSetUserProfile = async (event) => {
