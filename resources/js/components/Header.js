@@ -145,8 +145,6 @@ export default function Header(props) {
     }
 
     const handleInputChange = (event, value) => {
-        // NOTE THAT PATH WILL NOT CHANGE, JUST THE PARAMETER
-        // IT IS HANDLED IN componentWillReceiveProps WITHIN USERBLOG.JS
         history.push(`/user/getPosts/${value.id}`);
     }
 

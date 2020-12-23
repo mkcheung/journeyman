@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 Route::resource('roles', 'RoleController');
 Route::get('users/showUserBlogPosts', 'UserController@showUserBlogPosts');
 Route::get('users/showAuthors', 'UserController@showAuthors');
+Route::get('tags/showTags', 'TagController@showTags');
 Route::get('posts/', 'PostController@index');
 Route::get('posts/getRecentPosts', 'PostController@getRecentPosts');
 Route::get('posts/getUserPosts', 'PostController@getUserPosts');

@@ -9,10 +9,11 @@ class TagController extends Controller
 { 
   function __construct()
   {
-       $this->middleware('permission:tag-list', ['only' => ['index']]);
-       $this->middleware('permission:tag-create', ['only' => ['create','store']]);
-       $this->middleware('permission:tag-edit', ['only' => ['edit','update']]);
-       $this->middleware('permission:tag-delete', ['only' => ['destroy']]);
+    $this->middleware('auth', ['except' => ['showTags']]);
+    $this->middleware('permission:tag-list', ['only' => ['index', 'show']]);
+    $this->middleware('permission:tag-create', ['only' => ['create','store']]);
+    $this->middleware('permission:tag-edit', ['only' => ['edit','update']]);
+    $this->middleware('permission:tag-delete', ['only' => ['destroy']]);
   }
   
 	public function index()
@@ -42,6 +43,13 @@ class TagController extends Controller
         }])->find($id);
 
         return $tag->toJson();
+      }
+
+      public function showTags(Request $request)
+      {
+        $tags = Tag::get();
+
+        return $tags->toJson();
       }
 
 }

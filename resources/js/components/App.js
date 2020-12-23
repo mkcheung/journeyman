@@ -60,6 +60,7 @@ class App extends Component {
             blogAuthors.push(temp);
         });
 
+
         if (state && blogAuthors) {
             let AppState = JSON.parse(state);
 
@@ -214,7 +215,7 @@ class App extends Component {
 			isLoggedIn,
 			openMenu,
             user,
-            blogAuthors,
+            blogAuthors
 		} = this.state;
 
         let role = user.roles ? user.roles[0] : '';

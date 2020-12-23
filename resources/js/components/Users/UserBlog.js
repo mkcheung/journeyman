@@ -1,99 +1,162 @@
-import axios from 'axios'
-import React, {Component} from 'react'
-import Header from './../Header';
-import Footer from './../Footer';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { 
+    Button,
+    Grid,
+    InputLabel,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    TextField,
+    TextareaAutosize,
+} from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Link, Redirect } from 'react-router-dom';
 import {withRouter} from 'react-router';
-import { 
-	Box,
-	Container,
-	Grid,
-	Paper
-} from '@material-ui/core';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
+import { makeStyles } from '@material-ui/core/styles';
 
 
-class UserBlog extends Component {
+    const useStyles = makeStyles((theme) => ({
+        root: {
+            flexGrow: 1,
+        },
+        paper: {
+            padding: theme.spacing(2),
+            textAlign: 'center',
+            color: theme.palette.text.secondary,
+        },
+            inputInputForTags: {
+            padding: theme.spacing(1, 1, 1, 0),
+        },
+    }));
 
-    state = {
-        loading: true,
-        post_id: [],
-		user: {},
-		posts: []
-    };
-
-
-	async componentWillReceiveProps(nextProps) {
-		
-        const { 
-            user 
-        } = this.state;
-
-		if (nextProps.match.params.id !== user.id) {
-			await this.loadData(nextProps.match.params.id);
-		}
-	}
-
-    async componentDidMount () {
-
-        const userId = (this.props.match.params.id) ? this.props.match.params.id : null;
-        await this.loadData(userId);
+    function useMergeState(initialState) {
+        const [state, setState] = useState(initialState);
+        const setMergedState = newState => 
+            setState(prevState => Object.assign({}, prevState, newState)
+        );
+        return [state, setMergedState];
     }
 
-    loadData = async (userId) => {
+export default function UserBlog(props) {
 
-        let userObj = await axios.get('/api/users/showUserBlogPosts', 
-        {
-        	headers: {
-                'Accept': 'application/json'
-            },
-            params: {
-                userId: userId
-            }
-        });
 
-	    let userData = userObj.data;
-        this.setState({
-            loading:false,
-            user:userData[0],
-            posts:userData[0]['posts']
-        });
-	}
+    const classes = useStyles();
 
-	render() {
 
-		let { 
-			posts,
-			user 
-		} = this.state;
-	    
-	    return (
-			<div className="container">
+    const [combined, setCombined] = useMergeState({
+        posts: [],
+        user: {},
+    });
+
+    const [tagOptions, setTagOptions] = useState([]);
+
+    useEffect( () => {
+        async function loadData(userId){
+            let userObj = await axios.get('/api/users/showUserBlogPosts', 
+            {
+                headers: {
+                    'Accept': 'application/json'
+                },
+                params: {
+                    userId: userId
+                }
+            });
+
+            let userData = userObj.data;
+            let tempUser = userData[0];
+            await setCombined({
+                posts: userData[0]['posts'],
+                user: userData[0]
+            });
+        }
+        loadData(props.match.params.id);
+    }, [props.match.params.id]);
+
+
+    useEffect( () => {
+        async function loadTagsOptions(){
+            let tagOptions = [];
+
+            let tagRes = await axios.get('/api/tags/showTags', 
                 {
-                    posts && posts.map(post => (
-                	<div key={`userpost-${post.id}`}>
-	                    <h2>
-							<Link
-								to={`/post/show/${post.id}`}
-								key={post.id}
-							>
-								{post.title}
-							</Link>
-							<HTMLEllipsis
-								unsafeHTML={post.content}
-								maxLine='3'
-								ellipsis='...'
-								basedOn='letters'
-							/>
-	        			</h2>
-	        			Author: {user.full_name}
-	        			<br/>
-	        			Posted: {post.created_at}
-	            		<hr/>
-                	</div>
-                ))}
-			</div>
-		)
-	}
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+            let tags = tagRes.data;
+            
+            tags.forEach(function(tag){
+                let temp = {};
+                temp['id'] = tag.id;
+                temp['value'] = tag.title;
+                tagOptions.push(temp);
+                setTagOptions(tagOptions);
+            });
+        }
+        loadTagsOptions();
+    }, []);
+
+    let userBlogEntries = '';
+    if(combined.posts.length > 0){
+        userBlogEntries = <Grid container spacing={3}>
+                    <Grid item xs={1}>
+                    </Grid>
+                    <Grid item xs={8}>
+                        {
+                            combined.posts.length && combined.posts.map(post => (
+                            <div key={`userpost-${post.id}`}>
+                                <h2>
+                                    <Link
+                                        to={`/post/show/${post.id}`}
+                                        key={post.id}
+                                    >
+                                        {post.title}
+                                    </Link>
+                                    <HTMLEllipsis
+                                        unsafeHTML={post.content}
+                                        maxLine='3'
+                                        ellipsis='...'
+                                        basedOn='letters'
+                                    />
+                                </h2>
+                                Author: {combined.user.full_name}
+                                <br/>
+                                Posted: {post.created_at}
+                                <hr/>
+                            </div>
+                        ))}
+                    </Grid>
+                    <Grid item xs={3}>
+                        <div style={{marginTop:'100px'}}>
+                            <Autocomplete
+                                id='tags'
+                                freeSolo
+                                multiple
+                                classes={{
+                                    input: classes.inputInputForTags,
+                                }}
+                                options={tagOptions}
+                                getOptionLabel={(tagOption) => tagOption.value}
+                                style={{ 
+                                     width: 300 }}
+                                renderInput={(params) => 
+                                    <TextField 
+                                        {...params} 
+                                        label="Search Posts With Tags:"
+                                    />
+                                }
+                            />
+                        </div>
+                    </Grid>
+                </Grid>
+    }
+
+    return (
+            <div className={classes.root}>
+                {userBlogEntries}
+            </div>
+    )
 }
-export default withRouter(UserBlog)
