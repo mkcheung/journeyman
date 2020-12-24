@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { 
     Button,
+    Chip,
     Grid,
     InputLabel,
     List,
@@ -19,23 +20,24 @@ import { makeStyles } from '@material-ui/core/styles';
 
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-  inputInputForTags: {
-    padding: theme.spacing(1, 1, 1, 0),
-  },
+    root: {
+        flexGrow: 1,
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+    inputInputForTags: {
+        padding: theme.spacing(1, 1, 1, 0),
+    },
 }));
 
 export default function RecentBlog() {
     const classes = useStyles();
     const [recentPosts, setPosts] = useState([]);
     const [tagOptions, setTagOptions] = useState([]);
+    const [selectedTags, selectTags] = useState([]);
 
     useEffect( () => {
         async function loadData(){
@@ -71,6 +73,28 @@ export default function RecentBlog() {
         loadData();
         loadTagsOptions();
     }, []);
+
+
+    const handleTagSelection = async (event, values) => {
+        selectTags(values);
+    }
+
+    const handleTagSubmit = async () => {
+
+        let recentPostRes = await axios.get('/api/posts/getRecentPosts', 
+        {
+            headers: {
+                'Accept': 'application/json'
+            },
+            params: {
+                tags: selectedTags
+            }
+        });
+
+        let posts = recentPostRes.data;
+        setPosts(posts);
+    }
+
 
     return (
             <div className={classes.root}>
@@ -121,8 +145,13 @@ export default function RecentBlog() {
                                         label="Search Posts With Tags:"
                                     />
                                 }
+                                onChange={handleTagSelection}
                             />
                         </div>
+                        <Chip
+                            label='Search'
+                            onClick={() => handleTagSubmit()}
+                        />
                     </Grid>
                 </Grid>
             </div>

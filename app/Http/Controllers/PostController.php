@@ -36,7 +36,34 @@ class PostController extends Controller
 
     public function getRecentPosts(Request $request)
     {
-        $posts = Post::where('published', '=', 1)->where('parent', '=', 1)->with('user')->limit(10)->get();
+        $data = $request->all();
+        $tagsRequested = [];
+
+        if(!empty($data['tags'])){
+          foreach($data['tags'] as $row){
+            $tagObj = json_decode($row);
+            $tagsRequested[] = $tagObj->id;
+          }
+        }
+
+        if(!empty($tagsRequested)){
+          $posts = Post::where('published', '=', 1)
+            ->whereHas('tags', function($query) use ($tagsRequested) {
+                return $query->whereIn('id', $tagsRequested);
+            })
+            ->where('parent', '=', 1)
+            ->with('user')
+            ->limit(10)
+            ->get();
+        } else {
+          $posts = Post::where('published', '=', 1)
+            ->where('parent', '=', 1)
+            ->with('user')
+            ->limit(10)
+            ->get();
+        }
+
+
         return $posts->toJson();
     }
 

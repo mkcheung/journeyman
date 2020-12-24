@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { 
     Button,
+    Chip,
     Grid,
     InputLabel,
     List,
@@ -52,6 +53,7 @@ export default function UserBlog(props) {
     });
 
     const [tagOptions, setTagOptions] = useState([]);
+    const [selectedTags, selectTags] = useState([]);
 
     useEffect( () => {
         async function loadData(userId){
@@ -98,6 +100,32 @@ export default function UserBlog(props) {
         }
         loadTagsOptions();
     }, []);
+
+    const handleTagSelection = async (event, values) => {
+        selectTags(values);
+    }
+
+    const handleTagSubmit = async () => {
+
+        let userId = props.match.params.id;
+        let userObj = await axios.get('/api/users/showUserBlogPosts', 
+        {
+            headers: {
+                'Accept': 'application/json'
+            },
+            params: {
+                userId: userId,
+                tags: selectedTags
+            }
+        });
+
+        let userData = userObj.data;
+        let tempUser = userData[0];
+        await setCombined({
+            posts: userData[0]['posts'],
+            user: userData[0]
+        });
+    }
 
     let userBlogEntries = '';
     if(combined.posts.length > 0){
@@ -148,8 +176,13 @@ export default function UserBlog(props) {
                                         label="Search Posts With Tags:"
                                     />
                                 }
+                                onChange={handleTagSelection}
                             />
                         </div>
+                        <Chip
+                            label='Search'
+                            onClick={() => handleTagSubmit()}
+                        />
                     </Grid>
                 </Grid>
     }

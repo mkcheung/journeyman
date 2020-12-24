@@ -24,10 +24,34 @@ class UserController extends Controller
 
     public function showUserBlogPosts(Request $request)
     {
+
+        $data = $request->all();
+        $tagsRequested = [];
+
+        if(!empty($data['tags'])){
+          foreach($data['tags'] as $row){
+            $tagObj = json_decode($row);
+            $tagsRequested[] = $tagObj->id;
+          }
+        }
+
         $userId = $request->query('userId');
-        $userPosts = User::where('id', '=', $userId)->with(['posts' => function ($query) {
-            $query->where('published', '=', 1);
-        }])->get();
+
+        if(!empty($tagsRequested)){
+            $userPosts = User::where('id', '=', $userId)
+                ->with(['posts' => function ($query) use ($tagsRequested) {
+                    $query->where('published', '=', 1);
+                    $query->whereHas('tags', function($query) use ($tagsRequested) {
+                        return $query->whereIn('id', $tagsRequested);
+                    });
+                }])
+                ->get();
+        } else {
+            $userPosts = User::where('id', '=', $userId)->with(['posts' => function ($query) {
+                $query->where('published', '=', 1);
+            }])->get();
+        }
+
         return $userPosts->toJson();
     }
 
