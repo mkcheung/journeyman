@@ -37,20 +37,16 @@ class UserController extends Controller
 
         $userId = $request->query('userId');
 
-        if(!empty($tagsRequested)){
-            $userPosts = User::where('id', '=', $userId)
-                ->with(['posts' => function ($query) use ($tagsRequested) {
-                    $query->where('published', '=', 1);
-                    $query->whereHas('tags', function($query) use ($tagsRequested) {
-                        return $query->whereIn('id', $tagsRequested);
-                    });
-                }])
-                ->get();
-        } else {
-            $userPosts = User::where('id', '=', $userId)->with(['posts' => function ($query) {
+        $userPosts = User::where('id', '=', $userId)
+            ->with(['posts' => function ($query) use ($tagsRequested) {
                 $query->where('published', '=', 1);
-            }])->get();
-        }
+                $query->when(!empty($tagsRequested), function($query2) use ($tagsRequested) {
+                    $query2->whereHas('tags', function($query3) use ($tagsRequested) {
+                        $query3->whereIn('id', $tagsRequested);
+                    });
+                });
+            }])
+            ->get();
 
         return $userPosts->toJson();
     }

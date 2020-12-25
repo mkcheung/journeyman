@@ -46,23 +46,16 @@ class PostController extends Controller
           }
         }
 
-        if(!empty($tagsRequested)){
-          $posts = Post::where('published', '=', 1)
-            ->whereHas('tags', function($query) use ($tagsRequested) {
-                return $query->whereIn('id', $tagsRequested);
-            })
-            ->where('parent', '=', 1)
-            ->with('user')
-            ->limit(10)
-            ->get();
-        } else {
-          $posts = Post::where('published', '=', 1)
-            ->where('parent', '=', 1)
-            ->with('user')
-            ->limit(10)
-            ->get();
-        }
-
+        $posts = Post::when(!empty($tagsRequested), function($query) use ($tagsRequested) {
+              $query->whereHas('tags', function($query2) use ($tagsRequested) {
+                $query2->whereIn('id', $tagsRequested);
+              });
+          })
+          ->where('published', '=', 1)
+          ->where('parent', '=', 1)
+          ->with('user')
+          ->limit(10)
+          ->get();
 
         return $posts->toJson();
     }
