@@ -127,12 +127,10 @@ export default function UserBlog(props) {
         });
     }
 
-    let userBlogEntries = '';
+    let userBlogEntries = <div></div>;
     if(combined.posts.length > 0){
-        userBlogEntries = <Grid container spacing={3}>
-                    <Grid item xs={1}>
-                    </Grid>
-                    <Grid item xs={8}>
+        userBlogEntries = 
+                    <div>
                         {
                             combined.posts.length && combined.posts.map(post => (
                             <div key={`userpost-${post.id}`}>
@@ -156,6 +154,16 @@ export default function UserBlog(props) {
                                 <hr/>
                             </div>
                         ))}
+                    </div>
+    }
+
+    return (
+            <div className={classes.root}>
+                <Grid container spacing={3}>
+                    <Grid item xs={1}>
+                    </Grid>
+                    <Grid item xs={8}>
+                        {userBlogEntries}
                     </Grid>
                     <Grid item xs={3}>
                         <div style={{marginTop:'100px'}}>
@@ -185,11 +193,6 @@ export default function UserBlog(props) {
                         />
                     </Grid>
                 </Grid>
-    }
-
-    return (
-            <div className={classes.root}>
-                {userBlogEntries}
             </div>
     )
 }
