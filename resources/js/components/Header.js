@@ -22,7 +22,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import { 
     Search as SearchIcon,
     PersonPin as PersonPinIcon
-}from '@material-ui/icons';
+} from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -206,7 +206,9 @@ export default function Header(props) {
                 </div>
                 <div style={{color:'white', borderRight:'solid', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
                     <h5>
+                        <Link to='/about' color="inherit">
                         About
+                        </Link>
                     </h5>
                 </div>
             </div>;

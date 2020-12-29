@@ -12,6 +12,7 @@ import NotFound from './NotFound';
 // User is LoggedIn
 import PrivateRoute from './Routes/PrivateRoute';
 import ProtectedRoute from './Routes/ProtectedRoute';
+import About from './About';
 import AdminDashboard from './Home/AdminDashboard';
 import Dashboard from './Home/Dashboard';
 import NewTag from './Tags/NewTag';
@@ -231,7 +232,8 @@ class App extends Component {
 					<Switch>
                         <Route exact path='/' component={RecentBlog} />
 						<Route exact path='/login' render={(loginProps) => (<Login handleLogin={this.handleLogin} isLoggedIn={isLoggedIn} userRole={role}/>)} />
-						<Route exact path='/register' component={Register}/>
+                        <Route exact path='/register' component={Register}/>
+                        <Route exact path='/about' component={About}/>
                         <Route exact path='/user/getPosts/:id' component={UserBlog} />
                         <Route exact path='/post' component={PostsList} />
                         <Route exact path='/post/show/:id' component={ShowPost} />
