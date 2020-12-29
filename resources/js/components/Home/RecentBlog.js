@@ -112,13 +112,13 @@ export default function RecentBlog() {
                                     >
                                         {post.title}
                                     </Link>
+                                </h2>
                                     <HTMLEllipsis
                                         unsafeHTML={post.content}
                                         maxLine='3'
                                         ellipsis='...'
                                         basedOn='letters'
                                     />
-                                </h2>
                                 Author: {post.user.full_name}
                                 <br/>
                                 Posted: {post.created_at}

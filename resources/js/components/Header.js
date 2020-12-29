@@ -194,14 +194,20 @@ export default function Header(props) {
                             root: classes.inputRoot,
                             input: classes.inputInput,
                         }}
+
                         options={blogAuthors}
                         getOptionLabel={(blogAuthor) => blogAuthor.full_name}
                         style={{ width: 300 }}
                         onChange={handleInputChange}
                         renderInput={(params) => 
-                            <TextField {...params} variant="outlined" />
+                            <TextField label="Search Posts By Author" {...params} variant="outlined" />
                         }
                     />
+                </div>
+                <div style={{color:'white', borderRight:'solid', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
+                    <h5>
+                        About
+                    </h5>
                 </div>
             </div>;
     }

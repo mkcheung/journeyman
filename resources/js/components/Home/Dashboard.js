@@ -254,13 +254,13 @@ class Home extends Component {
 								>
 									{post.title}
 								</Link>
-								<HTMLEllipsis
-									unsafeHTML={post.content}
-									maxLine='3'
-									ellipsis='...'
-									basedOn='letters'
-								/>
 		        			</h2>
+							<HTMLEllipsis
+								unsafeHTML={post.content}
+								maxLine='3'
+								ellipsis='...'
+								basedOn='letters'
+							/>
 		        			Author: {post.user.full_name}
 		        			<br/>
 		        			Posted: {post.created_at}
