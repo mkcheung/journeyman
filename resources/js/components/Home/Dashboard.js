@@ -25,7 +25,7 @@ import {
 	PlaylistAdd as PlaylistAddIcon
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
-
+import { IOSSwitch } from './../CustomComponents/CustomComponents';
 
 class Home extends Component {
 
@@ -265,7 +265,7 @@ class Home extends Component {
 		        			<br/>
 		        			Posted: {post.created_at}
 		        			<div style={{float:'right', top:'-27px', position:'relative'}}>
-								<Switch
+								<IOSSwitch
 									checked={post.published === 1 ? true : false}
 									onChange={() => {
 										this.togglePublished(post.id, post.published === 1);
