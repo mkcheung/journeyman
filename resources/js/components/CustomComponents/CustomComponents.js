@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import { 
+	Button,
 	Switch,
 } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { red } from '@material-ui/core/colors';
+import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
 const IOSSwitch = withStyles((theme) => ({
 	root: {
@@ -57,4 +59,14 @@ const IOSSwitch = withStyles((theme) => ({
 	);
 });
 
-export { IOSSwitch };
+const ColorButton = withStyles((theme) => ({
+	root: {
+		color: theme.palette.getContrastText(red[500]),
+		backgroundColor: red[500],
+		'&:hover': {
+			backgroundColor: red[700],
+		},
+	},
+}))(Button);
+
+export { ColorButton, IOSSwitch };

@@ -7,7 +7,6 @@ import {withRouter} from 'react-router';
 import { 
 	Box,
 	Button,
-    IconButton,
 	Container,
 	Grid,
 	Paper,
@@ -25,7 +24,10 @@ import {
 	PlaylistAdd as PlaylistAddIcon
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
-import { IOSSwitch } from './../CustomComponents/CustomComponents';
+import { 
+	ColorButton,
+	IOSSwitch 
+} from './../CustomComponents/CustomComponents';
 
 class Home extends Component {
 
@@ -291,9 +293,9 @@ class Home extends Component {
 								<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
 									<EditIcon style={{color:'white'}} />
 								</Button>
-								<Button style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
+								<ColorButton style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
 									<DeleteIcon style={{color:'white'}} />
-								</Button>
+								</ColorButton>
 		            		</div>
 		            		<hr/>
 	                	</div>
