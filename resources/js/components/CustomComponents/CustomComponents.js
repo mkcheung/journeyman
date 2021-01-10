@@ -19,13 +19,13 @@ const IOSSwitch = withStyles((theme) => ({
 			transform: 'translateX(16px)',
 			color: theme.palette.common.white,
 			'& + $track': {
-				backgroundColor: '#52d869',
+				backgroundColor: 'darkslategrey',
 				opacity: 1,
 				border: 'none',
 			},
 		},
 		'&$focusVisible $thumb': {
-			color: '#52d869',
+			color: 'darkslategrey',
 			border: '6px solid #fff',
 		},
 	},
@@ -59,14 +59,24 @@ const IOSSwitch = withStyles((theme) => ({
 	);
 });
 
-const ColorButton = withStyles((theme) => ({
+const ColorDeleteButton = withStyles((theme) => ({
 	root: {
-		color: theme.palette.getContrastText(red[500]),
-		backgroundColor: red[500],
+		color: theme.palette.getContrastText('#890824'),
+		backgroundColor: '#890824',
 		'&:hover': {
-			backgroundColor: red[700],
+			backgroundColor: '#890824',
 		},
 	},
 }))(Button);
 
-export { ColorButton, IOSSwitch };
+const ColorEditButton = withStyles((theme) => ({
+	root: {
+		color: theme.palette.getContrastText('#724470'),
+		backgroundColor: '#724470',
+		'&:hover': {
+			backgroundColor: '#724470',
+		},
+	},
+}))(Button);
+
+export { ColorDeleteButton, ColorEditButton, IOSSwitch };

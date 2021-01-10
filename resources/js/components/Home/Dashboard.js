@@ -25,7 +25,8 @@ import {
 } from '@material-ui/icons';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 import { 
-	ColorButton,
+	ColorDeleteButton,
+	ColorEditButton,
 	IOSSwitch 
 } from './../CustomComponents/CustomComponents';
 
@@ -278,24 +279,24 @@ class Home extends Component {
 								{
 									(showDescendantPosts === false && post.descendant_post_id !== null )&& 
 
-										<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
+										<ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
 											<ListIcon style={{color:'white'}} />
-										</Button>
+										</ColorEditButton>
 								}
 								{
 									(showDescendantPosts === false && post.descendant_post_id == null) &&
 							            <Tooltip title="Add Chapter" placement="bottom">
-							                <Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToAddChapter(post.id)}>
+							                <ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToAddChapter(post.id)}>
 							                    <PlaylistAddIcon style={{color:'white'}} />
-							                </Button>
+							                </ColorEditButton>
 							            </Tooltip>
 								}
-								<Button style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
+								<ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
 									<EditIcon style={{color:'white'}} />
-								</Button>
-								<ColorButton style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
+								</ColorEditButton>
+								<ColorDeleteButton style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
 									<DeleteIcon style={{color:'white'}} />
-								</ColorButton>
+								</ColorDeleteButton>
 		            		</div>
 		            		<hr/>
 	                	</div>
