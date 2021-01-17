@@ -1,11 +1,7 @@
-import axios from 'axios'
-import React, {Component} from 'react'
-import Header from './../Header';
-import Footer from './../Footer';
-import { Link, Redirect } from 'react-router-dom';
-import {withRouter} from 'react-router';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import Files from 'react-files'
 import { 
-	Box,
 	Button,
 	Container,
 	Grid,
@@ -14,10 +10,6 @@ import {
 	Tooltip,
 } from '@material-ui/core';
 import { 
-	ToggleButton
-} from '@material-ui/lab';
-import { 
-	Check as CheckIcon,
 	Delete as DeleteIcon,
 	Edit as EditIcon,
 	List as ListIcon,
@@ -29,137 +21,87 @@ import {
 	ColorEditButton,
 	IOSSwitch 
 } from './../CustomComponents/CustomComponents';
+import { Link, useHistory } from 'react-router-dom';
 
-class Home extends Component {
+function useMergeState(initialState) {
+    const [state, setState] = useState(initialState);
+    const setMergedState = newState => 
+        setState(prevState => Object.assign({}, prevState, newState)
+    );
+    return [state, setMergedState];
+}
 
-    state = {
-		isLoggedIn: false,
+export default function Home(props) {
+
+    let user = {};
+    let token = '';
+    let state = localStorage["appState"];
+
+    if (state) {
+        let appState = JSON.parse(state);
+        user = appState.user;
+        token = user.access_token;
+     }
+
+    const history = useHistory();
+
+    const [combined, setCombined] = useMergeState({
         loading: true,
-        post_id: null,
-		user: {},
-		posts: []
-    };
+        posts: [],
+    });
 
-	// check if user is authenticated and storing authentication data as states if true
-	componentWillMount() {
-		let state = localStorage["appState"];
+    const [loading, setLoading] = useState(true);
 
-		if (state) {
-			let appState = JSON.parse(state);
-			this.setState(
-				{ 
-					isLoggedIn: appState.isLoggedIn,
-					user: appState.user,
-		            token: appState.user.access_token,
-		            rolesAndPermissions:appState.user.rolesAndPermissions,
-		            userSpecificPermissions:appState.user.userSpecificPermissions,
-				}
-			);
-		}
-	}
+    useEffect( () => {
+        async function loadData(userId=null, postId=null){
 
-    async componentDidMount () {
+		    let postData = [];
 
-        let { 
-            user
-        } = this.state;
+	    	if(postId !== null){
 
-    	const userId = user.id;
-        if (this.props.match.params.id !== null && this.props.match.params.id !== undefined) {
-            await this.loadData(null, this.props.match.params.id);
-        } else {
-            await this.loadData(userId);
-        }
-    }
+		        let postObj = await axios.get('/api/posts/getPostAndDecendants', 
+		        {
+		        	headers: {
+		                'Authorization': 'Bearer '+token,
+		                'Accept': 'application/json'
+		            },
+		            params: {
+		                postId: postId
+		            }
+		        });
+			    postData = postObj.data;
+	    	} else {
 
-    async componentWillReceiveProps(nextProps) {
-        const {
-            post_id,
-			user 
-		} = this.state;
+		        let postObj = await axios.get('/api/posts/getUserPosts', 
+		        {
+		        	headers: {
+		                'Authorization': 'Bearer '+token,
+		                'Accept': 'application/json'
+		            },
+		            params: {
+		                userId: userId
+		            }
+		        });
 
-        if (nextProps.match.params.id !== undefined) {
-            await this.loadData(null, nextProps.match.params.id);
-        } else {
-            await this.loadData(user.id);
-        }
-    }
+			    postData = postObj.data;
+	    	}
 
-    loadData = async (userId=null, postId=null) => {
-    	
-    		
-        let { 
-            token
-        } = this.state;
-
-	    let postData = [];
-
-    	if(postId !== null){
-
-	        let postObj = await axios.get('/api/posts/getPostAndDecendants', 
-	        {
-	        	headers: {
-	                'Authorization': 'Bearer '+token,
-	                'Accept': 'application/json'
-	            },
-	            params: {
-	                postId: postId
-	            }
-	        });
-		    postData = postObj.data;
-    	} else {
-
-	        let postObj = await axios.get('/api/posts/getUserPosts', 
-	        {
-	        	headers: {
-	                'Authorization': 'Bearer '+token,
-	                'Accept': 'application/json'
-	            },
-	            params: {
-	                userId: userId
-	            }
-	        });
-
-		    postData = postObj.data;
-    	}
-
-    	let newState = {};
-    	if (postData.length <= 0){
-    		newState = {
-	            loading:false,
-    		};
-    	} else {
-    		newState = {
-	            loading:false,
+	        await setCombined({
+	            loading: false,
 	            posts: postData
-    		};
-    	}
+	        });
+        }
 
-        this.setState({
-        	...newState
-        });
-	}
+    	// const userId = user.id;
+        if (props.match.params.id !== null && props.match.params.id !== undefined) {
+            loadData(null, props.match.params.id);
+        } else {
+            loadData(user.id);
+        }
+    }, [user.id, props.match.params.id, combined.loading]);
 
-    loadPostDescendants = async (postId) => {
-    	
-        this.props.history.push(`/dashboard/${postId}`);
-	}
 
-    redirectToEdit = async (postId) => {
-
-		this.props.history.push(`/post/edit/${postId}`);
-	}
-
-    redirectToAddChapter = async (postId) => {
-		this.props.history.push(`/post/create/chapter/${postId}`);
-	}
-
-	deleteBook = async (postId) => {
-
-		let { 
-			token,
-			user 
-		} = this.state;
+	const deleteBook = async (postId) => {
 
     	const userId = user.id;
 
@@ -169,40 +111,30 @@ class Home extends Component {
 			icon: "warning",
 			dangerMode: true,
 		})
-		.then(willDelete => {
+		.then(async willDelete => {
 
 			if (willDelete) {
-				axios.delete(`/api/posts/${postId}`,
+				await axios.delete(`/api/posts/${postId}`,
 		        {   
 		        	headers: {
 		                'Authorization': 'Bearer '+token,
 		                'Accept': 'application/json'
 		            },
-		        })
-				.then(response => {
-					swal("Deleted!", "Post deleted!", "success");
-					this.loadData(userId);
-				})
-				.catch(error => {
-					this.setState({
-				    	errors: error.response.data.errors
-					});
+		        });
+
+				swal("Deleted!", "Post deleted!", "success");
+				await setCombined({
+					loading: true
 				});
 			}
 		});
 	};
 
-	togglePublished = async (postId, published) => {
-
-		let { 
-			posts,
-			token,
-			user 
-		} = this.state;
+	const togglePublished = async (postId, published) => {
 
     	const userId = user.id;
         
-		let post = posts.find(post => post.id === postId);
+		let post = combined.posts.find(post => post.id === postId);
 		published = !published;
 		published = published ? 1 : 0 ;
 
@@ -223,97 +155,115 @@ class Home extends Component {
                     }
                 }
             );
-            await this.loadData(userId);
+
+	        await setCombined({
+	            loading: true
+	        });
         } 
 	}
 
-
-	render() {
-
-		let { 
-			isLoggedIn,
-			posts,
-			user 
-		} = this.state;
-	    
-	    const showDescendantPosts = this.props.match.params.id ? true : false;
-
-        if (isLoggedIn === false) {
-            this.props.history.push('/login');
-		}
-		let latestPostInChapter = null;
-	    return (
-
-            <Container maxWidth="lg">
-				<div className="container">
-	                {
-	                    posts && posts.map(post => (
-
-	                	<div key={`post-${post.id}`}>
-		                    <h2>
-								<Link
-									to={`/post/show/${post.id}`}
-									key={post.id}
-								>
-									{post.title}
-								</Link>
-		        			</h2>
-							<HTMLEllipsis
-								unsafeHTML={post.content}
-								maxLine='3'
-								ellipsis='...'
-								basedOn='letters'
-							/>
-		        			Author: {post.user.full_name}
-		        			<br/>
-		        			Posted: {post.created_at}
-		        			<div style={{float:'right', top:'-27px', position:'relative'}}>
-								<IOSSwitch
-									checked={post.published === 1 ? true : false}
-									onChange={() => {
-										this.togglePublished(post.id, post.published === 1);
-									}}
-									name="published"
-									inputProps={{ 'aria-label': 'secondary checkbox' }}
-								/>
-								{
-									(showDescendantPosts === false && post.descendant_post_id !== null )&& 
-
-										<ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.loadPostDescendants(post.id)}>
-											<ListIcon style={{color:'white'}} />
-										</ColorEditButton>
-								}
-								{
-									(showDescendantPosts === false && post.descendant_post_id == null) &&
-							            <Tooltip title="Add Chapter" placement="bottom">
-							                <ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToAddChapter(post.id)}>
-							                    <PlaylistAddIcon style={{color:'white'}} />
-							                </ColorEditButton>
-							            </Tooltip>
-								}
-								<ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>this.redirectToEdit(post.id)}>
-									<EditIcon style={{color:'white'}} />
-								</ColorEditButton>
-								<ColorDeleteButton style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>this.deleteBook(post.id)}>
-									<DeleteIcon style={{color:'white'}} />
-								</ColorDeleteButton>
-		            		</div>
-		            		<hr/>
-	                	</div>
-	                ))}
-				</div>
-				{
-					(showDescendantPosts === true )&& 
-					<div className="container">
-	  					<Tooltip title="Add Chapter" placement="bottom">
-							<Button style={{height:'47px', top:'-1px', float:'right'}} variant="contained" color="primary" onClick={()=>this.redirectToAddChapter(this.props.match.params.id)}>
-								<PlaylistAddIcon style={{color:'white'}} />
-							</Button>
-						</Tooltip>
-					</div>
-				}
-            </Container>
-		)
+    const loadPostDescendants = async (postId) => {
+    	
+        history.push(`/dashboard/${postId}`);
 	}
+
+    const redirectToEdit = async (postId) => {
+
+		history.push(`/post/edit/${postId}`);
+	}
+
+    const redirectToAddChapter = async (postId) => {
+		history.push(`/post/create/chapter/${postId}`);
+	}
+
+    const showDescendantPosts = props.match.params.id ? true : false;
+
+    let postsOnDashboard = <div></div>;
+    let showDescPosts = <div></div>;
+
+	if(combined.posts.length > 0){
+        postsOnDashboard = 
+                    <div>
+                        {
+                            combined.posts.length && combined.posts.map(post => (
+	                		<div key={`post-${post.id}`}>
+			                    <h2>
+									<Link
+										to={`/post/show/${post.id}`}
+										key={post.id}
+									>
+										{post.title}
+									</Link>
+			        			</h2>
+								<HTMLEllipsis
+									unsafeHTML={post.content}
+									maxLine='3'
+									ellipsis='...'
+									basedOn='letters'
+								/>
+			        			Author: {post.user.full_name}
+		        				<br/>
+		        				Posted: {post.created_at}
+			        			<div style={{float:'right', top:'-27px', position:'relative'}}>
+				  					<Tooltip title="Publish" placement="bottom">
+										<IOSSwitch
+											checked={post.published === 1 ? true : false}
+											onChange={() => {
+												togglePublished(post.id, post.published === 1);
+											}}
+											name="published"
+											inputProps={{ 'aria-label': 'secondary checkbox' }}
+										/>
+									</Tooltip>
+									{
+										(showDescendantPosts === false && post.descendant_post_id !== null )&& 
+
+											<ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>loadPostDescendants(post.id)}>
+												<ListIcon style={{color:'white'}} />
+											</ColorEditButton>
+									}
+									{
+										(showDescendantPosts === false && post.descendant_post_id == null) &&
+								            <Tooltip title="Add Chapter" placement="bottom">
+								                <ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>redirectToAddChapter(post.id)}>
+								                    <PlaylistAddIcon style={{color:'white'}} />
+								                </ColorEditButton>
+								            </Tooltip>
+									}
+				  					<Tooltip title="Edit Post" placement="bottom">
+										<ColorEditButton style={{marginRight:'10px', height:'47px', top:'-1px'}} variant="contained" color="primary" onClick={()=>redirectToEdit(post.id)}>
+											<EditIcon style={{color:'white'}} />
+										</ColorEditButton>
+									</Tooltip>
+				  					<Tooltip title="Delete Post(s)" placement="bottom">
+										<ColorDeleteButton style={{height:'47px', top:'-1px'}} variant="contained" color="secondary" onClick={()=>deleteBook(post.id)}>
+											<DeleteIcon style={{color:'white'}} />
+										</ColorDeleteButton>
+									</Tooltip>
+			            		</div>
+		            			<hr/>
+                			</div>
+                        ))}
+                    </div>
+                }
+
+
+	if (showDescendantPosts === true) {
+		showDescPosts = <div className="container">
+				<Tooltip title="Add Chapter" placement="bottom">
+				<Button style={{height:'47px', top:'-1px', float:'right'}} variant="contained" color="primary" onClick={()=>redirectToAddChapter(props.match.params.id)}>
+					<PlaylistAddIcon style={{color:'white'}} />
+				</Button>
+			</Tooltip>
+		</div>
+	}
+    return (
+
+        <Container maxWidth="lg">
+			<div className="container">
+			{postsOnDashboard}
+			</div>
+			{showDescPosts}
+        </Container>
+    )
 }
-export default withRouter(Home)
