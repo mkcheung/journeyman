@@ -31,11 +31,14 @@ const useStyles = makeStyles((theme) => ({
     menuButton: {
         marginRight: theme.spacing(2),
     },
+    welcomeMessage: {
+        paddingTop:'7px'
+    },
     title: {
         [theme.breakpoints.up('sm')]: {
             display: 'block',
         },
-        paddingTop:'10px'
+        paddingTop:'1px'
     },
     titleAndUserSelect: {
         display: 'inherit',
@@ -181,7 +184,7 @@ export default function Header(props) {
 
                 <IconButton style={{color:'white'}} onClick={(e) => handleSetUserProfile(e)}>
                     <PersonPinIcon /> 
-                    <h6>
+                    <h6 className={ classes.welcomeMessage }>
                         Welcome {user.full_name}!
                     </h6>
                 </IconButton>
