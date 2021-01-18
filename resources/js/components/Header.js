@@ -130,6 +130,7 @@ const ITEM_HEIGHT = 48;
 export default function Header(props) {
 
     let {
+        anchorEl,
         blogAuthors,
         handleClick,
         handleClose,
@@ -139,7 +140,6 @@ export default function Header(props) {
         user
     } = props;
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
     const history = useHistory();
 
     const handleLogOut = () => {
@@ -165,10 +165,6 @@ export default function Header(props) {
 
         history.push(`/user/edit/${user.id}`);
     }
-
-    const handleProfileMenuOpen = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
 
     let navOps = [];
     
