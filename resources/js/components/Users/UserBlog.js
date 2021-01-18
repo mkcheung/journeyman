@@ -137,6 +137,7 @@ export default function UserBlog(props) {
                                 <h2>
                                     <Link
                                         to={`/post/show/${post.id}`}
+                                        style={{ textDecoration: 'none', color:'black' }}
                                         key={post.id}
                                     >
                                         {post.title}

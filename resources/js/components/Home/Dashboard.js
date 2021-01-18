@@ -15,6 +15,9 @@ import {
 	List as ListIcon,
 	PlaylistAdd as PlaylistAddIcon
 } from '@material-ui/icons';
+import { 
+	makeStyles
+} from '@material-ui/core/styles';
 import HTMLEllipsis from 'react-lines-ellipsis/lib/html';
 import { 
 	ColorDeleteButton,
@@ -191,6 +194,7 @@ export default function Home(props) {
 									<Link
 										to={`/post/show/${post.id}`}
 										key={post.id}
+										style={{ textDecoration: 'none', color:'black' }}
 									>
 										{post.title}
 									</Link>

@@ -210,7 +210,10 @@ export default function Header(props) {
                 </div>
                 <div style={{color:'white', borderRight:'solid', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
                     <h5>
-                        <Link to='/about' color="inherit">
+                        <Link 
+                            to='/about' 
+                            style={{ textDecoration: 'none', color:'white' }}
+                        >
                         About
                         </Link>
                     </h5>
@@ -225,6 +228,7 @@ export default function Header(props) {
             id="long-menu"
             anchorEl={anchorEl}
             keepMounted
+            style={{ color:'white' }}
             className={classes.title}
             open={openMenu}
             onClose={handleClose}
@@ -237,24 +241,35 @@ export default function Header(props) {
         >
             {navOps.map((navOp) => (
                 <MenuItem key={navOp.name}>
-                    <Link to={navOp.route}>{navOp.name}</Link>
+                    <Link 
+                        to={navOp.route}
+                        style={{ textDecoration: 'none', color:'black' }}
+                    >
+                        {navOp.name}
+                    </Link>
                 </MenuItem>
             ))}
             {!isLoggedIn ?
                 <div>
                     <MenuItem key={'login'}>
-                        <Link to="/login">
+                        <Link 
+                            to="/login"
+                            style={{ color:'black' }}
+                        >
                             Login
                         </Link>  
                     </MenuItem>
                     <MenuItem key={'register'}>
-                        <Link to="/register">
+                        <Link 
+                            to="/register"
+                            style={{ color:'black' }}
+                        >
                             Register
                         </Link>
                     </MenuItem>
                 </div>
             :   <MenuItem key={'logout'}>
-                    <MUILINK href="#" onClick={handleLogOut}>
+                    <MUILINK href="#" onClick={handleLogOut} style={{ color:'black' }}>
                         Logout
                     </MUILINK>
                 </MenuItem>
@@ -272,7 +287,9 @@ export default function Header(props) {
                     aria-haspopup="true"
                     onClick={handleClick}
                 >
-                    <MenuIcon />
+                    <MenuIcon
+                        style={{ color:'white' }}
+                    />
                 </IconButton>
                 <Typography className={classes.title} variant="h6" noWrap>
                     Phronesis Project
