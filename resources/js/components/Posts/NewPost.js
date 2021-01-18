@@ -62,42 +62,40 @@ class NewPost extends Component {
 
 
   modules = {
-    // #3 Add "image" to the toolbar
-    toolbar: [
-    [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
-    [{size: []}],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-    [{'list': 'ordered'}, {'list': 'bullet'}, 
-     {'indent': '-1'}, {'indent': '+1'}],
-    ['link', 'image', 'video'],
-    ['clean']
-    ],
-    // # 4 Add module and upload function
-    imageUploader: {
-      upload: file => {
-        return new Promise((resolve, reject) => {
-          const formData = new FormData();
-          formData.append("image", file);
+        toolbar: [
+            [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+            [{size: []}],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{'list': 'ordered'}, {'list': 'bullet'}, 
+             {'indent': '-1'}, {'indent': '+1'}],
+            ['link', 'image', 'video'],
+            ['clean']
+        ],
+        imageUploader: {
+            upload: file => {
+                return new Promise((resolve, reject) => {
+                    const formData = new FormData();
+                    formData.append("image", file);
 
-          fetch(
-            "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
-            {
-              method: "POST",
-              body: formData
+                    fetch(
+                        "https://api.imgbb.com/1/upload?key=d36eb6591370ae7f9089d85875e56b22",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    )
+                    .then(response => response.json())
+                    .then(result => {
+                        resolve(result.data.url);
+                    })
+                    .catch(error => {
+                        reject("Upload failed");
+                        console.error("Error:", error);
+                    });
+                });
             }
-          )
-            .then(response => response.json())
-            .then(result => {
-              resolve(result.data.url);
-            })
-            .catch(error => {
-              reject("Upload failed");
-              console.error("Error:", error);
-            });
-        });
-      }
-    }
-  };
+        }
+    };
 
     formats = [
         "header",
@@ -140,7 +138,6 @@ class NewPost extends Component {
         this.quillRef = null;
         this.reactQuillRef = null;
     }
-    // reactQuillRef = React.createRef();
 
     async componentDidMount () {
         let state = localStorage["appState"];
@@ -290,7 +287,6 @@ class NewPost extends Component {
 
         const citationText = '"' + citationBlock.getElementsByClassName("citationText")[0].innerText + '", <i>' + citationBlock.getElementsByClassName("title")[0].innerText + '</i>, ' + citationBlock.getElementsByClassName("page")[0].innerText;
 
-
         // must focus before calling getSelection
         this.quillRef.focus();
         var range = this.quillRef.getSelection();
@@ -303,8 +299,6 @@ class NewPost extends Component {
         this.quillRef.insertText(position, '"' + citationBlock.getElementsByClassName("citationText")[0].innerText + '", ', {
             'italic': false
         });
-
-
     }
 
 
@@ -596,8 +590,8 @@ class NewPost extends Component {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormControl 
-                                        
-                                                style={{ width:'100%' }}>
+                                            style={{ width:'100%' }}
+                                        >
                                             <Autocomplete
                                                 multiple
                                                 id="selectedTags"
