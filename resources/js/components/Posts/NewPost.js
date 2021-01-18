@@ -39,7 +39,6 @@ class NewPost extends Component {
         loading: true,
         books: [],
         chapters: [],
-        categories: [],
         citations: [],
         tags:[],
         errors: [],
@@ -199,7 +198,6 @@ class NewPost extends Component {
     }
 
     loadData = async (postId = null, parentPostId=null) => {
-        let categoryOptions = [];
         let tagOptions = [];
 
         let {
@@ -225,26 +223,9 @@ class NewPost extends Component {
                 tagOptions.push(temp);
             });
 
-            let categoryRes = await axios.get('/api/categories', 
-                {
-                    headers: {
-                        'Authorization': 'Bearer '+token,
-                        'Accept': 'application/json'
-                    }
-                });
-            let categories = categoryRes.data;
-            
-            categories.forEach(function(category){
-                let temp = []
-                temp['id'] = category.id;
-                temp['value'] = category.title;
-                categoryOptions.push(temp);
-            });
-
             let appState = JSON.parse(localStorage["appState"]);
 
             let newState = {
-                categories: categoryOptions,
                 loading:false,
                 tags: tagOptions,
                 user_id:appState.user.id,
@@ -575,7 +556,6 @@ class NewPost extends Component {
             books,
             book_title,
             book_title_search_term,
-            categories,
             category_id,
             chapters,
             chapterSelectedId,
@@ -610,19 +590,30 @@ class NewPost extends Component {
                                             title='title' 
                                             onChange={this.handleFieldChange} 
                                             value={title}
+                                            style={{ width:'100%' }}
                                         />
                                         {this.renderErrorFor('title')}
                                     </Grid>
                                     <Grid item xs={12}>
-                                            <InputLabel htmlFor="name">Slug:</InputLabel>
-                                            <TextField 
-                                                id="slug" 
-                                                title='slug' 
-                                                onChange={this.handleFieldChange} 
-                                                aria-describedby="my-helper-text" 
-                                                value={slug}
+                                        <FormControl 
+                                        
+                                                style={{ width:'100%' }}>
+                                            <Autocomplete
+                                                multiple
+                                                id="selectedTags"
+                                                options={tags}
+                                                getOptionLabel={(option) => option.value}
+                                                onChange={this.onTagsChange}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="standard"
+                                                        label="Tags"
+                                                        placeholder="Favorites"
+                                                    />
+                                                )}
                                             />
-                                            {this.renderErrorFor('slug')}
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormControlLabel
@@ -649,54 +640,8 @@ class NewPost extends Component {
 
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <Grid item xs={12}>
-                                        <FormControl >
-                                            <Autocomplete
-                                                multiple
-                                                id="selectedTags"
-                                                options={tags}
-                                                getOptionLabel={(option) => option.value}
-                                                onChange={this.onTagsChange}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        variant="standard"
-                                                        label="Tags"
-                                                        placeholder="Favorites"
-                                                    />
-                                                )}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <FormControl >
-                                            <InputLabel htmlFor="age-native-simple">Category</InputLabel>
-                                            <Select
-                                                native
-                                                value={category_id}
-                                                onChange={this.handleChange}
-                                                title='category_id'
-                                                inputProps={{
-                                                    name: 'age',
-                                                    id: 'age-native-simple',
-                                                }}
-                                            >
-                                            <option value='0'></option>
-                                            {
-                                                Object
-                                                .keys(categories)
-                                                .map(key => <option key={key} value = {categories[key].id}>{categories[key].value}</option>)
-                                            }
-                                            </Select>
-                                        </FormControl>
-                                    </Grid>
                                     <Grid style={{'textAlign':'center', 'marginLeft':'-85px'}} item xs={12}>
                                         <div>
-                                            <h4>
-                                                <u>
-                                                    Header Image Preview
-                                                </u>
-                                            </h4>
                                             <img style={{'width':'400px'}} src={this.state.image} />
                                         </div>
                                     </Grid>
