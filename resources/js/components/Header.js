@@ -150,7 +150,11 @@ export default function Header(props) {
 
     const handleInputChange = (event, value) => {
         if(value === null){
-            history.push(`/`);
+            if(isLoggedIn){
+                history.push(`/dashboard`);
+            } else {
+                history.push(`/`);
+            }
         } else {
             history.push(`/user/getPosts/${value.id}`);
         }
