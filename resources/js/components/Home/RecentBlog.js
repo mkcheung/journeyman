@@ -108,6 +108,7 @@ export default function RecentBlog() {
                                 <h2>
                                     <Link
                                         to={`/post/show/${post.id}`}
+                                        style={{ textDecoration: 'none', color:'black' }}
                                         key={post.id}
                                     >
                                         {post.title}

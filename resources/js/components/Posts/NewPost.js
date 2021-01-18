@@ -722,7 +722,7 @@ class NewPost extends Component {
                                         formats={this.formats}
                                         ref={(el) => { this.reactQuillRef = el }}
                                         onChange={this.handleEditorChange} 
-                                        style={{height:'90%'}}
+                                        style={{height:'725px', maxHeight:'725px', overflow:'scroll'}}
                                     />
                                     {this.renderErrorFor('content')}
                                 </Grid>

@@ -34,7 +34,7 @@ export default function BookCitationList(props) {
             </Grid>
             <Grid container style={{height:'750px'}}>
                 <Grid item xs={12}>
-                    <ul style={{maxHeight:'675px', overflow:'scroll'}}>
+                    <ul style={{maxHeight:'640px', overflow:'scroll'}}>
                     {
                         citations && citations.map(citation => (
                         <li key={citation.id} onClick={(e) => handleClick(e)}>
