@@ -91,4 +91,77 @@ class PostControllerTest extends TestCase
         // Assert
         self::assertJson($response);
     }
+
+    public function testGetRecentPostsWithTags(){
+
+        // $returnedTagData = [
+        //     'tags' => [
+        //         '{"id":"1","value":"Test"}',
+        //         '{"id":"2","value":"epistemology"}'
+        //     ]
+        // ];
+
+        // $tagsRequested = [1,2];
+        // $postGetRecentPostsReturn = collect(['test']);
+
+        // // var_dump(json_decode($returnedTagData['tags'][0]));
+        // // die;
+        // // Mock
+        // $controller = new PostController();
+        // $request = $this->createMock(Request::class);
+        // $post = \Mockery::mock('overload:' . Post::class);
+
+
+        // $post->shouldReceive('when')
+        //     ->once()
+        //     ->with($tagsRequested, \Mockery::on( function($query) use ($tagsRequested){
+        //         // $mockQuery = \Mockery::mock('Illuminate\Database\Eloquent\Builder');
+
+
+        //         $query->shouldReceive('whereHas')
+        //             ->once()
+        //             ->with('tags', \Mockery::on(function($query2) use ($tagsRequested){
+        //                 // $mockQuery2 = \Mockery::mock('Illuminate\Database\Eloquent\Builder');
+        //                 $query2->shouldReceive('whereIn')
+        //                     ->once()
+        //                     ->with('id', $tagsRequested)
+        //                     ->andReturn(true);
+        //                 return true;
+        //         }))
+        //             ->andReturn(true);
+        //         return true;
+        //     }))
+        //     ->andReturn($post);
+
+
+        // $post->shouldReceive('where')
+        //     ->with('published', '=', 1)
+        //     ->andReturn($post)
+        //     ->once();
+        // $post->shouldReceive('where')
+        //     ->with('parent', '=', 1)
+        //     ->andReturn($post)
+        //     ->once();
+        // $post->shouldReceive('with')
+        //     ->with('user')
+        //     ->andReturn($post)
+        //     ->once();
+        // $post->shouldReceive('limit')
+        //     ->with(10)
+        //     ->andReturn($post)
+        //     ->once();
+        // $post->shouldReceive('get')
+        //     ->andReturn($postGetRecentPostsReturn)
+        //     ->once();
+
+        // // // Expect
+        // $request->expects($this->once())
+        //     ->method('all')
+        //     ->willReturn($returnedTagData);
+        // // Fire
+        // $response = $controller->getRecentPosts($request);
+        // // Assert
+        // self::assertJson($response);
+    }
+
 }
