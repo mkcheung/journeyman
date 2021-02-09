@@ -11,7 +11,8 @@ import {
     MenuItem,
     TextField,
     Toolbar,
-    Typography
+    Typography,
+    Fade
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -99,37 +100,6 @@ const useStyles = makeStyles((theme) => ({
     } 
 }));
 
-const navOpsLoggedIn = [
-    {
-        name: 'Dashboard',
-        route: '/dashboard'
-    },
-    {
-        name: 'Posts',
-        route: '/post'
-    },
-    {
-        name: 'Books',
-        route: '/book/getUserBooks'
-    },
-    {
-        name: 'Categories',
-        route: '/category'
-    },
-    {
-        name: 'Tags',
-        route: '/tag'
-    },
-];
-const navOpsLoggedOut = [
-    {
-        name: 'Home',
-        route: '/'
-    },
-];
-
-const ITEM_HEIGHT = 48;
-
 export default function Header(props) {
 
     let {
@@ -169,27 +139,82 @@ export default function Header(props) {
         history.push(`/user/edit/${user.id}`);
     }
 
-    let navOps = [];
-    
-    if(isLoggedIn){
-        navOps = navOpsLoggedIn;
-    } else {
-        navOps = navOpsLoggedOut;
-    }
-
     let loggedInUserName = '';
     if(user.full_name && user.full_name.length>0){
         loggedInUserName = 
             <div style={{color:'white'}}>
 
-                <IconButton style={{color:'white'}} onClick={(e) => handleSetUserProfile(e)}>
+                <IconButton style={{color:'white'}} onClick={handleClick} >
                     <PersonPinIcon /> 
                     <h6 className={ classes.welcomeMessage }>
                         Welcome {user.full_name}!
                     </h6>
                 </IconButton>
+                <Menu
+                    id="fade-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={openMenu}
+                    onClose={handleClose}
+                    TransitionComponent={Fade}
+                >
+                    <MenuItem onClick={(e) => handleSetUserProfile(e)}>Profile</MenuItem>
+                    <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+                </Menu>
             </div>;
     }
+
+    let loggedInOutNavOps = '';
+    if(isLoggedIn) {
+        loggedInOutNavOps =
+            <div style={{display:'contents'}}>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
+                    <h5>
+                        <Link 
+                            to='/dashboard'
+                            style={{ textDecoration: 'none', color:'white' }}
+                        >
+                        Posts
+                        </Link>
+                    </h5>
+                </div>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%', borderRight:'solid'}}>
+                    <h5>
+                        <Link 
+                            to='/book/getUserBooks'
+                            style={{ textDecoration: 'none', color:'white' }}
+                        >
+                        Books
+                        </Link>
+                    </h5>
+                </div>
+            </div>;
+    } else {
+        loggedInOutNavOps =
+            <div style={{display:'contents'}}>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
+                    <h5>
+                        <Link 
+                            to='/login'
+                            style={{ textDecoration: 'none', color:'white' }}
+                        >
+                        Login
+                        </Link>
+                    </h5>
+                </div>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
+                    <h5>
+                        <Link 
+                            to='/register'
+                            style={{ textDecoration: 'none', color:'white' }}
+                        >
+                        Register
+                        </Link>
+                    </h5>
+                </div>
+            </div>;
+    }
+
 
     let dropdownOptions = '';
     if(blogAuthors && blogAuthors.length>0){
@@ -211,7 +236,7 @@ export default function Header(props) {
                         }
                     />
                 </div>
-                <div style={{color:'white', borderRight:'solid', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
                     <h5>
                         <Link 
                             to='/about' 
@@ -221,84 +246,18 @@ export default function Header(props) {
                         </Link>
                     </h5>
                 </div>
+                {loggedInOutNavOps}
             </div>;
     }
-
-
-    const menuId = 'primary-search-account-menu';
-    const renderMenu = (
-        <Menu
-            id="long-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            style={{ color:'white' }}
-            className={classes.title}
-            open={openMenu}
-            onClose={handleClose}
-            PaperProps={{
-                style: {
-                    maxHeight: ITEM_HEIGHT * 4.5,
-                    width: '20ch',
-                },
-            }}
-        >
-            {navOps.map((navOp) => (
-                <MenuItem key={navOp.name}>
-                    <Link 
-                        to={navOp.route}
-                        style={{ textDecoration: 'none', color:'black' }}
-                    >
-                        {navOp.name}
-                    </Link>
-                </MenuItem>
-            ))}
-            {!isLoggedIn ?
-                <div>
-                    <MenuItem key={'login'}>
-                        <Link 
-                            to="/login"
-                            style={{ color:'black' }}
-                        >
-                            Login
-                        </Link>  
-                    </MenuItem>
-                    <MenuItem key={'register'}>
-                        <Link 
-                            to="/register"
-                            style={{ color:'black' }}
-                        >
-                            Register
-                        </Link>
-                    </MenuItem>
-                </div>
-            :   <MenuItem key={'logout'}>
-                    <MUILINK href="#" onClick={handleLogOut} style={{ color:'black' }}>
-                        Logout
-                    </MUILINK>
-                </MenuItem>
-            }
-        </Menu>
-    );
 
   return (
     <div className={classes.grow}>
         <AppBar className={classes.root} position="static">
             <Toolbar>
-                <IconButton
-                    aria-label="more"
-                    aria-controls="long-menu"
-                    aria-haspopup="true"
-                    onClick={handleClick}
-                >
-                    <MenuIcon
-                        style={{ color:'white' }}
-                    />
-                </IconButton>
                 <Typography className={classes.title} variant="h6" noWrap>
                     Phronesis Project
                 </Typography>
                 {dropdownOptions}
-                {renderMenu}
                 {loggedInUserName}
             </Toolbar>
         </AppBar>

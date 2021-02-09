@@ -209,7 +209,6 @@ export default function Home(props) {
 		        				<br/>
 		        				Posted: {post.created_at}
 			        			<div style={{float:'right', top:'-27px', position:'relative'}}>
-				  					<Tooltip title="Publish" placement="bottom">
 										<IOSSwitch
 											checked={post.published === 1 ? true : false}
 											onChange={() => {
@@ -218,7 +217,6 @@ export default function Home(props) {
 											name="published"
 											inputProps={{ 'aria-label': 'secondary checkbox' }}
 										/>
-									</Tooltip>
 									{
 										(showDescendantPosts === false && post.descendant_post_id !== null )&& 
 
