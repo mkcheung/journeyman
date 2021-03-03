@@ -178,13 +178,23 @@ export default function Header(props) {
                         </Link>
                     </h5>
                 </div>
-                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%', borderRight:'solid'}}>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%'}}>
                     <h5>
                         <Link 
                             to='/book/getUserBooks'
                             style={{ textDecoration: 'none', color:'white' }}
                         >
                         Books
+                        </Link>
+                    </h5>
+                </div>
+                <div style={{color:'white', paddingTop:'20px', paddingLeft:'5%', paddingRight:'5%', borderRight:'solid'}}>
+                    <h5>
+                        <Link 
+                            to='/tag'
+                            style={{ textDecoration: 'none', color:'white' }}
+                        >
+                        Tags
                         </Link>
                     </h5>
                 </div>

@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('comments', 'CommentController');
     Route::resource('replies', 'ReplyController');
     Route::resource('posts', 'PostController');
+    Route::get('tags/getTagsToPosts', 'TagController@getTagsToPosts');
     Route::resource('tags', 'TagController');
     Route::resource('users', 'UserController');
 });

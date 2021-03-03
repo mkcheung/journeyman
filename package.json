@@ -30,6 +30,8 @@
         "@material-ui/icons": "^4.9.1",
         "@material-ui/lab": "^4.0.0-alpha.56",
         "@tinymce/tinymce-react": "^3.6.0",
+        "ag-grid-community": "^25.0.1",
+        "ag-grid-react": "^25.0.1",
         "html-react-parser": "^0.14.0",
         "luxon": "^1.25.0",
         "quill-image-uploader": "^1.2.2",
