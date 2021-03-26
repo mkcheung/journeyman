@@ -26,12 +26,10 @@ class TagController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-          'title' => 'required'
-        ]);
+        $tagData = $request->get('data');
 
         $tag = Tag::create([
-          'title' => $validatedData['title']
+          'title' => $tagData['title']
         ]);
 
         return response()->json('Tag created!');

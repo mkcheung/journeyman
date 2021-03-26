@@ -36,6 +36,7 @@ class PostController extends Controller
 
     public function getRecentPosts(Request $request)
     {
+
         $data = $request->all();
         $tagsRequested = [];
 
@@ -62,8 +63,9 @@ class PostController extends Controller
 
     public function getPostAndDecendants(Request $request)
     {
+
         $postId = $request->query('postId');
-        $posts = Post::where('id', '=', (int)$postId)->where('parent', '=', 1)->with('user')->with('allDescendantPosts')->get()->all();
+        $posts = Post::where('id', '=', (int)$postId)->where('parent', '=', 1)->with('user')->with('allDescendantPosts')->with('tags')->get()->all();
 
         if(empty($posts)){
             return json_encode($posts);
@@ -84,6 +86,7 @@ class PostController extends Controller
         ];
 
         $allDescendantPosts = $posts[0]['allDescendantPosts'];
+        $allAssociatedTags = $posts[0]['tags'];
 
         $this->processDescendants($posts[0]['allDescendantPosts'], $descendantPosts);
 
@@ -201,7 +204,7 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::where('id', $id)->with('comments', 'comments.replies', 'comments.replies.user')->first();
+        $post = Post::where('id', $id)->with('comments', 'comments.replies', 'comments.replies.user', 'tags')->first();
         return $post->toJson();
     }
 
@@ -236,7 +239,13 @@ class PostController extends Controller
             $destinationPath = public_path('post_images') . '/'.$post->title;
             file_put_contents($destinationPath, file_get_contents($post->image));
         }
+        $selectedTagIds = [];
+        $selectedTags = $data['data']['selectedTags'];
+        foreach($selectedTags as $selectedTag){
+            $selectedTagIds[] = $selectedTag['id'];
+        }
 
+        $post->tags()->sync($selectedTagIds);
         $post->slug = str_slug($data['data']['title'], '-');
         $post->published = $data['data']['published'];
         $post->user_id = $data['data']['user_id'];

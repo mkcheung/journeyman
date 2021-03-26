@@ -36,35 +36,47 @@ class NewTag extends Component {
         })
     }
 
-  handleCreateNewTag (event) {
-    event.preventDefault()
+    async handleCreateNewTag (event) {
+        event.preventDefault()
 
-    const { 
-      history 
-    } = this.props
+        const { 
+          history 
+        } = this.props
 
-    const { 
-      description,
-      title 
-    } = this.state;
+        const { 
+          description,
+          title,
+          token 
+        } = this.state;
 
-    const tag = {
-      title: title,
-      description: description
-    }
+        const tag = {
+          title: title,
+          description: description
+        }
 
-    axios.post('/api/tags', tag)
-      .then(response => {
-        // redirect to the homepage
-        swal("Done!", "Tag Created!", "success");
-        history.push('/')
-      })
-      .catch(error => {
-        this.setState({
-          errors: error.response.data.errors
+        await axios.post('/api/tags',
+            {
+                data: tag,
+
+            },
+            {   
+                headers: {
+                    'Authorization': 'Bearer '+token,
+                    'Accept': 'application/json'
+                }
+            }
+        )
+        .then(response => {
+            // redirect to the homepage
+            swal("Done!", "Tag Created!", "success");
+            history.push('/')
         })
-      })
-  }
+        .catch(error => {
+            this.setState({
+              errors: error.response.data.errors
+            })
+        })
+    }
 
   hasErrorFor (field) {
     return !!this.state.errors[field]

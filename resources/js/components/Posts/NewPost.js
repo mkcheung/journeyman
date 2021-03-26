@@ -216,7 +216,7 @@ class NewPost extends Component {
             tags.forEach(function(tag){
                 let temp = {};
                 temp['id'] = tag.id;
-                temp['value'] = tag.title;
+                temp['title'] = tag.title;
                 tagOptions.push(temp);
             });
 
@@ -240,11 +240,11 @@ class NewPost extends Component {
                 );
 
                 let postData = postObj.data;
-
                 newState['title'] = postData['title'];
                 newState['content'] = postData['content'];
                 newState['post_id'] = postData['id'];
                 newState['image'] = postData['image'];
+                newState['selectedTags'] = postData['tags'];
                 newState['published'] = postData['published'] ? true : false;
 
             }
@@ -543,6 +543,18 @@ class NewPost extends Component {
         reader.readAsDataURL(file);
     }
 
+    handleDelete = (id) => {
+        let { 
+            selectedTags
+        } = this.state;
+        let remainingTags = selectedTags.filter(function( obj ) {
+            return obj.id !== id;
+        });
+        this.setState({
+            selectedTags: remainingTags
+        })
+    };
+
     render () {
         let { 
             bookSelectedId,
@@ -557,6 +569,7 @@ class NewPost extends Component {
             content,
             post_id,
             published,
+            selectedTags,
             slug,
             tags,
             title,
@@ -565,7 +578,6 @@ class NewPost extends Component {
 
         const buttonTitle = (post_id) ? 'Update' : 'Create';
         const headerTitle = (post_id) ? 'Update' : 'Create New';
-
         return (
 
             <Container maxWidth="lg">
@@ -595,9 +607,18 @@ class NewPost extends Component {
                                             <Autocomplete
                                                 multiple
                                                 id="selectedTags"
+                                                value={selectedTags}
                                                 options={tags}
-                                                getOptionLabel={(option) => option.value}
+                                                getOptionLabel={(option) => option.title}
                                                 onChange={this.onTagsChange}
+                                                renderTags={(tagValue, getTagProps) =>
+                                                    tagValue.map((option, index) => (
+                                                        <Chip
+                                                            label={option.title}
+                                                            onDelete={() => this.handleDelete(option.id)}
+                                                        />
+                                                    ))
+                                                }
                                                 renderInput={(params) => (
                                                     <TextField
                                                         {...params}

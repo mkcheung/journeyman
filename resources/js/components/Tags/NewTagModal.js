@@ -44,7 +44,6 @@ export default function NewTagModal(props) {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
-  const [open, setOpen] = React.useState(false);
 
   const body = (
         <Grid container spacing={3}>
@@ -69,16 +68,16 @@ export default function NewTagModal(props) {
 	    </Grid>
   );
 
-  return (
+    return (
     <div>
-      <Modal
-        open={props.open}
-        onClose={props.handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        {body}
-      </Modal>
+        <Modal
+            open={props.open}
+            onClose={props.handleClose}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+        >
+            {body}
+        </Modal>
     </div>
-  );
+    );
 }

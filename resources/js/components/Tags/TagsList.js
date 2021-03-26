@@ -4,6 +4,7 @@ import swal from 'sweetalert';
 import  NewTagModal  from './NewTagModal';
 import { 
     Box,
+    CircularProgress,
     Collapse,
     Container,
     Grid,
@@ -131,7 +132,7 @@ export default function TagsList(props) {
     ]);
 
     const [loading, setLoading] = useState(true);
-    const [open, setOpen] = useState(false);
+    const [open, setOpenModal] = useState(false);
 
     const [newTag, setNewTag] = useState({
         title: '',
@@ -159,26 +160,38 @@ export default function TagsList(props) {
             });
         }
         loadData();
-    },[]);
+    },[combined.loading]);
 
     const handleFieldChange = async (event) => {
         newTag[event.target.id] = event.target.value
     }
 
     const handleOpen = async () => {
-        setOpen(true);
+        setOpenModal(true);
     };
 
     const handleClose = async () => {
-        setOpen(false);
+        setOpenModal(false);
     };
 
     const handleSubmit = async () => {
 
-        axios.post('/api/tags', newTag)
+        await axios.post('/api/tags', 
+            {
+                data: newTag,
+            },
+            {   
+                headers: {
+                    'Authorization': 'Bearer '+token,
+                    'Accept': 'application/json'
+                }
+            }
+          )
             .then(response => {
                 swal("Done!", "Tag Created!", "success");
-                setLoading(true);
+                setCombined({
+                    loading: true
+                });
                 handleClose();
             })
             .catch(error => {
@@ -186,29 +199,39 @@ export default function TagsList(props) {
             });
     };
 
+let test = <div></div>;
+    if (combined.loading === true) {
+        test = 
+            <div style={{verticalAlign: 'top', marginLeft:'3px',marginRight:'3px',marginTop:'50px',position:'relative' }} >
+                <CircularProgress style={{margin:'auto', position: 'absolute', top:0,bottom:0,left:0,right:0, }} />
+            </div>
+    } else if(combined.loading === false && combined.tags && combined.tags.length>0){
+        test = <TableContainer component={Paper}>
+                    <Table aria-label="collapsible table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Tags</TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {combined.tags.map((tag) => (
+                                    <Row key={`tag-${tag.title}-${tag.id}`} tag={tag} />
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+    }
+
     return (
         <Container maxWidth="lg">
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <div className='card-header'>All Tags</div>
-                    <NewTagModal open={open} handleFieldChange={handleFieldChange} handleSubmit={handleSubmit} handleClose={handleClose} />
+                    <NewTagModal open={open} handleFieldChange={handleFieldChange} handleSubmit={handleSubmit}/>
                 </Grid>
                 <Grid item xs={6}>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="collapsible table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Tags</TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {combined.tags.map((tag) => (
-                                        <Row key={`tag-${tag.title}-${tag.id}`} tag={tag} />
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    {test}
                 </Grid>
                 <Grid item xs={6}>
                     <button type="button" onClick={handleOpen}>
