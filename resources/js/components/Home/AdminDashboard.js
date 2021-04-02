@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, {Component} from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import Header from './../Header';
 import Footer from './../Footer';
 import { Link, Redirect } from 'react-router-dom';
@@ -19,122 +19,117 @@ import {
 	ExpandMore,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 
-class AdminDashboard extends Component {
-    state = {
-		isLoggedIn: false,
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
+        inputInputForTags: {
+        padding: theme.spacing(1, 1, 1, 0),
+    },
+}));
+
+function useMergeState(initialState) {
+    const [state, setState] = useState(initialState);
+    const setMergedState = newState => 
+        setState(prevState => Object.assign({}, prevState, newState)
+    );
+    return [state, setMergedState];
+}
+
+export default function AdminDashboard(props) {
+
+    let user = {};
+    let token = '';
+    let state = localStorage["appState"];
+
+    if (state) {
+        let appState = JSON.parse(state);
+        user = appState.user;
+        token = user.access_token;
+    }
+
+    const history = useHistory();
+    const classes = useStyles();
+
+    const [combined, setCombined] = useMergeState({
+        isLoggedIn: false,
         loading: true,
         post_id: [],
-		user: {},
 		allUsers: [],
 		posts: [],
 		userListOpen: false,
 		openStatusSlots: {}
-    };
+    });
 
-	// check if user is authenticated and storing authentication data as states if true
-	componentWillMount() {
-		let state = localStorage["appState"];
 
-		if (state) {
-			let appState = JSON.parse(state);
-			this.setState(
-				{ 
-					isLoggedIn: appState.isLoggedIn,
-					user: appState.user,
-		            token: appState.user.access_token,
-		            rolesAndPermissions:appState.user.rolesAndPermissions,
-		            userSpecificPermissions:appState.user.userSpecificPermissions,
-				}
-			);
-		}
-	}
+    useEffect( () => {
+        async function loadData(){
 
-    async componentDidMount () {
+	        let allUsers = await axios.get('/api/users/', 
+	        {
+	        	headers: {
+	                'Authorization': 'Bearer '+token,
+	                'Accept': 'application/json'
+	            }
+	        });
 
-    	const userId = this.state.user.id;
-        await this.loadData(userId);
+	        console.log(allUsers);
+
+	        let postsObj = await axios.get('/api/posts/', 
+	        {
+	        	headers: {
+	                'Authorization': 'Bearer '+token,
+	                'Accept': 'application/json'
+	            }
+	        });
+
+
+		    let postData = postsObj.data;
+		    let openStatusSlots = {};
+		    postData.map(function(pd){
+		    	openStatusSlots['open-user-'+pd.id] = false;
+		    });
+
+            await setCombined({
+	            loading:false,
+	            posts: postData,
+	            openStatusSlots,
+	            allUsers:allUsers.data
+            });
+        }
+        loadData();
+    }, []);
+
+    const handleClick = async (postId) => {
+
+		let newOpenStatusSlots = combined.openStatusSlots;
+
+		newOpenStatusSlots['open-user-'+postId] = !(newOpenStatusSlots['open-user-'+postId]);
+
+        await setCombined({
+            openStatusSlots:newOpenStatusSlots
+        });
     }
 
-    handleClick = (postId) => {
-		let { 
-			openStatusSlots, 
-		} = this.state;
-
-		openStatusSlots['open-user-'+postId] = !(openStatusSlots['open-user-'+postId]);
-
-        this.setState({
-			openStatusSlots
-        })
-    }
-
-    handleUserListClick = () => {
-		let { 
-			userListOpen, 
-		} = this.state;
-
+    const handleUserListClick = async () => {
+		let newUserListOpen = combined.userListOpen;
 		
-        this.setState({
-			userListOpen: !userListOpen
-        })
+    	newUserListOpen = !newUserListOpen;
+
+        await setCombined({
+            userListOpen:newUserListOpen
+        });
     }
 
-
-    loadData = async (userId) => {
-
-        let allUsers = await axios.get('/api/users/', 
-        {
-        	headers: {
-                'Authorization': 'Bearer '+this.state.token,
-                'Accept': 'application/json'
-            }
-        });
-
-        console.log(allUsers);
-
-        let postsObj = await axios.get('/api/posts/', 
-        {
-        	headers: {
-                'Authorization': 'Bearer '+this.state.token,
-                'Accept': 'application/json'
-            },
-            params: {
-                userId: userId
-            }
-        });
-
-
-	    let postData = postsObj.data;
-	    let openStatusSlots = {};
-	    postData.map(function(pd){
-	    	openStatusSlots['open-user-'+pd.id] = false;
-	    });
-
-        this.setState({
-            loading:false,
-            posts: postData,
-            openStatusSlots,
-            allUsers:allUsers.data
-        });
-	}
-
-	render() {
-
-		let { 
-			isLoggedIn,
-			allUsers,
-			posts,
-			user,
-			openStatusSlots,
-			userListOpen
-		} = this.state;
-	    
-
-        if (isLoggedIn === false) {
-            this.props.history.push('/login');
-		}
-
-	    return (
+return (
 	    	<Container maxWidth="lg">
 		      	<Grid container>
     				<List
@@ -142,16 +137,16 @@ class AdminDashboard extends Component {
 			      	>
 	                    {
 	                        	<div>
-									<ListItem button onClick={() => this.handleUserListClick()}>
+									<ListItem button onClick={() => handleUserListClick()}>
 										<ListItemIcon>
 											Users
 										</ListItemIcon>
 										<ListItemText/>
-										{userListOpen ? <ExpandLess /> : <ExpandMore />}
+										{combined.userListOpen ? <ExpandLess /> : <ExpandMore />}
 									</ListItem>
-	      							<Collapse in={userListOpen} timeout="auto" unmountOnExit>
+	      							<Collapse in={combined.userListOpen} timeout="auto" unmountOnExit>
 	        							<List component="div" disablePadding style={{width: '100%'}}>
-	        								{ allUsers && allUsers.map(allUser => (
+	        								{ combined.allUsers && combined.allUsers.map(allUser => (
 												<ListItem button 
 														key={allUser.full_name}>
 													<Link
@@ -172,16 +167,16 @@ class AdminDashboard extends Component {
 			      		style={{width: '100%'}}
 			      	>
 	                    {
-	                        posts && posts.map(post => (
+	                        combined.posts && combined.posts.map(post => (
 	                        	<div key={'userPost'+post.id}>
-									<ListItem key={post.name} button onClick={() => this.handleClick(post.id)}>
+									<ListItem key={post.name} button onClick={() => handleClick(post.id)}>
 										<ListItemIcon>
 											{post.name}
 										</ListItemIcon>
 										<ListItemText/>
-										{openStatusSlots['open-user-'+post.id] ? <ExpandLess /> : <ExpandMore />}
+										{combined.openStatusSlots['open-user-'+post.id] ? <ExpandLess /> : <ExpandMore />}
 									</ListItem>
-	      							<Collapse key={post.id} in={openStatusSlots['open-user-'+post.id]} timeout="auto" unmountOnExit>
+	      							<Collapse key={post.id} in={combined.openStatusSlots['open-user-'+post.id]} timeout="auto" unmountOnExit>
 	        							<List component="div" disablePadding style={{width: '100%'}}>
 	        								{post.posts.map(userpost => (
 												<ListItem button 
@@ -203,6 +198,4 @@ class AdminDashboard extends Component {
 		       </Grid>
 		    </Container>
 		)
-	}
 }
-export default withRouter(AdminDashboard)

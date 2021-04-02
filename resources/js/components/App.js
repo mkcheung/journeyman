@@ -45,7 +45,6 @@ class App extends Component {
     async componentDidMount() {
         let state = localStorage["appState"];
 
-
         let blogAuthors = [];
         let authorRes = await axios.get('/api/users/showAuthors', 
             {
